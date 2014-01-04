@@ -382,7 +382,7 @@ namespace boost
       {
         return m_val == 0;
       }
-#   endif 
+#   endif
 
       // relationals:
       inline friend bool operator==( const error_code & lhs,
@@ -527,7 +527,7 @@ namespace boost
 #include <boost/config/abi_suffix.hpp> // pops abi_prefix.hpp pragmas
 
 # ifdef BOOST_ERROR_CODE_HEADER_ONLY
-#   include <boost/../libs/system/src/error_code.cpp>
+#   include <boost/system/detail/error_code.ipp>
 # endif
 
 #endif // BOOST_ERROR_CODE_HPP
