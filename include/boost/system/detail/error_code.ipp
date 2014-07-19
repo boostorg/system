@@ -1,7 +1,7 @@
 //  error_code support implementation file  ----------------------------------//
 
 //  Copyright Beman Dawes 2002, 2006
-
+//  Copyright (c) Microsoft Corporation 2014
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
@@ -22,7 +22,7 @@
 
 # if defined( BOOST_WINDOWS_API )
 #   include <windows.h>
-#   if !defined(WINAPI_FAMILY) || ((WINAPI_FAMILY & WINAPI_PARTITION_DESKTOP) != 0)
+# if BOOST_PLAT_WINDOWS_DESKTOP
 #     include <boost/system/detail/local_free_on_destruction.hpp>
 #   endif
 #   ifndef ERROR_INCORRECT_SIZE
@@ -368,7 +368,7 @@ namespace
 
   std::string system_error_category::message( int ev ) const
   {
-# if defined(WINAPI_FAMILY) && ((WINAPI_FAMILY & WINAPI_PARTITION_DESKTOP) == 0)
+#if BOOST_PLAT_WINDOWS_DESKTOP
     std::string str( 128, char() );
     for (;;)
     {
@@ -415,27 +415,42 @@ namespace
         return std::string("Unknown error");
 
     std::string str( static_cast<LPCSTR>(lpMsgBuf) );
-# else  // WinCE workaround
-    LPVOID lpMsgBuf = 0;
-    DWORD retval = ::FormatMessageW(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER |
-        FORMAT_MESSAGE_FROM_SYSTEM |
-        FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
-        ev,
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-        (LPWSTR) &lpMsgBuf,
-        0,
-        NULL
-    );
-    detail::local_free_on_destruction lfod(lpMsgBuf);
-    if (retval == 0)
-        return std::string("Unknown error");
-
-    int num_chars = (wcslen( static_cast<LPCWSTR>(lpMsgBuf) ) + 1) * 2;
+# else  // WinCE and Windows Runtime workaround
+    std::wstring buf(128, wchar_t());
+    for (;;)
+    {
+        DWORD retval = ::FormatMessageW(
+            FORMAT_MESSAGE_FROM_SYSTEM |
+            FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL,
+            ev,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+            &buf[0],
+            buf.size(),
+            NULL
+        );
+        
+        if (retval > 0)
+        {
+            buf.resize(retval);
+            break;
+        }
+        else if ( ::GetLastError() != ERROR_INSUFFICIENT_BUFFER )
+        {
+            return std::string("Unknown error");
+        }
+        else
+        {
+            buf.resize(buf.size() + buf.size() / 2);
+        }
+    }
+    
+    int num_chars = (buf.size() + 1) * 2;
     LPSTR narrow_buffer = (LPSTR)_alloca( num_chars );
-    if (::WideCharToMultiByte(CP_ACP, 0, static_cast<LPCWSTR>(lpMsgBuf), -1, narrow_buffer, num_chars, NULL, NULL) == 0)
+    if (::WideCharToMultiByte(CP_ACP, 0, buf.c_str(), -1, narrow_buffer, num_chars, NULL, NULL) == 0)
+    {
         return std::string("Unknown error");
+    }
 
     std::string str( narrow_buffer );
 # endif
