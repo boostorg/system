@@ -22,7 +22,7 @@
 
 # if defined( BOOST_WINDOWS_API )
 #   include <windows.h>
-# if BOOST_PLAT_WINDOWS_DESKTOP
+#   if !BOOST_PLAT_WINDOWS_RUNTIME
 #     include <boost/system/detail/local_free_on_destruction.hpp>
 #   endif
 #   ifndef ERROR_INCORRECT_SIZE
@@ -368,54 +368,7 @@ namespace
 
   std::string system_error_category::message( int ev ) const
   {
-#if BOOST_PLAT_WINDOWS_DESKTOP
-    std::string str( 128, char() );
-    for (;;)
-    {
-      DWORD retval = ::FormatMessageA(
-          FORMAT_MESSAGE_FROM_SYSTEM |
-          FORMAT_MESSAGE_IGNORE_INSERTS,
-          NULL,
-          ev,
-          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-          &str[0],
-          str.size(),
-          NULL
-      );
-
-      if ( retval > 0 )
-      {
-        str.resize( retval );
-        break;
-      }
-      else if ( ::GetLastError() != ERROR_INSUFFICIENT_BUFFER )
-      {
-        return std::string("Unknown error");
-      }
-      else
-      {
-        str.resize( str.size() + str.size()/2 );
-      }
-    }
-# elif !defined(BOOST_NO_ANSI_APIS)
-    LPVOID lpMsgBuf = 0;
-    DWORD retval = ::FormatMessageA(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER |
-        FORMAT_MESSAGE_FROM_SYSTEM |
-        FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
-        ev,
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-        (LPSTR) &lpMsgBuf,
-        0,
-        NULL
-    );
-    detail::local_free_on_destruction lfod(lpMsgBuf);
-    if (retval == 0)
-        return std::string("Unknown error");
-
-    std::string str( static_cast<LPCSTR>(lpMsgBuf) );
-# else  // WinCE and Windows Runtime workaround
+#if defined(UNDER_CE) || BOOST_PLAT_WINDOWS_RUNTIME || defined(BOOST_NO_ANSI_APIS)
     std::wstring buf(128, wchar_t());
     for (;;)
     {
@@ -453,6 +406,24 @@ namespace
     }
 
     std::string str( narrow_buffer );
+#else
+    LPVOID lpMsgBuf = 0;
+    DWORD retval = ::FormatMessageA(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
+        FORMAT_MESSAGE_FROM_SYSTEM |
+        FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL,
+        ev,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+        (LPSTR) &lpMsgBuf,
+        0,
+        NULL
+    );
+    detail::local_free_on_destruction lfod(lpMsgBuf);
+    if (retval == 0)
+        return std::string("Unknown error");
+
+    std::string str( static_cast<LPCSTR>(lpMsgBuf) );
 # endif
     while ( str.size()
       && (str[str.size()-1] == '\n' || str[str.size()-1] == '\r') )
