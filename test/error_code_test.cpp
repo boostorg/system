@@ -59,6 +59,26 @@ namespace
 int main( int, char ** )
 {
 
+#ifdef BOOST_WINDOWS_API
+  std::cout << "BOOST_WINDOWS_API is defined" << std::endl;
+#else
+  std::cout << "BOOST_WINDOWS_API is not defined" << std::endl;
+#endif
+#ifdef BOOST_POSIX_API
+  std::cout << "BOOST_POSIX_API is defined" << std::endl;
+#else
+  std::cout << "BOOST_POSIX_API is not defined" << std::endl;
+#endif
+#ifdef BOOST_PLAT_WINDOWS_DESKTOP
+  std::cout << "BOOST_PLAT_WINDOWS_DESKTOP is defined" << std::endl;
+#else
+  std::cout << "BOOST_PLAT_WINDOWS_DESKTOP is not defined" << std::endl;
+#endif
+#ifdef BOOST_NO_ANSI_APIS
+  std::cout << "BOOST_NO_ANSI_APIS is defined" << std::endl;
+#else
+  std::cout << "BOOST_NO_ANSI_APIS is not defined" << std::endl;
+#endif
 #ifdef BOOST_NO_CXX11_NOEXCEPT
   std::cout << "BOOST_NO_CXX11_NOEXCEPT is defined" << std::endl;
 #else
