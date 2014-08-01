@@ -52,4 +52,7 @@ project
          [ run header_only_test.cpp
            :  :  : <link>static
          ]
+         [ run config_test.cpp
+           :  :  : <test-info>always_show_run_output 
+         ]
          ;
