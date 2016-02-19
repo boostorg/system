@@ -21,7 +21,9 @@
 #include <cstring> // for strerror/strerror_r
 
 # if defined( BOOST_WINDOWS_API )
-#   include <windows.h>
+#   include <winerror.h>
+#   include <boost/detail/winapi/error_handling.hpp>
+#   include <boost/detail/winapi/character_code_conversion.hpp>
 #   if !BOOST_PLAT_WINDOWS_RUNTIME
 #     include <boost/system/detail/local_free_on_destruction.hpp>
 #   endif
@@ -372,12 +374,12 @@ namespace
     std::wstring buf(128, wchar_t());
     for (;;)
     {
-        DWORD retval = ::FormatMessageW(
-            FORMAT_MESSAGE_FROM_SYSTEM |
-            FORMAT_MESSAGE_IGNORE_INSERTS,
+        boost::detail::winapi::DWORD_ retval = boost::detail::winapi::FormatMessageW(
+            boost::detail::winapi::FORMAT_MESSAGE_FROM_SYSTEM_ |
+            boost::detail::winapi::FORMAT_MESSAGE_IGNORE_INSERTS_,
             NULL,
             ev,
-            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+            boost::detail::winapi::MAKELANGID_(boost::detail::winapi::LANG_NEUTRAL_, boost::detail::winapi::SUBLANG_DEFAULT_), // Default language
             &buf[0],
             buf.size(),
             NULL
@@ -388,7 +390,7 @@ namespace
             buf.resize(retval);
             break;
         }
-        else if ( ::GetLastError() != ERROR_INSUFFICIENT_BUFFER )
+        else if (boost::detail::winapi::GetLastError() != ERROR_INSUFFICIENT_BUFFER)
         {
             return std::string("Unknown error");
         }
@@ -399,22 +401,22 @@ namespace
     }
     
     int num_chars = (buf.size() + 1) * 2;
-    LPSTR narrow_buffer = (LPSTR)_alloca( num_chars );
-    if (::WideCharToMultiByte(CP_ACP, 0, buf.c_str(), -1, narrow_buffer, num_chars, NULL, NULL) == 0)
+    boost::detail::winapi::LPSTR_ narrow_buffer = (boost::detail::winapi::LPSTR_)_alloca(num_chars);
+    if (boost::detail::winapi::WideCharToMultiByte(boost::detail::winapi::CP_ACP_, 0, buf.c_str(), -1, narrow_buffer, num_chars, NULL, NULL) == 0)
     {
         return std::string("Unknown error");
     }
 
     std::string str( narrow_buffer );
 #else
-    LPVOID lpMsgBuf = 0;
-    DWORD retval = ::FormatMessageA(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER |
-        FORMAT_MESSAGE_FROM_SYSTEM |
-        FORMAT_MESSAGE_IGNORE_INSERTS,
+    boost::detail::winapi::LPVOID_ lpMsgBuf = 0;
+    boost::detail::winapi::DWORD_ retval = boost::detail::winapi::FormatMessageA(
+        boost::detail::winapi::FORMAT_MESSAGE_ALLOCATE_BUFFER_ |
+        boost::detail::winapi::FORMAT_MESSAGE_FROM_SYSTEM_ |
+        boost::detail::winapi::FORMAT_MESSAGE_IGNORE_INSERTS_,
         NULL,
         ev,
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+        boost::detail::winapi::MAKELANGID_(boost::detail::winapi::LANG_NEUTRAL_, boost::detail::winapi::SUBLANG_DEFAULT_), // Default language
         (LPSTR) &lpMsgBuf,
         0,
         NULL
