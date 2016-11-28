@@ -39,8 +39,9 @@ namespace boost
   namespace system
   {
 
-    class error_code;
-    class error_condition;
+    class error_code;         // values defined by the operating system
+    class error_condition;    // portable generic values defined below, but ultimately
+                              // based on the POSIX standard
 
     //  "Concept" helpers  ---------------------------------------------------//
 
