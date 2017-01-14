@@ -419,14 +419,18 @@ namespace boost
 
   }  // namespace system
 
-  namespace detail { inline system::error_code * throws() { return 0; } }
-    //  Misuse of the error_code object is turned into a noisy failure by
-    //  poisoning the reference. This particular implementation doesn't
-    //  produce warnings or errors from popular compilers, is very efficient
-    //  (as determined by inspecting generated code), and does not suffer
-    //  from order of initialization problems. In practice, it also seems
-    //  cause user function error handling implementation errors to be detected
-    //  very early in the development cycle.
+  namespace detail 
+  { 
+    inline system::error_code * throws() 
+      { return reinterpret_cast<system::error_code *>(0x123); } 
+      //  Misuse of the error_code object is turned into a noisy failure by
+      //  poisoning the reference. This particular implementation doesn't
+      //  produce warnings or errors from popular compilers, is very efficient
+      //  (as determined by inspecting generated code), and does not suffer
+      //  from order of initialization problems. In practice, it also seems
+      //  cause user function error handling implementation errors to be detected
+      //  very early in the development cycle.
+  }
 
   inline system::error_code & throws()
     { return *detail::throws(); }
