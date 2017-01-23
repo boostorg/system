@@ -8,8 +8,8 @@
 
 //  See library home page at http://www.boost.org/libs/system
 
-#ifndef BOOST_ERROR_CODE_HPP
-#define BOOST_ERROR_CODE_HPP
+#ifndef BOOST_SYSTEM_ERROR_CODE_HPP
+#define BOOST_SYSTEM_ERROR_CODE_HPP
 
 #include <boost/system/config.hpp>
 #include <boost/cstdint.hpp>
@@ -530,6 +530,6 @@ namespace boost
 #   include <boost/system/detail/error_code.ipp>
 # endif
 
-#endif // BOOST_ERROR_CODE_HPP
+#endif // BOOST_SYSTEM_ERROR_CODE_HPP
 
 

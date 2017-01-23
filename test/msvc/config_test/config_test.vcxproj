@@ -82,6 +82,15 @@
   <ItemGroup>
     <ClCompile Include="..\..\config_test.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\boost\system\api_config.hpp" />
+    <ClInclude Include="..\..\..\include\boost\system\config.hpp" />
+    <ClInclude Include="..\..\..\include\boost\system\cygwin_error.hpp" />
+    <ClInclude Include="..\..\..\include\boost\system\error_code.hpp" />
+    <ClInclude Include="..\..\..\include\boost\system\linux_error.hpp" />
+    <ClInclude Include="..\..\..\include\boost\system\system_error.hpp" />
+    <ClInclude Include="..\..\..\include\boost\system\windows_error.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
