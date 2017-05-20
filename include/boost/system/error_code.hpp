@@ -607,8 +607,20 @@ namespace boost
       }
       else if( condition.category() == std::generic_category() || condition.category() == boost::system::generic_category() )
       {
-        return pc_->equivalent( code, boost::system::error_condition( condition.value(), boost::system::generic_category() ) );
+        boost::system::error_code bc( code, *pc_ );
+        boost::system::error_condition bn( condition.value(), boost::system::generic_category() );
+
+        return bc == bn;
       }
+#ifndef BOOST_NO_RTTI
+      else if( std_category const* pc2 = dynamic_cast< std_category const* >( &condition.category() ) )
+      {
+        boost::system::error_code bc( code, *pc_ );
+        boost::system::error_condition bn( condition.value(), *pc2->pc_ );
+
+        return bc == bn;
+      }
+#endif
       else
       {
         return false;
@@ -623,8 +635,7 @@ namespace boost
       }
       else if( *pc_ == boost::system::generic_category() )
       {
-        std::error_category const & st = std::generic_category();
-        return st.equivalent( code, condition );
+        return code == std::error_condition( condition, std::generic_category() );
       }
       else
       {
@@ -644,5 +655,3 @@ namespace boost
 # endif
 
 #endif // BOOST_SYSTEM_ERROR_CODE_HPP
-
-
