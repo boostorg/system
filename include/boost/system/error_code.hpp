@@ -28,6 +28,10 @@
 #  error BOOST_POSIX_API or BOOST_WINDOWS_API must be defined
 #endif
 
+#ifndef BOOST_NO_CXX11_HDR_SYSTEM_ERROR
+#include <system_error>
+#endif
+
 #include <boost/config/abi_prefix.hpp> // must be the last #include
 
 #ifndef BOOST_SYSTEM_NOEXCEPT
@@ -181,10 +185,79 @@ namespace boost
 
     //  ----------------------------------------------------------------------//
 
+    class error_category;
+
+    //  predefined error categories  -----------------------------------------//
+
+#ifdef BOOST_ERROR_CODE_HEADER_ONLY
+    inline const error_category &  system_category() BOOST_SYSTEM_NOEXCEPT;
+    inline const error_category &  generic_category() BOOST_SYSTEM_NOEXCEPT;
+#else
+    BOOST_SYSTEM_DECL const error_category &  system_category() BOOST_SYSTEM_NOEXCEPT;
+    BOOST_SYSTEM_DECL const error_category &  generic_category() BOOST_SYSTEM_NOEXCEPT;
+#endif
+    //  deprecated synonyms --------------------------------------------------//
+
+#ifndef BOOST_SYSTEM_NO_DEPRECATED
+    inline const error_category &  get_system_category() { return system_category(); }
+    inline const error_category &  get_generic_category() { return generic_category(); }
+    inline const error_category &  get_posix_category() { return generic_category(); }
+    static const error_category &  posix_category BOOST_ATTRIBUTE_UNUSED = generic_category();
+    static const error_category &  errno_ecat     BOOST_ATTRIBUTE_UNUSED = generic_category();
+    static const error_category &  native_ecat    BOOST_ATTRIBUTE_UNUSED = system_category();
+#endif
+
     //  class error_category  ------------------------------------------------//
 
     class error_category : public noncopyable
     {
+#ifndef BOOST_NO_CXX11_HDR_SYSTEM_ERROR
+
+    private:
+
+      class std_category: public std::error_category
+      {
+      private:
+
+        boost::system::error_category const * pc_;
+
+      public:
+
+        explicit std_category( boost::system::error_category const * pc ): pc_( pc )
+        {
+        }
+
+        virtual const char * name() const BOOST_NOEXCEPT
+        {
+          return pc_->name();
+        }
+
+        virtual std::string message( int ev ) const
+        {
+          return pc_->message( ev );
+        }
+
+        virtual std::error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT;
+      };
+
+      std_category std_cat_;
+
+    public:
+
+      error_category() BOOST_SYSTEM_NOEXCEPT: std_cat_( this ) {}
+
+      operator std::error_category const & () const BOOST_SYSTEM_NOEXCEPT
+      {
+        if( this == &generic_category() )
+        {
+          return std::generic_category();
+        }
+
+        return std_cat_;
+      }
+
+#endif
+
     public:
       virtual ~error_category(){}
 
@@ -203,26 +276,6 @@ namespace boost
         return std::less<const error_category*>()( this, &rhs );
       }
     };
-
-    //  predefined error categories  -----------------------------------------//
-
-# ifdef BOOST_ERROR_CODE_HEADER_ONLY
-    inline const error_category &  system_category() BOOST_SYSTEM_NOEXCEPT;
-    inline const error_category &  generic_category() BOOST_SYSTEM_NOEXCEPT;
-#else
-    BOOST_SYSTEM_DECL const error_category &  system_category() BOOST_SYSTEM_NOEXCEPT;
-    BOOST_SYSTEM_DECL const error_category &  generic_category() BOOST_SYSTEM_NOEXCEPT;
-#endif
-    //  deprecated synonyms --------------------------------------------------//
-
-# ifndef BOOST_SYSTEM_NO_DEPRECATED
-    inline const error_category &  get_system_category() { return system_category(); }
-    inline const error_category &  get_generic_category() { return generic_category(); }
-    inline const error_category &  get_posix_category() { return generic_category(); }
-    static const error_category &  posix_category BOOST_ATTRIBUTE_UNUSED = generic_category();
-    static const error_category &  errno_ecat     BOOST_ATTRIBUTE_UNUSED = generic_category();
-    static const error_category &  native_ecat    BOOST_ATTRIBUTE_UNUSED = system_category();
-# endif
 
     //  class error_condition  -----------------------------------------------//
 
@@ -308,11 +361,29 @@ namespace boost
           || (lhs.m_cat == rhs.m_cat && lhs.m_val < rhs.m_val);
       }
 
+#ifndef BOOST_NO_CXX11_HDR_SYSTEM_ERROR
+
+      operator std::error_condition () const BOOST_SYSTEM_NOEXCEPT
+      {
+        return std::error_condition( value(), category() );
+      }
+
+#endif
+
     private:
       int                     m_val;
       const error_category *  m_cat;
 
     };
+
+#ifndef BOOST_NO_CXX11_HDR_SYSTEM_ERROR
+
+    inline std::error_condition error_category::std_category::default_error_condition( int ev ) const BOOST_NOEXCEPT
+    {
+      return pc_->default_error_condition( ev );
+    }
+
+#endif
 
     //  class error_code  ----------------------------------------------------//
 
@@ -401,6 +472,15 @@ namespace boost
         return lhs.m_cat < rhs.m_cat
           || (lhs.m_cat == rhs.m_cat && lhs.m_val < rhs.m_val);
       }
+
+#ifndef BOOST_NO_CXX11_HDR_SYSTEM_ERROR
+
+      operator std::error_code () const BOOST_SYSTEM_NOEXCEPT
+      {
+        return std::error_code( value(), category() );
+      }
+
+#endif
 
     private:
       int                     m_val;
