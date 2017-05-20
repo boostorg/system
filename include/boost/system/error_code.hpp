@@ -250,22 +250,9 @@ namespace boost
 
       operator std::error_category const & () const BOOST_SYSTEM_NOEXCEPT
       {
-        if( *this == generic_category() )
-        {
-          std::error_category const & st = std::generic_category();
-
-          int ev = ENOENT;
-
-          // if the standard generic category works, use it; else not
-          if( st.equivalent( ev, st.default_error_condition( ev ) ) )
-          {
-            // g++ 4.x with libstdc++ 5 installed fails, because the two
-            // generic categories, v1 and v2, get mixed up
-
-            return st;
-          }
-        }
-
+        // do not map generic to std::generic on purpose; occasionally,
+        // there are two std::generic categories in a program, which leads
+        // to error codes/conditions mysteriously not being equal to themselves
         return std_cat_;
       }
 
@@ -618,7 +605,7 @@ namespace boost
       {
         return true;
       }
-      else if( condition.category() == std::generic_category() )
+      else if( condition.category() == std::generic_category() || condition.category() == boost::system::generic_category() )
       {
         return pc_->equivalent( code, boost::system::error_condition( condition.value(), boost::system::generic_category() ) );
       }
