@@ -239,6 +239,7 @@ namespace boost
 
         virtual std::error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT;
         virtual bool equivalent( int code, const std::error_condition & condition ) const BOOST_NOEXCEPT;
+        virtual bool equivalent( const std::error_code & code, int condition ) const BOOST_NOEXCEPT;
       };
 
       std_category std_cat_;
@@ -613,13 +614,34 @@ namespace boost
 
     inline bool error_category::std_category::equivalent( int code, const std::error_condition & condition ) const BOOST_NOEXCEPT
     {
-      if( condition.category() == std::generic_category() )
+      if( default_error_condition( code ) == condition )
+      {
+        return true;
+      }
+      else if( condition.category() == std::generic_category() )
       {
         return pc_->equivalent( code, boost::system::error_condition( condition.value(), boost::system::generic_category() ) );
       }
       else
       {
-        return default_error_condition( code ) == condition;
+        return false;
+      }
+    }
+
+    inline bool error_category::std_category::equivalent( const std::error_code & code, int condition ) const BOOST_NOEXCEPT
+    {
+      if( *this == code.category() && code.value() == condition )
+      {
+        return true;
+      }
+      else if( *pc_ == boost::system::generic_category() )
+      {
+        std::error_category const & st = std::generic_category();
+        return st.equivalent( code, condition );
+      }
+      else
+      {
+        return false;
       }
     }
 
