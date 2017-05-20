@@ -251,7 +251,18 @@ namespace boost
       {
         if( *this == generic_category() )
         {
-          return std::generic_category();
+          std::error_category const & st = std::generic_category();
+
+          int ev = ENOENT;
+
+          // if the standard generic category works, use it; else not
+          if( st.equivalent( ev, st.default_error_condition( ev ) ) )
+          {
+            // g++ 4.x with libstdc++ 5 installed fails, because the two
+            // generic categories, v1 and v2, get mixed up
+
+            return st;
+          }
         }
 
         return std_cat_;

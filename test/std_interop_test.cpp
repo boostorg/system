@@ -24,15 +24,28 @@ int main() {}
 
 static void test_generic_category()
 {
+    int ev = ENOENT;
+
+    // check whether the standard generic category works
+
+    std::error_category const & st0 = std::generic_category();
+    bool has_roundtrip = st0.equivalent( ev, st0.default_error_condition( ev ) );
+
+    //
+
     boost::system::error_category const & bt = boost::system::generic_category();
     std::error_category const & st = bt;
 
-    BOOST_TEST_EQ( &st, &std::generic_category() );
-
     BOOST_TEST_CSTR_EQ( bt.name(), st.name() );
 
-    int ev = ENOENT;
-    // BOOST_TEST_EQ( bt.message( ev ), st.message( ev ) );
+    if( has_roundtrip )
+    {
+        BOOST_TEST_EQ( &st, &std::generic_category() );
+    }
+    else
+    {
+        BOOST_TEST_EQ( bt.message( ev ), st.message( ev ) );
+    }
 
     {
         boost::system::error_code bc( ev, bt );
@@ -60,13 +73,6 @@ static void test_generic_category()
         BOOST_TEST_EQ( &sn.category(), &st );
 
         BOOST_TEST( st.equivalent( ev, sn ) );
-
-        std::error_condition sn2 = st.default_error_condition( ev );
-
-        BOOST_TEST_EQ( sn2.value(), ev );
-        BOOST_TEST_EQ( &sn2.category(), &st );
-
-        BOOST_TEST( st.equivalent( ev, sn2 ) );
     }
 }
 
