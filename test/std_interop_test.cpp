@@ -37,8 +37,14 @@ static void test_generic_category()
     boost::system::error_condition bn = bt.default_error_condition( ev );
     BOOST_TEST( bt.equivalent( ev, bn ) );
 
+    BOOST_TEST_EQ( bn.value(), ev );
+    BOOST_TEST_EQ( &bn.category(), &bt );
+
     std::error_condition sn( bn );
     BOOST_TEST( st.equivalent( ev, sn ) );
+
+    BOOST_TEST_EQ( sn.value(), ev );
+    BOOST_TEST_EQ( &sn.category(), &st );
 }
 
 static void test_system_category()
