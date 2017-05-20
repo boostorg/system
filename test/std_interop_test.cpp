@@ -34,17 +34,40 @@ static void test_generic_category()
     int ev = ENOENT;
     // BOOST_TEST_EQ( bt.message( ev ), st.message( ev ) );
 
-    boost::system::error_condition bn = bt.default_error_condition( ev );
-    BOOST_TEST( bt.equivalent( ev, bn ) );
+    {
+        boost::system::error_code bc( ev, bt );
 
-    BOOST_TEST_EQ( bn.value(), ev );
-    BOOST_TEST_EQ( &bn.category(), &bt );
+        BOOST_TEST_EQ( bc.value(), ev );
+        BOOST_TEST_EQ( &bc.category(), &bt );
 
-    std::error_condition sn( bn );
-    BOOST_TEST( st.equivalent( ev, sn ) );
+        std::error_code sc( bc );
 
-    BOOST_TEST_EQ( sn.value(), ev );
-    BOOST_TEST_EQ( &sn.category(), &st );
+        BOOST_TEST_EQ( sc.value(), ev );
+        BOOST_TEST_EQ( &sc.category(), &st );
+    }
+
+    {
+        boost::system::error_condition bn = bt.default_error_condition( ev );
+
+        BOOST_TEST_EQ( bn.value(), ev );
+        BOOST_TEST_EQ( &bn.category(), &bt );
+
+        BOOST_TEST( bt.equivalent( ev, bn ) );
+
+        std::error_condition sn( bn );
+
+        BOOST_TEST_EQ( sn.value(), ev );
+        BOOST_TEST_EQ( &sn.category(), &st );
+
+        BOOST_TEST( st.equivalent( ev, sn ) );
+
+        std::error_condition sn2 = st.default_error_condition( ev );
+
+        BOOST_TEST_EQ( sn2.value(), ev );
+        BOOST_TEST_EQ( &sn2.category(), &st );
+
+        BOOST_TEST( st.equivalent( ev, sn2 ) );
+    }
 }
 
 static void test_system_category()
@@ -58,22 +81,50 @@ static void test_system_category()
         int ev = 5;
         BOOST_TEST_EQ( bt.message( ev ), st.message( ev ) );
 
-        boost::system::error_condition bn = bt.default_error_condition( ev );
-        BOOST_TEST( bt.equivalent( ev, bn ) );
+        {
+            boost::system::error_code bc( ev, bt );
 
-        std::error_condition sn( bn );
-        BOOST_TEST( st.equivalent( ev, sn ) );
+            BOOST_TEST_EQ( bc.value(), ev );
+            BOOST_TEST_EQ( &bc.category(), &bt );
+
+            std::error_code sc( bc );
+
+            BOOST_TEST_EQ( sc.value(), ev );
+            BOOST_TEST_EQ( &sc.category(), &st );
+        }
+
+        {
+            boost::system::error_condition bn = bt.default_error_condition( ev );
+            BOOST_TEST( bt.equivalent( ev, bn ) );
+
+            std::error_condition sn( bn );
+            BOOST_TEST( st.equivalent( ev, sn ) );
+        }
     }
 
     {
         int ev = 4;
         BOOST_TEST_EQ( bt.message( ev ), st.message( ev ) );
 
-        boost::system::error_condition bn = bt.default_error_condition( ev );
-        BOOST_TEST( bt.equivalent( ev, bn ) );
+        {
+            boost::system::error_code bc( ev, bt );
 
-        std::error_condition sn( bn );
-        BOOST_TEST( st.equivalent( ev, sn ) );
+            BOOST_TEST_EQ( bc.value(), ev );
+            BOOST_TEST_EQ( &bc.category(), &bt );
+
+            std::error_code sc( bc );
+
+            BOOST_TEST_EQ( sc.value(), ev );
+            BOOST_TEST_EQ( &sc.category(), &st );
+        }
+
+        {
+            boost::system::error_condition bn = bt.default_error_condition( ev );
+            BOOST_TEST( bt.equivalent( ev, bn ) );
+
+            std::error_condition sn( bn );
+            BOOST_TEST( st.equivalent( ev, sn ) );
+        }
     }
 }
 
@@ -145,16 +196,42 @@ static void test_user_category()
         int ev = 5;
         BOOST_TEST_EQ( bt.message( ev ), st.message( ev ) );
 
-        boost::system::error_condition bn = bt.default_error_condition( ev );
-        BOOST_TEST( bt.equivalent( ev, bn ) );
+        {
+            boost::system::error_code bc( ev, bt );
 
-        std::error_condition sn( bn );
-        BOOST_TEST( st.equivalent( ev, sn ) );
+            BOOST_TEST_EQ( bc.value(), ev );
+            BOOST_TEST_EQ( &bc.category(), &bt );
+
+            std::error_code sc( bc );
+
+            BOOST_TEST_EQ( sc.value(), ev );
+            BOOST_TEST_EQ( &sc.category(), &st );
+        }
+
+        {
+            boost::system::error_condition bn = bt.default_error_condition( ev );
+            BOOST_TEST( bt.equivalent( ev, bn ) );
+
+            std::error_condition sn( bn );
+            BOOST_TEST( st.equivalent( ev, sn ) );
+        }
     }
 
     {
         int ev = 4;
         BOOST_TEST_EQ( bt.message( ev ), st.message( ev ) );
+
+        {
+            boost::system::error_code bc( ev, bt );
+
+            BOOST_TEST_EQ( bc.value(), ev );
+            BOOST_TEST_EQ( &bc.category(), &bt );
+
+            std::error_code sc( bc );
+
+            BOOST_TEST_EQ( sc.value(), ev );
+            BOOST_TEST_EQ( &sc.category(), &st );
+        }
 
         {
             boost::system::error_condition bn = bt.default_error_condition( ev );
