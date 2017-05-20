@@ -238,6 +238,7 @@ namespace boost
         }
 
         virtual std::error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT;
+        virtual bool equivalent( int code, const std::error_condition & condition ) const BOOST_NOEXCEPT;
       };
 
       std_category std_cat_;
@@ -248,7 +249,7 @@ namespace boost
 
       operator std::error_category const & () const BOOST_SYSTEM_NOEXCEPT
       {
-        if( this == &generic_category() )
+        if( *this == generic_category() )
         {
           return std::generic_category();
         }
@@ -375,15 +376,6 @@ namespace boost
       const error_category *  m_cat;
 
     };
-
-#ifndef BOOST_NO_CXX11_HDR_SYSTEM_ERROR
-
-    inline std::error_condition error_category::std_category::default_error_condition( int ev ) const BOOST_NOEXCEPT
-    {
-      return pc_->default_error_condition( ev );
-    }
-
-#endif
 
     //  class error_code  ----------------------------------------------------//
 
@@ -600,6 +592,27 @@ namespace boost
     {
       return *this == code.category() && code.value() == condition;
     }
+
+#ifndef BOOST_NO_CXX11_HDR_SYSTEM_ERROR
+
+    inline std::error_condition error_category::std_category::default_error_condition( int ev ) const BOOST_NOEXCEPT
+    {
+      return pc_->default_error_condition( ev );
+    }
+
+    inline bool error_category::std_category::equivalent( int code, const std::error_condition & condition ) const BOOST_NOEXCEPT
+    {
+      if( condition.category() == std::generic_category() )
+      {
+        return pc_->equivalent( code, boost::system::error_condition( condition.value(), boost::system::generic_category() ) );
+      }
+      else
+      {
+        return default_error_condition( code ) == condition;
+      }
+    }
+
+#endif
 
   } // namespace system
 } // namespace boost
