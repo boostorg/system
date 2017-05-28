@@ -8,6 +8,9 @@
 
 // See library home page at http://www.boost.org/libs/system
 
+// Avoid spurious VC++ warnings
+# define _CRT_SECURE_NO_WARNINGS
+
 #include <boost/config.hpp>
 
 #if defined(BOOST_NO_CXX11_HDR_SYSTEM_ERROR)
