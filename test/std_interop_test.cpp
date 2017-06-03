@@ -15,7 +15,12 @@
 
 #if defined(BOOST_NO_CXX11_HDR_SYSTEM_ERROR)
 
-int main() {}
+int main()
+{
+  std::cout
+    << "The version of the C++ standard library being used does not"
+    " support header <system_error> so interoperation will not be tested.\n";
+}
 
 #else
 
@@ -349,6 +354,9 @@ static void test_user2_category()
 
 int main()
 {
+    std::cout
+      << "The version of the C++ standard library being used"
+      " supports header <system_error> so interoperation will be tested.\n";
     test_generic_category();
     test_system_category();
     test_user_category();
