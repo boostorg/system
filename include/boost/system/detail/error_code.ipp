@@ -296,8 +296,8 @@ namespace
     case ERROR_DEV_NOT_EXIST: return make_error_condition( no_such_device );
     case ERROR_DEVICE_IN_USE: return make_error_condition( device_or_resource_busy );
     case ERROR_DIR_NOT_EMPTY: return make_error_condition( directory_not_empty );
-    case ERROR_DIRECTORY: return make_error_condition( invalid_argument ); // WinError.h:
-      "The directory name is invalid"
+    case ERROR_DIRECTORY: return make_error_condition( invalid_argument );\
+      // WinError.h: "The directory name is invalid"
     case ERROR_DISK_FULL: return make_error_condition( no_space_on_device );
     case ERROR_FILE_EXISTS: return make_error_condition( file_exists );
     case ERROR_FILE_NOT_FOUND: return make_error_condition( no_such_file_or_directory );
