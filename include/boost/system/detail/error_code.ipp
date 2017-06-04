@@ -389,7 +389,7 @@ namespace
             buf.resize(retval);
             break;
         }
-        else if (boost::detail::winapi::GetLastError() != ERROR_INSUFFICIENT_BUFFER)
+        else if (boost::detail::winapi::GetLastError() != boost::detail::winapi::ERROR_INSUFFICIENT_BUFFER_)
         {
             return std::string("Unknown error");
         }
