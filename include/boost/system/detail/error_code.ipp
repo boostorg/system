@@ -1,4 +1,4 @@
-//  error_code support implementation file  ----------------------------------//
+//  error_code support implementation file  --------------------------------------------//
 
 //  Copyright Beman Dawes 2002, 2006
 //  Copyright (c) Microsoft Corporation 2014
@@ -7,7 +7,7 @@
 
 //  See library home page at http://www.boost.org/libs/system
 
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------//
 
 #include <boost/config/warning_disable.hpp>
 
@@ -31,7 +31,7 @@
 #   endif
 # endif
 
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------//
 namespace boost
 {
     namespace system
@@ -40,7 +40,7 @@ namespace boost
 namespace
 {
 
-  //  standard error categories  ---------------------------------------------//
+  //  standard error categories  -------------------------------------------------------//
 
   class generic_error_category : public error_category
   {
@@ -85,7 +85,8 @@ namespace
   //   -- VMS doesn't provide strerror_r, but on this platform, strerror is
   //      thread safe.
   # if defined(BOOST_WINDOWS_API) || defined(__hpux) || defined(__sun)\
-     || (defined(__linux) && (!defined(__USE_XOPEN2K) || defined(BOOST_SYSTEM_USE_STRERROR)))\
+     || (defined(__linux) && (!defined(__USE_XOPEN2K)\
+     || defined(BOOST_SYSTEM_USE_STRERROR)))\
      || (defined(__osf__) && !defined(_REENTRANT))\
      || (defined(__INTEGRITY))\
      || (defined(__vms))\
@@ -157,14 +158,15 @@ namespace
   #  endif   // else POSIX version of strerror_r
   # endif  // else use strerror_r
   }
-  //  system_error_category implementation  --------------------------------//
+  //  system_error_category implementation  --------------------------------------------//
 
   const char * system_error_category::name() const BOOST_SYSTEM_NOEXCEPT
   {
     return "system";
   }
 
-  error_condition system_error_category::default_error_condition( int ev ) const BOOST_SYSTEM_NOEXCEPT
+  error_condition system_error_category::default_error_condition( int ev ) const
+    BOOST_SYSTEM_NOEXCEPT
   {
     using namespace boost::system::errc;
 #if defined(__PGI)
@@ -186,7 +188,7 @@ namespace
     {
     case 0: return make_error_condition( success );
 # if defined(BOOST_POSIX_API)
-    // POSIX-like O/S -> posix_errno decode table  ---------------------------//
+    // POSIX-like O/S -> posix_errno decode table  -------------------------------------//
     case E2BIG: return make_error_condition( argument_list_too_long );
     case EACCES: return make_error_condition( permission_denied );
     case EADDRINUSE: return make_error_condition( address_in_use );
@@ -294,7 +296,8 @@ namespace
     case ERROR_DEV_NOT_EXIST: return make_error_condition( no_such_device );
     case ERROR_DEVICE_IN_USE: return make_error_condition( device_or_resource_busy );
     case ERROR_DIR_NOT_EMPTY: return make_error_condition( directory_not_empty );
-    case ERROR_DIRECTORY: return make_error_condition( invalid_argument ); // WinError.h: "The directory name is invalid"
+    case ERROR_DIRECTORY: return make_error_condition( invalid_argument ); // WinError.h:
+      "The directory name is invalid"
     case ERROR_DISK_FULL: return make_error_condition( no_space_on_device );
     case ERROR_FILE_EXISTS: return make_error_condition( file_exists );
     case ERROR_FILE_NOT_FOUND: return make_error_condition( no_such_file_or_directory );
@@ -378,7 +381,8 @@ namespace
             boost::detail::winapi::FORMAT_MESSAGE_IGNORE_INSERTS_,
             NULL,
             ev,
-            boost::detail::winapi::MAKELANGID_(boost::detail::winapi::LANG_NEUTRAL_, boost::detail::winapi::SUBLANG_DEFAULT_), // Default language
+            boost::detail::winapi::MAKELANGID_(boost::detail::winapi::LANG_NEUTRAL_,
+            boost::detail::winapi::SUBLANG_DEFAULT_), // Default language
             &buf[0],
             buf.size(),
             NULL
@@ -389,7 +393,8 @@ namespace
             buf.resize(retval);
             break;
         }
-        else if (boost::detail::winapi::GetLastError() != boost::detail::winapi::ERROR_INSUFFICIENT_BUFFER_)
+        else if (boost::detail::winapi::GetLastError() !=
+          boost::detail::winapi::ERROR_INSUFFICIENT_BUFFER_)
         {
             return std::string("Unknown error");
         }
@@ -400,8 +405,10 @@ namespace
     }
     
     int num_chars = (buf.size() + 1) * 2;
-    boost::detail::winapi::LPSTR_ narrow_buffer = (boost::detail::winapi::LPSTR_)_alloca(num_chars);
-    if (boost::detail::winapi::WideCharToMultiByte(boost::detail::winapi::CP_ACP_, 0, buf.c_str(), -1, narrow_buffer, num_chars, NULL, NULL) == 0)
+    boost::detail::winapi::LPSTR_ narrow_buffer =
+      (boost::detail::winapi::LPSTR_)_alloca(num_chars);
+    if (boost::detail::winapi::WideCharToMultiByte(boost::detail::winapi::CP_ACP_, 0,
+      buf.c_str(), -1, narrow_buffer, num_chars, NULL, NULL) == 0)
     {
         return std::string("Unknown error");
     }
@@ -415,7 +422,8 @@ namespace
         boost::detail::winapi::FORMAT_MESSAGE_IGNORE_INSERTS_,
         NULL,
         ev,
-        boost::detail::winapi::MAKELANGID_(boost::detail::winapi::LANG_NEUTRAL_, boost::detail::winapi::SUBLANG_DEFAULT_), // Default language
+        boost::detail::winapi::MAKELANGID_(boost::detail::winapi::LANG_NEUTRAL_,
+        boost::detail::winapi::SUBLANG_DEFAULT_), // Default language
         (boost::detail::winapi::LPSTR_) &lpMsgBuf,
         0,
         NULL
