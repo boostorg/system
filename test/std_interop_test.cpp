@@ -12,6 +12,7 @@
 # define _CRT_SECURE_NO_WARNINGS
 
 #include <boost/config.hpp>
+#include <iostream>
 
 #if defined(BOOST_NO_CXX11_HDR_SYSTEM_ERROR)
 
