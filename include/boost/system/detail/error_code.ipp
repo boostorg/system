@@ -21,6 +21,7 @@
 #include <cstring> // for strerror/strerror_r
 
 # if defined( BOOST_WINDOWS_API )
+#   include <boost/detail/winapi/error_codes.hpp>
 #   include <boost/detail/winapi/error_handling.hpp>
 #   include <boost/detail/winapi/character_code_conversion.hpp>
 #   if !BOOST_PLAT_WINDOWS_RUNTIME
@@ -184,6 +185,12 @@ namespace
 #   endif
 # endif
 
+# if defined(BOOST_WINDOWS_API)
+
+    using namespace boost::detail::winapi; // for error codes
+
+# endif
+
     switch ( ev )
     {
     case 0: return make_error_condition( success );
@@ -282,81 +289,81 @@ namespace
   #else
     // Windows system -> posix_errno decode table  ---------------------------//
     // see WinError.h comments for descriptions of errors
-    case ERROR_ACCESS_DENIED: return make_error_condition( permission_denied );
-    case ERROR_ALREADY_EXISTS: return make_error_condition( file_exists );
-    case ERROR_BAD_UNIT: return make_error_condition( no_such_device );
-    case ERROR_BUFFER_OVERFLOW: return make_error_condition( filename_too_long );
-    case ERROR_BUSY: return make_error_condition( device_or_resource_busy );
-    case ERROR_BUSY_DRIVE: return make_error_condition( device_or_resource_busy );
-    case ERROR_CANNOT_MAKE: return make_error_condition( permission_denied );
-    case ERROR_CANTOPEN: return make_error_condition( io_error );
-    case ERROR_CANTREAD: return make_error_condition( io_error );
-    case ERROR_CANTWRITE: return make_error_condition( io_error );
-    case ERROR_CURRENT_DIRECTORY: return make_error_condition( permission_denied );
-    case ERROR_DEV_NOT_EXIST: return make_error_condition( no_such_device );
-    case ERROR_DEVICE_IN_USE: return make_error_condition( device_or_resource_busy );
-    case ERROR_DIR_NOT_EMPTY: return make_error_condition( directory_not_empty );
-    case ERROR_DIRECTORY: return make_error_condition( invalid_argument );\
+    case ERROR_ACCESS_DENIED_: return make_error_condition( permission_denied );
+    case ERROR_ALREADY_EXISTS_: return make_error_condition( file_exists );
+    case ERROR_BAD_UNIT_: return make_error_condition( no_such_device );
+    case ERROR_BUFFER_OVERFLOW_: return make_error_condition( filename_too_long );
+    case ERROR_BUSY_: return make_error_condition( device_or_resource_busy );
+    case ERROR_BUSY_DRIVE_: return make_error_condition( device_or_resource_busy );
+    case ERROR_CANNOT_MAKE_: return make_error_condition( permission_denied );
+    case ERROR_CANTOPEN_: return make_error_condition( io_error );
+    case ERROR_CANTREAD_: return make_error_condition( io_error );
+    case ERROR_CANTWRITE_: return make_error_condition( io_error );
+    case ERROR_CURRENT_DIRECTORY_: return make_error_condition( permission_denied );
+    case ERROR_DEV_NOT_EXIST_: return make_error_condition( no_such_device );
+    case ERROR_DEVICE_IN_USE_: return make_error_condition( device_or_resource_busy );
+    case ERROR_DIR_NOT_EMPTY_: return make_error_condition( directory_not_empty );
+    case ERROR_DIRECTORY_: return make_error_condition( invalid_argument );\
       // WinError.h: "The directory name is invalid"
-    case ERROR_DISK_FULL: return make_error_condition( no_space_on_device );
-    case ERROR_FILE_EXISTS: return make_error_condition( file_exists );
-    case ERROR_FILE_NOT_FOUND: return make_error_condition( no_such_file_or_directory );
-    case ERROR_HANDLE_DISK_FULL: return make_error_condition( no_space_on_device );
-    case ERROR_INVALID_ACCESS: return make_error_condition( permission_denied );
-    case ERROR_INVALID_DRIVE: return make_error_condition( no_such_device );
-    case ERROR_INVALID_FUNCTION: return make_error_condition( function_not_supported );
-    case ERROR_INVALID_HANDLE: return make_error_condition( invalid_argument );
-    case ERROR_INVALID_NAME: return make_error_condition( invalid_argument );
-    case ERROR_LOCK_VIOLATION: return make_error_condition( no_lock_available );
-    case ERROR_LOCKED: return make_error_condition( no_lock_available );
-    case ERROR_NEGATIVE_SEEK: return make_error_condition( invalid_argument );
-    case ERROR_NOACCESS: return make_error_condition( permission_denied );
-    case ERROR_NOT_ENOUGH_MEMORY: return make_error_condition( not_enough_memory );
-    case ERROR_NOT_READY: return make_error_condition( resource_unavailable_try_again );
-    case ERROR_NOT_SAME_DEVICE: return make_error_condition( cross_device_link );
-    case ERROR_OPEN_FAILED: return make_error_condition( io_error );
-    case ERROR_OPEN_FILES: return make_error_condition( device_or_resource_busy );
-    case ERROR_OPERATION_ABORTED: return make_error_condition( operation_canceled );
-    case ERROR_OUTOFMEMORY: return make_error_condition( not_enough_memory );
-    case ERROR_PATH_NOT_FOUND: return make_error_condition( no_such_file_or_directory );
-    case ERROR_READ_FAULT: return make_error_condition( io_error );
-    case ERROR_RETRY: return make_error_condition( resource_unavailable_try_again );
-    case ERROR_SEEK: return make_error_condition( io_error );
-    case ERROR_SHARING_VIOLATION: return make_error_condition( permission_denied );
-    case ERROR_TOO_MANY_OPEN_FILES: return make_error_condition( too_many_files_open );
-    case ERROR_WRITE_FAULT: return make_error_condition( io_error );
-    case ERROR_WRITE_PROTECT: return make_error_condition( permission_denied );
-    case WSAEACCES: return make_error_condition( permission_denied );
-    case WSAEADDRINUSE: return make_error_condition( address_in_use );
-    case WSAEADDRNOTAVAIL: return make_error_condition( address_not_available );
-    case WSAEAFNOSUPPORT: return make_error_condition( address_family_not_supported );
-    case WSAEALREADY: return make_error_condition( connection_already_in_progress );
-    case WSAEBADF: return make_error_condition( bad_file_descriptor );
-    case WSAECONNABORTED: return make_error_condition( connection_aborted );
-    case WSAECONNREFUSED: return make_error_condition( connection_refused );
-    case WSAECONNRESET: return make_error_condition( connection_reset );
-    case WSAEDESTADDRREQ: return make_error_condition( destination_address_required );
-    case WSAEFAULT: return make_error_condition( bad_address );
-    case WSAEHOSTUNREACH: return make_error_condition( host_unreachable );
-    case WSAEINPROGRESS: return make_error_condition( operation_in_progress );
-    case WSAEINTR: return make_error_condition( interrupted );
-    case WSAEINVAL: return make_error_condition( invalid_argument );
-    case WSAEISCONN: return make_error_condition( already_connected );
-    case WSAEMFILE: return make_error_condition( too_many_files_open );
-    case WSAEMSGSIZE: return make_error_condition( message_size );
-    case WSAENAMETOOLONG: return make_error_condition( filename_too_long );
-    case WSAENETDOWN: return make_error_condition( network_down );
-    case WSAENETRESET: return make_error_condition( network_reset );
-    case WSAENETUNREACH: return make_error_condition( network_unreachable );
-    case WSAENOBUFS: return make_error_condition( no_buffer_space );
-    case WSAENOPROTOOPT: return make_error_condition( no_protocol_option );
-    case WSAENOTCONN: return make_error_condition( not_connected );
-    case WSAENOTSOCK: return make_error_condition( not_a_socket );
-    case WSAEOPNOTSUPP: return make_error_condition( operation_not_supported );
-    case WSAEPROTONOSUPPORT: return make_error_condition( protocol_not_supported );
-    case WSAEPROTOTYPE: return make_error_condition( wrong_protocol_type );
-    case WSAETIMEDOUT: return make_error_condition( timed_out );
-    case WSAEWOULDBLOCK: return make_error_condition( operation_would_block );
+    case ERROR_DISK_FULL_: return make_error_condition( no_space_on_device );
+    case ERROR_FILE_EXISTS_: return make_error_condition( file_exists );
+    case ERROR_FILE_NOT_FOUND_: return make_error_condition( no_such_file_or_directory );
+    case ERROR_HANDLE_DISK_FULL_: return make_error_condition( no_space_on_device );
+    case ERROR_INVALID_ACCESS_: return make_error_condition( permission_denied );
+    case ERROR_INVALID_DRIVE_: return make_error_condition( no_such_device );
+    case ERROR_INVALID_FUNCTION_: return make_error_condition( function_not_supported );
+    case ERROR_INVALID_HANDLE_: return make_error_condition( invalid_argument );
+    case ERROR_INVALID_NAME_: return make_error_condition( invalid_argument );
+    case ERROR_LOCK_VIOLATION_: return make_error_condition( no_lock_available );
+    case ERROR_LOCKED_: return make_error_condition( no_lock_available );
+    case ERROR_NEGATIVE_SEEK_: return make_error_condition( invalid_argument );
+    case ERROR_NOACCESS_: return make_error_condition( permission_denied );
+    case ERROR_NOT_ENOUGH_MEMORY_: return make_error_condition( not_enough_memory );
+    case ERROR_NOT_READY_: return make_error_condition( resource_unavailable_try_again );
+    case ERROR_NOT_SAME_DEVICE_: return make_error_condition( cross_device_link );
+    case ERROR_OPEN_FAILED_: return make_error_condition( io_error );
+    case ERROR_OPEN_FILES_: return make_error_condition( device_or_resource_busy );
+    case ERROR_OPERATION_ABORTED_: return make_error_condition( operation_canceled );
+    case ERROR_OUTOFMEMORY_: return make_error_condition( not_enough_memory );
+    case ERROR_PATH_NOT_FOUND_: return make_error_condition( no_such_file_or_directory );
+    case ERROR_READ_FAULT_: return make_error_condition( io_error );
+    case ERROR_RETRY_: return make_error_condition( resource_unavailable_try_again );
+    case ERROR_SEEK_: return make_error_condition( io_error );
+    case ERROR_SHARING_VIOLATION_: return make_error_condition( permission_denied );
+    case ERROR_TOO_MANY_OPEN_FILES_: return make_error_condition( too_many_files_open );
+    case ERROR_WRITE_FAULT_: return make_error_condition( io_error );
+    case ERROR_WRITE_PROTECT_: return make_error_condition( permission_denied );
+    case WSAEACCES_: return make_error_condition( permission_denied );
+    case WSAEADDRINUSE_: return make_error_condition( address_in_use );
+    case WSAEADDRNOTAVAIL_: return make_error_condition( address_not_available );
+    case WSAEAFNOSUPPORT_: return make_error_condition( address_family_not_supported );
+    case WSAEALREADY_: return make_error_condition( connection_already_in_progress );
+    case WSAEBADF_: return make_error_condition( bad_file_descriptor );
+    case WSAECONNABORTED_: return make_error_condition( connection_aborted );
+    case WSAECONNREFUSED_: return make_error_condition( connection_refused );
+    case WSAECONNRESET_: return make_error_condition( connection_reset );
+    case WSAEDESTADDRREQ_: return make_error_condition( destination_address_required );
+    case WSAEFAULT_: return make_error_condition( bad_address );
+    case WSAEHOSTUNREACH_: return make_error_condition( host_unreachable );
+    case WSAEINPROGRESS_: return make_error_condition( operation_in_progress );
+    case WSAEINTR_: return make_error_condition( interrupted );
+    case WSAEINVAL_: return make_error_condition( invalid_argument );
+    case WSAEISCONN_: return make_error_condition( already_connected );
+    case WSAEMFILE_: return make_error_condition( too_many_files_open );
+    case WSAEMSGSIZE_: return make_error_condition( message_size );
+    case WSAENAMETOOLONG_: return make_error_condition( filename_too_long );
+    case WSAENETDOWN_: return make_error_condition( network_down );
+    case WSAENETRESET_: return make_error_condition( network_reset );
+    case WSAENETUNREACH_: return make_error_condition( network_unreachable );
+    case WSAENOBUFS_: return make_error_condition( no_buffer_space );
+    case WSAENOPROTOOPT_: return make_error_condition( no_protocol_option );
+    case WSAENOTCONN_: return make_error_condition( not_connected );
+    case WSAENOTSOCK_: return make_error_condition( not_a_socket );
+    case WSAEOPNOTSUPP_: return make_error_condition( operation_not_supported );
+    case WSAEPROTONOSUPPORT_: return make_error_condition( protocol_not_supported );
+    case WSAEPROTOTYPE_: return make_error_condition( wrong_protocol_type );
+    case WSAETIMEDOUT_: return make_error_condition( timed_out );
+    case WSAEWOULDBLOCK_: return make_error_condition( operation_would_block );
   #endif
     default: return error_condition( ev, system_category() );
     }
