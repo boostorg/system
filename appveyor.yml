@@ -24,11 +24,11 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       ADDPATH: C:\cygwin;
       TOOLSET: gcc
-      CXXFLAGS: -std=c++03
+      CXXFLAGS: cxxflags=-std=c++03
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       ADDPATH: C:\cygwin;
       TOOLSET: gcc
-      CXXFLAGS: -std=c++11
+      CXXFLAGS: cxxflags=-std=c++11
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       TOOLSET: msvc-14.0
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
@@ -50,4 +50,4 @@ build: off
 
 test_script:
   - PATH=%ADDPATH%%PATH%
-  - b2 libs/system/test toolset=%TOOLSET% cxxflags=%CXXFLAGS%
+  - b2 libs/system/test toolset=%TOOLSET% %CXXFLAGS%
