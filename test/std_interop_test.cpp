@@ -30,6 +30,7 @@ int main()
 #include <system_error>
 #include <cerrno>
 #include <string>
+#include <cstdio>
 
 static void test_generic_category()
 {
@@ -143,7 +144,7 @@ public:
     virtual std::string message( int ev ) const
     {
         char buffer[ 256 ];
-        sprintf( buffer, "user message %d", ev );
+        std::sprintf( buffer, "user message %d", ev );
 
         return buffer;
     }
@@ -283,7 +284,7 @@ public:
     virtual std::string message( int ev ) const
     {
         char buffer[ 256 ];
-        sprintf( buffer, "user2 message %d", ev );
+        std::sprintf( buffer, "user2 message %d", ev );
 
         return buffer;
     }
