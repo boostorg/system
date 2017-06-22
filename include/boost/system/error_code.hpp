@@ -618,45 +618,60 @@ namespace boost
     inline bool error_category::std_category::equivalent( int code,
       const std::error_condition & condition ) const BOOST_NOEXCEPT
     {
-      if( default_error_condition( code ) == condition )
+      if( condition.category() == *this )
       {
-        return true;
+        boost::system::error_condition bn( condition.value(), *pc_ );
+        return pc_->equivalent( code, bn );
       }
       else if( condition.category() == std::generic_category()
         || condition.category() == boost::system::generic_category() )
       {
-        boost::system::error_code bc( code, *pc_ );
         boost::system::error_condition bn( condition.value(),
           boost::system::generic_category() );
 
-        return bc == bn;
+        return pc_->equivalent( code, bn );
       }
 #ifndef BOOST_NO_RTTI
       else if( std_category const* pc2 = dynamic_cast< std_category const* >(
         &condition.category() ) )
       {
-        boost::system::error_code bc( code, *pc_ );
         boost::system::error_condition bn( condition.value(), *pc2->pc_ );
-
-        return bc == bn;
+        return pc_->equivalent( code, bn );
       }
 #endif
       else
       {
-        return false;
+        return default_error_condition( code ) == condition;
       }
     }
 
     inline bool error_category::std_category::equivalent( const std::error_code & code,
       int condition ) const BOOST_NOEXCEPT
     {
-      if( *this == code.category() && code.value() == condition )
+      if( code.category() == *this )
       {
-        return true;
+        boost::system::error_code bc( code.value(), *pc_ );
+        return pc_->equivalent( bc, condition );
       }
+      else if( code.category() == std::generic_category()
+        || code.category() == boost::system::generic_category() )
+      {
+        boost::system::error_code bc( code.value(),
+          boost::system::generic_category() );
+
+        return pc_->equivalent( bc, condition );
+      }
+#ifndef BOOST_NO_RTTI
+      else if( std_category const* pc2 = dynamic_cast< std_category const* >(
+        &code.category() ) )
+      {
+        boost::system::error_code bc( code.value(), *pc2->pc_ );
+        return pc_->equivalent( bc, condition );
+      }
+#endif
       else if( *pc_ == boost::system::generic_category() )
       {
-        return code == std::error_condition( condition, std::generic_category() );
+        return std::generic_category().equivalent( code, condition );
       }
       else
       {
