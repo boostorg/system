@@ -59,7 +59,7 @@ install:
   - git submodule update --init tools/boostdep
   - xcopy /s /e /q %APPVEYOR_BUILD_FOLDER% libs\system
   - python tools/boostdep/depinst/depinst.py system
-  - bootstrap
+  - cmd /c bootstrap
   - b2 headers
 
 build: off
