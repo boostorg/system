@@ -66,6 +66,4 @@ build: off
 
 test_script:
   - PATH=%ADDPATH%%PATH%
-  - PATH
-  - ECHO b2 libs/system/test toolset=%TOOLSET% %CXXFLAGS%
-  - b2 --debug-configuration libs/system/test toolset=%TOOLSET% %CXXFLAGS%
+  - b2 libs/system/test toolset=%TOOLSET% %CXXFLAGS%
