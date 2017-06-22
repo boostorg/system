@@ -7,6 +7,7 @@
 
 # See library home page at http://www.boost.org/libs/system
 
+import testing ;
 
 project
     : requirements
@@ -54,5 +55,11 @@ project
          ]
          [ run config_test.cpp
            :  :  : <test-info>always_show_run_output 
+         ]
+         [ run std_interop_test.cpp
+           :  :  : <link>static
+         ]
+         [ run std_interop_test.cpp
+            :  :  : <link>shared : std_interop_test_shared
          ]
          ;
