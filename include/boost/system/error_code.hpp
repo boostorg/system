@@ -262,6 +262,49 @@ namespace boost
         return std_cat_;
       }
 
+#else
+
+    // to maintain ABI compatibility between 03 and 11,
+    // define a class with the same layout
+
+    private:
+
+      class std_category
+      {
+      private:
+
+        boost::system::error_category const * pc_;
+
+      public:
+
+        explicit std_category( boost::system::error_category const * pc ): pc_( pc )
+        {
+        }
+
+        virtual ~std_category() {}
+
+        virtual const char * name() const BOOST_NOEXCEPT
+        {
+          return pc_->name();
+        }
+
+        // we can't define message, because (1) it returns an std::string,
+        // which can be different between 03 and 11, and (2) on mingw, there
+        // are actually two `message` functions, not one, so it doesn't work
+        // even if we do
+
+        // neither can we define default_error_condition or equivalent
+
+        // if these functions are called, it will crash, but that's still
+        // better than the alternative of having the class layout change
+      };
+
+      std_category std_cat_;
+
+    public:
+
+      error_category() BOOST_SYSTEM_NOEXCEPT: std_cat_( this ) {}
+
 #endif
 
     public:
