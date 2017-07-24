@@ -262,6 +262,48 @@ namespace boost
         return std_cat_;
       }
 
+#else
+
+    // to maintain ABI compatibility between 03 and 11,
+    // define a class with the same layout
+
+    private:
+
+      class std_category
+      {
+      private:
+
+        boost::system::error_category const * pc_;
+
+      public:
+
+        explicit std_category( boost::system::error_category const * pc ): pc_( pc )
+        {
+        }
+
+        virtual ~std_category() {}
+
+        virtual const char * name() const BOOST_NOEXCEPT
+        {
+          return pc_->name();
+        }
+
+        virtual std::string message( int ev ) const
+        {
+          return pc_->message( ev );
+        }
+
+        // we can't define default_error_condition or equivalent,
+        // so if called, it will crash, but that's still better than the
+        // alternative
+      };
+
+      std_category std_cat_;
+
+    public:
+
+      error_category() BOOST_SYSTEM_NOEXCEPT: std_cat_( this ) {}
+
 #endif
 
     public:
