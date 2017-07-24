@@ -41,7 +41,11 @@ project
    {
       local result ;
 
-      if <toolset>gcc in $(properties) || <toolset>clang in $(properties)
+      if <toolset-gcc:version>4.6 in $(properties)
+      {
+         result = <cxxflags>-std=c++0x ;
+      }
+      else if <toolset>gcc in $(properties) || <toolset>clang in $(properties)
       {
          result = <cxxflags>-std=c++11 ;
       }
@@ -104,5 +108,17 @@ project
          ]
          [ run std_interop_test.cpp
             :  :  : <link>shared : std_interop_test_shared
+         ]
+         [ run std_mismatch_test.cpp
+           :  :  : <link>static <conditional>@cxx03 : std_mismatch_test_03
+         ]
+         [ run std_mismatch_test.cpp
+           :  :  : <link>shared <conditional>@cxx03 : std_mismatch_test_shared_03
+         ]
+         [ run std_mismatch_test.cpp
+           :  :  : <link>static <conditional>@cxx11 : std_mismatch_test_11
+         ]
+         [ run std_mismatch_test.cpp
+           :  :  : <link>shared <conditional>@cxx11 : std_mismatch_test_shared_11
          ]
          ;
