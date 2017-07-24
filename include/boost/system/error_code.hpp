@@ -288,14 +288,15 @@ namespace boost
           return pc_->name();
         }
 
-        virtual std::string message( int ev ) const
-        {
-          return pc_->message( ev );
-        }
+        // we can't define message, because (1) it returns an std::string,
+        // which can be different between 03 and 11, and (2) on mingw, there
+        // are actually two `message` functions, not one, so it doesn't work
+        // even if we do
 
-        // we can't define default_error_condition or equivalent,
-        // so if called, it will crash, but that's still better than the
-        // alternative
+        // neither can we define default_error_condition or equivalent
+
+        // if these functions are called, it will crash, but that's still
+        // better than the alternative of having the class layout change
       };
 
       std_category std_cat_;
