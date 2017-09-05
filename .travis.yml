@@ -272,6 +272,7 @@ matrix:
         apt:
           packages:
             - clang-3.8
+            - libstdc++-4.9-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
@@ -282,6 +283,7 @@ matrix:
         apt:
           packages:
             - clang-3.8
+            - libstdc++-4.9-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
@@ -312,6 +314,7 @@ matrix:
         apt:
           packages:
             - clang-3.9
+            - libstdc++-4.9-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.9
@@ -322,6 +325,7 @@ matrix:
         apt:
           packages:
             - clang-3.9
+            - libstdc++-4.9-dev
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.9
