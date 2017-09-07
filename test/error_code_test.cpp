@@ -99,6 +99,9 @@ namespace
     catch (...)
       { exception_thrown = true; }            
     BOOST_TEST(exception_thrown);
+
+    //error_code should_fail(boost::throws());     // should fail at runtime
+    //boost::throws() = ec;                        // should fail at runtime
   }
 }
 
