@@ -62,10 +62,10 @@ project
            : # command line
            : # input files
            : # requirements
-                   <link>static
+             <test-info>always_show_run_output <link>static
          ]
          [ run error_code_test.cpp
-           :  :  : <link>shared : error_code_test_shared
+           :  :  : <test-info>always_show_run_output <link>shared : error_code_test_shared
          ]
          [ run error_code_test.cpp
            :  :  : <link>static <conditional>@cxx03 : error_code_test_03
