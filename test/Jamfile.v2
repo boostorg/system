@@ -122,3 +122,6 @@ project
            :  :  : <link>shared <conditional>@cxx11 : std_mismatch_test_shared_11
          ]
          ;
+
+# Quick (CI) test
+run quick.cpp ;

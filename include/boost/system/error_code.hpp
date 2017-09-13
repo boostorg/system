@@ -210,6 +210,12 @@ namespace boost
       = system_category();
 #endif
 
+#ifdef BOOST_MSVC
+#pragma warning(push)
+// 'this' : used in base member initializer list
+#pragma warning(disable: 4355)
+#endif
+
     //  class error_category  ------------------------------------------------//
 
     class error_category : public noncopyable
@@ -327,6 +333,10 @@ namespace boost
       bool operator<( const error_category & rhs ) const BOOST_SYSTEM_NOEXCEPT
         { return std::less<const error_category*>()( this, &rhs ); }
     };
+
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
 
     //  class error_condition  ---------------------------------------------------------//
 
