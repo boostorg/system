@@ -542,8 +542,9 @@ namespace boost
     //  "throws" function in namespace boost rather than namespace boost::system.
 
   }  // namespace system
-
-  namespace detail { inline system::error_code * throws() { return 0; } }
+                                                               
+  namespace detail
+  {
     //  Misuse of the error_code object is turned into a noisy failure by
     //  poisoning the reference. This particular implementation doesn't
     //  produce warnings or errors from popular compilers, is very efficient
@@ -551,8 +552,17 @@ namespace boost
     //  from order of initialization problems. In practice, it also seems
     //  cause user function error handling implementation errors to be detected
     //  very early in the development cycle.
+    inline system::error_code* throws()
+    {
+      // See github.com/boostorg/system/pull/12 by visigoth for why the return
+      // is poisoned with (1) rather than (0). A test, test_throws_usage(), has
+      // been added to error_code_test.cpp, and as visigoth mentioned it fails
+      // on clang for release builds with a return of 0 but works fine with (1).
+      return reinterpret_cast<system::error_code*>(1);
+    }
+  }
 
-  inline system::error_code & throws()
+  inline system::error_code& throws()
     { return *detail::throws(); }
 
   namespace system
