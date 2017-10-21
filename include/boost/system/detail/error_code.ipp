@@ -452,7 +452,7 @@ namespace
 } // unnamed namespace
 
 
-# ifndef BOOST_SYSTEM_NO_DEPRECATED
+# ifdef BOOST_SYSTEM_ENABLE_DEPRECATED
     BOOST_SYSTEM_DECL error_code throws; // "throw on error" special error_code;
                                          //  note that it doesn't matter if this
                                          //  isn't initialized before use since

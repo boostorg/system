@@ -80,7 +80,7 @@ noexcept</code> and explicit conversion operators. The actual implementation
 uses C++11 features only when they are available, and otherwise falls back on 
 C++03 features.</p>
 <h2><a name="Macros">Macros</a></h2>
-<p>Users may defined the following macros if desired. Sensible defaults are 
+<p>Users may define the following macros if desired. Sensible defaults are
 provided, so users may ignore these macros if they prefer.</p>
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" height="368">
   <tr>
@@ -109,17 +109,16 @@ provided, so users may ignore these macros if they prefer.</p>
     facility.</td>
   </tr>
   <tr>
-    <td valign="top" height="32"><code>BOOST_SYSTEM_NO_DEPRECATED</code></td>
+    <td valign="top" height="32"><code>BOOST_SYSTEM_ENABLE_DEPRECATED</code></td>
     <td valign="top" height="32">Not defined.</td>
-    <td valign="top" height="32">Deprecated features are excluded.</td>
+    <td valign="top" height="32">Deprecated features are provided for compatibility.</td>
   </tr>
   </table>
 <h2><a name="Deprecated-names">Deprecated names</a></h2>
-<p>In the process of adding Boost.System to C++0x standard library, the C++ 
-committee changed some  
-names. To ease transition, Boost.System deprecates the old 
-names, but continues to provide them unless macro <code>BOOST_SYSTEM_NO_DEPRECATED</code> 
-is defined.</p>
+<p>In the process of adding Boost.System to the C++11 standard library, the
+C++ committee changed some names. To ease transition, Boost.System deprecates
+the old names, but will provide them when the macro
+<code>BOOST_SYSTEM_ENABLE_DEPRECATED</code> is defined.</p>
 <table border="1" cellpadding="5" cellspacing="1" style="border-collapse: collapse" bordercolor="#111111">
   <tr>
     <td><b><i>Old usage, now deprecated</i></b></td>

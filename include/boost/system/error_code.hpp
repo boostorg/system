@@ -144,7 +144,7 @@ namespace boost
 
     } // namespace errc
 
-# ifndef BOOST_SYSTEM_NO_DEPRECATED
+# ifdef BOOST_SYSTEM_ENABLE_DEPRECATED
     namespace posix = errc;
     namespace posix_error = errc;
 # endif
@@ -198,7 +198,7 @@ namespace boost
 #endif
     //  deprecated synonyms ------------------------------------------------------------//
 
-#ifndef BOOST_SYSTEM_NO_DEPRECATED
+#ifdef BOOST_SYSTEM_ENABLE_DEPRECATED
     inline const error_category &  get_system_category() { return system_category(); }
     inline const error_category &  get_generic_category() { return generic_category(); }
     inline const error_category &  get_posix_category() { return generic_category(); }
@@ -533,7 +533,7 @@ namespace boost
     };
 
     //  predefined error_code object used as "throw on error" tag
-# ifndef BOOST_SYSTEM_NO_DEPRECATED
+# ifdef BOOST_SYSTEM_ENABLE_DEPRECATED
     BOOST_SYSTEM_DECL extern error_code throws;
 # endif
 
