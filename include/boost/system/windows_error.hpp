@@ -107,7 +107,7 @@ namespace boost
 
     }  // namespace windows
 
-# ifndef BOOST_SYSTEM_NO_DEPRECATED
+# ifdef BOOST_SYSTEM_ENABLE_DEPRECATED
     namespace windows = windows_error;
 # endif
 
