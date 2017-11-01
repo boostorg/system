@@ -390,7 +390,7 @@ namespace
             boost::winapi::MAKELANGID_(boost::winapi::LANG_NEUTRAL_,
             boost::winapi::SUBLANG_DEFAULT_), // Default language
             &buf[0],
-            static_cast<DWORD>(buf.size()),
+            static_cast<boost::winapi::DWORD_>(buf.size()),
             NULL
         );
         
