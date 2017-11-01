@@ -411,8 +411,14 @@ namespace
     }
     
     int num_chars = (buf.size() + 1) * 2;
+
     boost::winapi::LPSTR_ narrow_buffer =
+#if defined(__GNUC__)
+      (boost::winapi::LPSTR_)__builtin_alloca(num_chars);
+#else
       (boost::winapi::LPSTR_)_alloca(num_chars);
+#endif
+
     if (boost::winapi::WideCharToMultiByte(boost::winapi::CP_ACP_, 0,
       buf.c_str(), -1, narrow_buffer, num_chars, NULL, NULL) == 0)
     {
