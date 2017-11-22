@@ -38,5 +38,13 @@
 # else
 #   define BOOST_POSIX_API 
 # endif
+
+# if !defined(BOOST_SYSTEM_NO_DEPRECATION_WARNING) && defined(BOOST_WINDOWS_API) && defined(BOOST_NO_ANSI_APIS) && !defined(BOOST_SYSTEM_USE_UTF8)
+#   if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__DMC__)
+#     pragma message ("Using ASNI strings with UNICODE API is deprecated, please define BOOST_SYSTEM_USE_UTF8 to use UTF8 strings. To disable this warning message, define BOOST_SYSTEM_NO_DEPRECATION_WARNING")
+#   elif defined(__GNUC__) || defined(__HP_aCC) || defined(__SUNPRO_CC) || defined(__IBMCPP__)
+#     warning "Using ASNI strings with UNICODE API is deprecated, please define BOOST_SYSTEM_USE_UTF8 to use UTF8 strings. To disable this warning message, define BOOST_SYSTEM_NO_DEPRECATION_WARNING"
+#   endif
+# endif
                                      
 #endif  // BOOST_SYSTEM_API_CONFIG_HPP 

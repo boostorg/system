@@ -409,8 +409,22 @@ namespace
             buf.resize(buf.size() + buf.size() / 2);
         }
     }
-    
-    int num_chars = (buf.size() + 1) * 2;
+
+#if !defined(BOOST_NO_CXX11_CONSTEXPR)
+    constexpr
+#endif
+#ifdef BOOST_SYSTEM_USE_UTF8
+    const unsigned int code_page = boost::winapi::CP_UTF8_;
+#else
+    const unsigned int code_page = boost::winapi::CP_ACP_;
+#endif
+
+    int num_chars = boost::winapi::WideCharToMultiByte(code_page, 0,
+      buf.c_str(), -1, NULL, 0, NULL, NULL);
+    if (num_chars == 0)
+    {
+        return std::string("Unknown error");
+    }
 
     boost::winapi::LPSTR_ narrow_buffer =
 #if defined(__GNUC__)
@@ -419,7 +433,7 @@ namespace
       (boost::winapi::LPSTR_)_alloca(num_chars);
 #endif
 
-    if (boost::winapi::WideCharToMultiByte(boost::winapi::CP_ACP_, 0,
+    if (boost::winapi::WideCharToMultiByte(code_page, 0,
       buf.c_str(), -1, narrow_buffer, num_chars, NULL, NULL) == 0)
     {
         return std::string("Unknown error");
