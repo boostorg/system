@@ -192,7 +192,7 @@ install:
 script:
   - |-
     echo "using $TOOLSET : : $COMPILER ;" > ~/user-config.jam
-  - ./b2 libs/system/test toolset=$TOOLSET cxxstd=$CXXSTD
+  - ./b2 -j 3 libs/system/test toolset=$TOOLSET cxxstd=$CXXSTD
 
 notifications:
   email:
