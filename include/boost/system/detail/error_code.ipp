@@ -410,7 +410,7 @@ namespace
         }
     }
     
-    int num_chars = (buf.size() + 1) * 2;
+    int num_chars = static_cast<int>(buf.size() + 1) * 2;
 
     boost::winapi::LPSTR_ narrow_buffer =
 #if defined(__GNUC__)
