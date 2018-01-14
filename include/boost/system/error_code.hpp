@@ -38,6 +38,16 @@
 #define BOOST_SYSTEM_NOEXCEPT BOOST_NOEXCEPT
 #endif
 
+#if !defined(BOOST_NO_CXX14_CONSTEXPR) && !defined(BOOST_ERROR_CODE_HEADER_ONLY)
+# define BOOST_SYSTEM_HAS_CONSTEXPR
+#endif
+
+#if defined(BOOST_SYSTEM_HAS_CONSTEXPR)
+# define BOOST_SYSTEM_CONSTEXPR constexpr
+#else
+# define BOOST_SYSTEM_CONSTEXPR
+#endif
+
 namespace boost
 {
   namespace system
@@ -185,31 +195,6 @@ namespace boost
 
     //  --------------------------------------------------------------------------------//
 
-    class error_category;
-
-    //  predefined error categories  ---------------------------------------------------//
-
-#ifdef BOOST_ERROR_CODE_HEADER_ONLY
-    inline const error_category &  system_category() BOOST_SYSTEM_NOEXCEPT;
-    inline const error_category &  generic_category() BOOST_SYSTEM_NOEXCEPT;
-#else
-    BOOST_SYSTEM_DECL const error_category &  system_category() BOOST_SYSTEM_NOEXCEPT;
-    BOOST_SYSTEM_DECL const error_category &  generic_category() BOOST_SYSTEM_NOEXCEPT;
-#endif
-    //  deprecated synonyms ------------------------------------------------------------//
-
-#ifdef BOOST_SYSTEM_ENABLE_DEPRECATED
-    inline const error_category &  get_system_category() { return system_category(); }
-    inline const error_category &  get_generic_category() { return generic_category(); }
-    inline const error_category &  get_posix_category() { return generic_category(); }
-    static const error_category &  posix_category BOOST_ATTRIBUTE_UNUSED
-      = generic_category();
-    static const error_category &  errno_ecat     BOOST_ATTRIBUTE_UNUSED
-      = generic_category();
-    static const error_category &  native_ecat    BOOST_ATTRIBUTE_UNUSED
-      = system_category();
-#endif
-
 #ifdef BOOST_MSVC
 #pragma warning(push)
 // 'this' : used in base member initializer list
@@ -232,7 +217,7 @@ namespace boost
 
       public:
 
-        explicit std_category( boost::system::error_category const * pc ): pc_( pc )
+        BOOST_SYSTEM_CONSTEXPR explicit std_category( boost::system::error_category const * pc ): pc_( pc )
         {
         }
 
@@ -258,7 +243,7 @@ namespace boost
 
     public:
 
-      error_category() BOOST_SYSTEM_NOEXCEPT: std_cat_( this ) {}
+      BOOST_SYSTEM_CONSTEXPR error_category() BOOST_SYSTEM_NOEXCEPT: std_cat_( this ) {}
 
       operator std::error_category const & () const BOOST_SYSTEM_NOEXCEPT
       {
@@ -283,7 +268,7 @@ namespace boost
 
       public:
 
-        explicit std_category( boost::system::error_category const * pc ): pc_( pc )
+        BOOST_SYSTEM_CONSTEXPR explicit std_category( boost::system::error_category const * pc ): pc_( pc )
         {
         }
 
@@ -309,7 +294,7 @@ namespace boost
 
     public:
 
-      error_category() BOOST_SYSTEM_NOEXCEPT: std_cat_( this ) {}
+      BOOST_SYSTEM_CONSTEXPR error_category() BOOST_SYSTEM_NOEXCEPT: std_cat_( this ) {}
 
 #endif
 
@@ -326,9 +311,9 @@ namespace boost
       inline virtual bool             equivalent( const error_code & code,
                                            int condition ) const  BOOST_SYSTEM_NOEXCEPT;
 
-      bool operator==(const error_category & rhs) const BOOST_SYSTEM_NOEXCEPT
+      BOOST_SYSTEM_CONSTEXPR bool operator==(const error_category & rhs) const BOOST_SYSTEM_NOEXCEPT
         { return this == &rhs; }
-      bool operator!=(const error_category & rhs) const BOOST_SYSTEM_NOEXCEPT
+      BOOST_SYSTEM_CONSTEXPR bool operator!=(const error_category & rhs) const BOOST_SYSTEM_NOEXCEPT
         { return this != &rhs; }
       bool operator<( const error_category & rhs ) const BOOST_SYSTEM_NOEXCEPT
         { return std::less<const error_category*>()( this, &rhs ); }
@@ -336,6 +321,85 @@ namespace boost
 
 #ifdef BOOST_MSVC
 #pragma warning(pop)
+#endif
+
+    //  predefined error categories  ---------------------------------------------------//
+
+namespace detail
+{
+
+    class generic_error_category : public error_category
+    {
+    public:
+      BOOST_SYSTEM_CONSTEXPR generic_error_category(){}
+      const char *   name() const BOOST_SYSTEM_NOEXCEPT;
+      std::string    message( int ev ) const;
+    };
+
+    class system_error_category : public error_category
+    {
+    public:
+      BOOST_SYSTEM_CONSTEXPR system_error_category(){}
+      const char *        name() const BOOST_SYSTEM_NOEXCEPT;
+      std::string         message( int ev ) const;
+      error_condition     default_error_condition( int ev ) const BOOST_SYSTEM_NOEXCEPT;
+    };
+
+} // namespace detail
+
+#if defined(BOOST_ERROR_CODE_HEADER_ONLY)
+
+BOOST_SYSTEM_CONSTEXPR inline const error_category & system_category() BOOST_SYSTEM_NOEXCEPT
+{
+    static const detail::system_error_category  system_category_const;
+    return system_category_const;
+}
+
+BOOST_SYSTEM_CONSTEXPR inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
+{
+    static const detail::generic_error_category generic_category_const;
+    return generic_category_const;
+}
+
+#elif defined(BOOST_SYSTEM_HAS_CONSTEXPR)
+
+namespace detail
+{
+
+extern const system_error_category system_category_const;
+extern const generic_error_category generic_category_const;
+
+} // namespace detail
+
+constexpr const error_category & system_category() BOOST_SYSTEM_NOEXCEPT
+{
+    return detail::system_category_const;
+}
+
+constexpr const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
+{
+    return detail::generic_category_const;
+}
+
+#else
+
+    BOOST_SYSTEM_DECL const error_category &  system_category() BOOST_SYSTEM_NOEXCEPT;
+    BOOST_SYSTEM_DECL const error_category &  generic_category() BOOST_SYSTEM_NOEXCEPT;
+
+#endif
+
+    //  deprecated synonyms ------------------------------------------------------------//
+
+#ifdef BOOST_SYSTEM_ENABLE_DEPRECATED
+    inline const error_category &  get_system_category() { return system_category(); }
+    inline const error_category &  get_generic_category() { return generic_category(); }
+    inline const error_category &  get_posix_category() { return generic_category(); }
+    static const error_category &  posix_category BOOST_ATTRIBUTE_UNUSED
+      = generic_category();
+    static const error_category &  errno_ecat     BOOST_ATTRIBUTE_UNUSED
+      = generic_category();
+    static const error_category &  native_ecat    BOOST_ATTRIBUTE_UNUSED
+      = system_category();
 #endif
 
     //  class error_condition  ---------------------------------------------------------//
@@ -347,8 +411,8 @@ namespace boost
     public:
 
       // constructors:
-      error_condition() BOOST_SYSTEM_NOEXCEPT : m_val(0), m_cat(&generic_category()) {}
-      error_condition( int val, const error_category & cat ) BOOST_SYSTEM_NOEXCEPT
+      BOOST_SYSTEM_CONSTEXPR error_condition() BOOST_SYSTEM_NOEXCEPT : m_val(0), m_cat(&generic_category()) {}
+      BOOST_SYSTEM_CONSTEXPR error_condition( int val, const error_category & cat ) BOOST_SYSTEM_NOEXCEPT
         : m_val(val), m_cat(&cat) {}
 
       template <class ErrorConditionEnum>
@@ -361,7 +425,7 @@ namespace boost
 
       // modifiers:
 
-      void assign( int val, const error_category & cat ) BOOST_SYSTEM_NOEXCEPT
+      BOOST_SYSTEM_CONSTEXPR void assign( int val, const error_category & cat ) BOOST_SYSTEM_NOEXCEPT
       {
         m_val = val;
         m_cat = &cat;
@@ -376,26 +440,26 @@ namespace boost
         return *this;
       }
 
-      void clear() BOOST_SYSTEM_NOEXCEPT
+      BOOST_SYSTEM_CONSTEXPR void clear() BOOST_SYSTEM_NOEXCEPT
       {
         m_val = 0;
         m_cat = &generic_category();
       }
 
       // observers:
-      int                     value() const BOOST_SYSTEM_NOEXCEPT    { return m_val; }
-      const error_category &  category() const BOOST_SYSTEM_NOEXCEPT { return *m_cat; }
+      BOOST_SYSTEM_CONSTEXPR int                     value() const BOOST_SYSTEM_NOEXCEPT    { return m_val; }
+      BOOST_SYSTEM_CONSTEXPR const error_category &  category() const BOOST_SYSTEM_NOEXCEPT { return *m_cat; }
       std::string             message() const  { return m_cat->message(value()); }
 
       typedef void (*unspecified_bool_type)();
       static void unspecified_bool_true() {}
 
-      operator unspecified_bool_type() const BOOST_SYSTEM_NOEXCEPT  // true if error
+      BOOST_SYSTEM_CONSTEXPR operator unspecified_bool_type() const BOOST_SYSTEM_NOEXCEPT  // true if error
       {
         return m_val == 0 ? 0 : unspecified_bool_true;
       }
 
-      bool operator!() const BOOST_SYSTEM_NOEXCEPT  // true if no error
+      BOOST_SYSTEM_CONSTEXPR bool operator!() const BOOST_SYSTEM_NOEXCEPT  // true if no error
       {
         return m_val == 0;
       }
@@ -403,7 +467,7 @@ namespace boost
       // relationals:
       //  the more symmetrical non-member syntax allows enum
       //  conversions work for both rhs and lhs.
-      inline friend bool operator==( const error_condition & lhs,
+      BOOST_SYSTEM_CONSTEXPR inline friend bool operator==( const error_condition & lhs,
                                      const error_condition & rhs ) BOOST_SYSTEM_NOEXCEPT
       {
         return lhs.m_cat == rhs.m_cat && lhs.m_val == rhs.m_val;
@@ -446,8 +510,8 @@ namespace boost
     public:
 
       // constructors:
-      error_code() BOOST_SYSTEM_NOEXCEPT : m_val(0), m_cat(&system_category()) {}
-      error_code( int val, const error_category & cat ) BOOST_SYSTEM_NOEXCEPT
+      BOOST_SYSTEM_CONSTEXPR error_code() BOOST_SYSTEM_NOEXCEPT : m_val(0), m_cat(&system_category()) {}
+      BOOST_SYSTEM_CONSTEXPR error_code( int val, const error_category & cat ) BOOST_SYSTEM_NOEXCEPT
         : m_val(val), m_cat(&cat) {}
 
       template <class ErrorCodeEnum>
@@ -459,7 +523,7 @@ namespace boost
       }
 
       // modifiers:
-      void assign( int val, const error_category & cat ) BOOST_SYSTEM_NOEXCEPT
+      BOOST_SYSTEM_CONSTEXPR void assign( int val, const error_category & cat ) BOOST_SYSTEM_NOEXCEPT
       {
         m_val = val;
         m_cat = &cat;
@@ -473,15 +537,15 @@ namespace boost
         return *this;
       }
 
-      void clear() BOOST_SYSTEM_NOEXCEPT
+      BOOST_SYSTEM_CONSTEXPR void clear() BOOST_SYSTEM_NOEXCEPT
       {
         m_val = 0;
         m_cat = &system_category();
       }
 
       // observers:
-      int                     value() const  BOOST_SYSTEM_NOEXCEPT   { return m_val; }
-      const error_category &  category() const BOOST_SYSTEM_NOEXCEPT { return *m_cat; }
+      BOOST_SYSTEM_CONSTEXPR int                     value() const  BOOST_SYSTEM_NOEXCEPT   { return m_val; }
+      BOOST_SYSTEM_CONSTEXPR const error_category &  category() const BOOST_SYSTEM_NOEXCEPT { return *m_cat; }
       error_condition         default_error_condition() const BOOST_SYSTEM_NOEXCEPT
         { return m_cat->default_error_condition(value()); }
       std::string             message() const  { return m_cat->message(value()); }
@@ -489,18 +553,18 @@ namespace boost
       typedef void (*unspecified_bool_type)();
       static void unspecified_bool_true() {}
 
-      operator unspecified_bool_type() const  BOOST_SYSTEM_NOEXCEPT // true if error
+      BOOST_SYSTEM_CONSTEXPR operator unspecified_bool_type() const  BOOST_SYSTEM_NOEXCEPT // true if error
       {
         return m_val == 0 ? 0 : unspecified_bool_true;
       }
 
-      bool operator!() const  BOOST_SYSTEM_NOEXCEPT // true if no error
+      BOOST_SYSTEM_CONSTEXPR bool operator!() const  BOOST_SYSTEM_NOEXCEPT // true if no error
       {
         return m_val == 0;
       }
 
       // relationals:
-      inline friend bool operator==( const error_code & lhs,
+      BOOST_SYSTEM_CONSTEXPR inline friend bool operator==( const error_code & lhs,
                                      const error_code & rhs ) BOOST_SYSTEM_NOEXCEPT
         //  the more symmetrical non-member syntax allows enum
         //  conversions work for both rhs and lhs.
@@ -569,13 +633,13 @@ namespace boost
   {
     //  non-member functions  ------------------------------------------------//
 
-    inline bool operator!=( const error_code & lhs,
+    BOOST_SYSTEM_CONSTEXPR inline bool operator!=( const error_code & lhs,
                             const error_code & rhs ) BOOST_SYSTEM_NOEXCEPT
     {
       return !(lhs == rhs);
     }
 
-    inline bool operator!=( const error_condition & lhs,
+    BOOST_SYSTEM_CONSTEXPR inline bool operator!=( const error_condition & lhs,
                             const error_condition & rhs ) BOOST_SYSTEM_NOEXCEPT
     {
       return !(lhs == rhs);

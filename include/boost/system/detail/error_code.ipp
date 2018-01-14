@@ -35,30 +35,12 @@
 //--------------------------------------------------------------------------------------//
 namespace boost
 {
-    namespace system
-    {
+
+namespace system
+{
 
 namespace detail
 {
-
-  //  standard error categories  -------------------------------------------------------//
-
-  class generic_error_category : public error_category
-  {
-  public:
-    generic_error_category(){}
-    const char *   name() const BOOST_SYSTEM_NOEXCEPT;
-    std::string    message( int ev ) const;
-  };
-
-  class system_error_category : public error_category
-  {
-  public:
-    system_error_category(){}
-    const char *        name() const BOOST_SYSTEM_NOEXCEPT;
-    std::string         message( int ev ) const;
-    error_condition     default_error_condition( int ev ) const BOOST_SYSTEM_NOEXCEPT;
-  };
 
 #ifdef BOOST_ERROR_CODE_HEADER_ONLY
 # define BOOST_SYSTEM_INLINE inline
@@ -474,23 +456,47 @@ namespace detail
                                          //  address for comparison purposes
 # endif
 
-# ifdef BOOST_ERROR_CODE_HEADER_ONLY
-#   define BOOST_SYSTEM_LINKAGE inline
-# else
-#   define BOOST_SYSTEM_LINKAGE BOOST_SYSTEM_DECL
-# endif
+#if defined(BOOST_ERROR_CODE_HEADER_ONLY)
 
-    BOOST_SYSTEM_LINKAGE const error_category & system_category() BOOST_SYSTEM_NOEXCEPT
-    {
-      static const detail::system_error_category  system_category_const;
-      return system_category_const;
-    }
+// defined in error_code.hpp
 
-    BOOST_SYSTEM_LINKAGE const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
-    {
-      static const detail::generic_error_category generic_category_const;
-      return generic_category_const;
-    }
+#elif defined(BOOST_SYSTEM_HAS_CONSTEXPR)
 
-  } // namespace system
+#define BOOST_SYSTEM_CONST_INIT
+
+#if defined(__has_cpp_attribute)
+#if __has_cpp_attribute(clang::require_constant_initialization)
+# undef BOOST_SYSTEM_CONST_INIT
+# define BOOST_SYSTEM_CONST_INIT [[clang::require_constant_initialization]]
+#endif
+#endif
+
+namespace detail
+{
+
+BOOST_SYSTEM_CONST_INIT const system_error_category system_category_const;
+BOOST_SYSTEM_CONST_INIT const generic_error_category generic_category_const;
+
+} // namespace detail
+
+#undef BOOST_SYSTEM_CONST_INIT
+
+#else
+
+BOOST_SYSTEM_DECL const error_category & system_category() BOOST_SYSTEM_NOEXCEPT
+{
+    static const detail::system_error_category  system_category_const;
+    return system_category_const;
+}
+
+BOOST_SYSTEM_DECL const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
+{
+    static const detail::generic_error_category generic_category_const;
+    return generic_category_const;
+}
+
+#endif
+
+} // namespace system
+
 } // namespace boost
