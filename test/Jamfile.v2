@@ -124,6 +124,15 @@ project
          [ run header_only_test.cpp
            :  :  : -<library>/boost/system//boost_system <define>BOOST_NO_ANSI_APIS : header_only_test_no_ansi
          ]
+         [ run single_instance_test.cpp single_instance_1.cpp single_instance_2.cpp
+           :  :  : <link>static : single_instance_test_static
+         ]
+         [ run single_instance_test.cpp single_instance_1.cpp single_instance_2.cpp
+           :  :  : <link>shared : single_instance_test_shared
+         ]
+         [ run single_instance_test.cpp single_instance_1.cpp single_instance_2.cpp
+           :  :  : -<library>/boost/system//boost_system <define>BOOST_ERROR_CODE_HEADER_ONLY : single_instance_test_header
+         ]
          ;
 
 # Quick (CI) test
