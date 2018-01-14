@@ -98,7 +98,7 @@ project
             :  :  : <link>shared : initialization_test_shared
          ]
          [ run header_only_test.cpp
-           :  :  : <link>static
+           :  :  : -<library>/boost/system//boost_system
          ]
          [ run config_test.cpp
            :  :  : <test-info>always_show_run_output 
@@ -122,7 +122,7 @@ project
            :  :  : <link>shared <conditional>@cxx11 : std_mismatch_test_shared_11
          ]
          [ run header_only_test.cpp
-           :  :  : <link>static <define>BOOST_NO_ANSI_APIS : header_only_test_no_ansi
+           :  :  : -<library>/boost/system//boost_system <define>BOOST_NO_ANSI_APIS : header_only_test_no_ansi
          ]
          ;
 
