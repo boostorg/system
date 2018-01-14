@@ -310,14 +310,19 @@ namespace boost
         BOOST_SYSTEM_NOEXCEPT;
       inline virtual bool             equivalent( const error_code & code,
                                            int condition ) const  BOOST_SYSTEM_NOEXCEPT;
-
-      BOOST_SYSTEM_CONSTEXPR bool operator==(const error_category & rhs) const BOOST_SYSTEM_NOEXCEPT
-        { return this == &rhs; }
-      BOOST_SYSTEM_CONSTEXPR bool operator!=(const error_category & rhs) const BOOST_SYSTEM_NOEXCEPT
-        { return this != &rhs; }
-      bool operator<( const error_category & rhs ) const BOOST_SYSTEM_NOEXCEPT
-        { return std::less<const error_category*>()( this, &rhs ); }
     };
+
+    BOOST_SYSTEM_CONSTEXPR inline bool operator==( const error_category & lhs,
+        const error_category & rhs ) BOOST_SYSTEM_NOEXCEPT
+        { return &lhs == &rhs; }
+
+    BOOST_SYSTEM_CONSTEXPR inline bool operator!=( const error_category & lhs,
+        const error_category & rhs ) BOOST_SYSTEM_NOEXCEPT
+        { return &lhs != &rhs; }
+
+    inline bool operator<( const error_category & lhs,
+        const error_category & rhs ) BOOST_SYSTEM_NOEXCEPT
+        { return std::less<const error_category*>()( &lhs, &rhs ); }
 
 #ifdef BOOST_MSVC
 #pragma warning(pop)
