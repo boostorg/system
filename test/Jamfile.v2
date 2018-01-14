@@ -133,6 +133,15 @@ project
          [ run single_instance_test.cpp single_instance_1.cpp single_instance_2.cpp
            :  :  : -<library>/boost/system//boost_system <define>BOOST_ERROR_CODE_HEADER_ONLY : single_instance_test_header
          ]
+         [ run before_main_test.cpp
+           :  :  : <link>static : before_main_test_static
+         ]
+         [ run before_main_test.cpp
+           :  :  : <link>shared : before_main_test_shared
+         ]
+         [ run before_main_test.cpp
+           :  :  : -<library>/boost/system//boost_system <define>BOOST_ERROR_CODE_HEADER_ONLY : before_main_test_header
+         ]
          ;
 
 # Quick (CI) test
