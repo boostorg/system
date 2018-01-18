@@ -25,7 +25,11 @@ project
    {
       local result ;
 
-      if <toolset>gcc in $(properties) || <toolset>clang in $(properties)
+      if <toolset>gcc in $(properties)
+      {
+         result = <cxxflags>-std=c++98 ; # 4.4 has no 03
+      }
+      else if <toolset>clang in $(properties)
       {
          result = <cxxflags>-std=c++03 ;
       }
@@ -41,11 +45,11 @@ project
    {
       local result ;
 
-      if <toolset-gcc:version>4.6 in $(properties)
+      if <toolset>gcc in $(properties)
       {
-         result = <cxxflags>-std=c++0x ;
+         result = <cxxflags>-std=c++0x ; # 4.6 has no 11
       }
-      else if <toolset>gcc in $(properties) || <toolset>clang in $(properties)
+      else if <toolset>clang in $(properties)
       {
          result = <cxxflags>-std=c++11 ;
       }
