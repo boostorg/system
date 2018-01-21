@@ -63,11 +63,11 @@ install:
   - xcopy /s /e /q %APPVEYOR_BUILD_FOLDER% libs\system
   - python tools/boostdep/depinst/depinst.py system
   - cmd /c bootstrap
-  - b2 headers
+  - b2 -d0 headers
 
 build: off
 
 test_script:
   - PATH=%ADDPATH%%PATH%
   - if not "%CXXSTD%" == "" set CXXSTD=cxxstd=%CXXSTD%
-  - b2 -j 3 libs/system/test toolset=%TOOLSET% %CXXSTD%
+  - b2 -j3 libs/system/test toolset=%TOOLSET% %CXXSTD%
