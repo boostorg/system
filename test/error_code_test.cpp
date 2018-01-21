@@ -22,6 +22,7 @@
 #include <cstring>
 #include <functional>
 #include <boost/cerrno.hpp>
+#include <boost/config/pragma_message.hpp>
 
 //  Although using directives are not the best programming practice, testing
 //  with a boost::system using directive increases use scenario coverage.
@@ -246,7 +247,16 @@ int main( int, char ** )
   BOOST_TEST( econd.message() != "" );
   BOOST_TEST( econd.message().substr( 0, 13) != "Unknown error" );
 
+#if !defined(UBSAN)
+
+  // the current implementation of boost::throws() relies on undefined behavior
   test_throws_usage();
+
+#else
+
+  BOOST_PRAGMA_MESSAGE("Skipping test_throws_usage() due to UBSAN");
+
+#endif
 
 #ifdef BOOST_WINDOWS_API
   std::cout << "Windows tests...\n";
