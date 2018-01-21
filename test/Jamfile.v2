@@ -66,7 +66,7 @@ project
       local result ;
 
       result += [ run $(sources) : : : <link>static : $(sources[1]:B)_static ] ;
-      result += [ run $(sources) : : : <link>shared : $(source:B)_shared ] ;
+      result += [ run $(sources) : : : <link>shared : $(sources[1]:B)_shared ] ;
       result += [ run $(sources) : : : -<library>/boost/system//boost_system <define>BOOST_ERROR_CODE_HEADER_ONLY : $(sources[1]:B)_header ] ;
 
       return $(result) ;
