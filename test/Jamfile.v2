@@ -21,6 +21,9 @@ project
        <link>static:<define>BOOST_SYSTEM_STATIC_LINK=1
      ;
 
+   lib single_instance_lib1 : single_instance_1.cpp : <link>shared:<define>SINGLE_INSTANCE_DYN_LINK ;
+   lib single_instance_lib2 : single_instance_2.cpp : <link>shared:<define>SINGLE_INSTANCE_DYN_LINK ;
+
    rule cxx03 ( properties * )
    {
       local result ;
@@ -107,6 +110,8 @@ project
          [ system-run- std_interop_test.cpp ]
          [ system-run std_mismatch_test.cpp ]
          [ system-run single_instance_test.cpp single_instance_1.cpp single_instance_2.cpp ]
+         [ run single_instance_test.cpp single_instance_lib1 single_instance_lib2 : : : <link>static : single_instance_lib_static ]
+         [ run single_instance_test.cpp single_instance_lib1 single_instance_lib2 : : : <link>shared : single_instance_lib_shared ]
          [ system-run before_main_test.cpp ]
          ;
 

@@ -2,19 +2,26 @@
 // Copyright 2018 Peter Dimov.
 // Distributed under the Boost Software License, Version 1.0.
 
-#include <boost/system/error_code.hpp>
+#include <boost/config.hpp>
 
+#if defined(SINGLE_INSTANCE_DYN_LINK) && defined(BOOST_HAS_DECLSPEC)
+# define EXPORT __declspec(dllexport)
+#else
+# define EXPORT
+#endif
+
+#include <boost/system/error_code.hpp>
 using namespace boost::system;
 
 namespace lib1
 {
 
-error_code get_system_code()
+EXPORT error_code get_system_code()
 {
     return error_code( 0, system_category() );
 }
 
-error_code get_generic_code()
+EXPORT error_code get_generic_code()
 {
     return error_code( 0, generic_category() );
 }
