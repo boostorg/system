@@ -477,23 +477,38 @@ namespace detail
 BOOST_SYSTEM_CONST_INIT const system_error_category system_category_const;
 BOOST_SYSTEM_CONST_INIT const generic_error_category generic_category_const;
 
+BOOST_SYSTEM_DECL const error_category & system_category_ncx() BOOST_SYSTEM_NOEXCEPT
+{
+    return system_category_const;
+}
+
+BOOST_SYSTEM_DECL const error_category & generic_category_ncx() BOOST_SYSTEM_NOEXCEPT
+{
+    return generic_category_const;
+}
+
 } // namespace detail
 
 #undef BOOST_SYSTEM_CONST_INIT
 
 #else
 
-BOOST_SYSTEM_DECL const error_category & system_category() BOOST_SYSTEM_NOEXCEPT
+namespace detail
 {
-    static const detail::system_error_category  system_category_const;
+
+BOOST_SYSTEM_DECL const error_category & system_category_ncx() BOOST_SYSTEM_NOEXCEPT
+{
+    static const detail::system_error_category system_category_const;
     return system_category_const;
 }
 
-BOOST_SYSTEM_DECL const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
+BOOST_SYSTEM_DECL const error_category & generic_category_ncx() BOOST_SYSTEM_NOEXCEPT
 {
     static const detail::generic_error_category generic_category_const;
     return generic_category_const;
 }
+
+} // namespace detail
 
 #endif
 

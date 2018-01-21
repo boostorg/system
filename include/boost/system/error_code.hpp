@@ -361,7 +361,7 @@ namespace detail
 
 BOOST_SYSTEM_CONSTEXPR inline const error_category & system_category() BOOST_SYSTEM_NOEXCEPT
 {
-    static const detail::system_error_category  system_category_const;
+    static const detail::system_error_category system_category_const;
     return system_category_const;
 }
 
@@ -393,8 +393,23 @@ constexpr const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
 
 #else
 
-    BOOST_SYSTEM_DECL const error_category &  system_category() BOOST_SYSTEM_NOEXCEPT;
-    BOOST_SYSTEM_DECL const error_category &  generic_category() BOOST_SYSTEM_NOEXCEPT;
+namespace detail
+{
+
+BOOST_SYSTEM_DECL const error_category & system_category_ncx() BOOST_SYSTEM_NOEXCEPT;
+BOOST_SYSTEM_DECL const error_category & generic_category_ncx() BOOST_SYSTEM_NOEXCEPT;
+
+} // namespace detail
+
+inline const error_category & system_category() BOOST_SYSTEM_NOEXCEPT
+{
+    return detail::system_category_ncx();
+}
+
+inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
+{
+    return detail::generic_category_ncx();
+}
 
 #endif
 
