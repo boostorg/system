@@ -70,4 +70,4 @@ build: off
 test_script:
   - PATH=%ADDPATH%%PATH%
   - if not "%CXXSTD%" == "" set CXXSTD=cxxstd=%CXXSTD%
-  - b2 -j3 libs/system/test toolset=%TOOLSET% %CXXSTD%
+  - b2 -j3 libs/system/test toolset=%TOOLSET% variant=debug,release %CXXSTD%
