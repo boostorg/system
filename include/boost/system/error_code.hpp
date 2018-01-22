@@ -2,6 +2,7 @@
 
 //  Copyright Beman Dawes 2006, 2007
 //  Copyright Christoper Kohlhoff 2007
+//  Copyright Peter Dimov 2017, 2018
 
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -541,6 +542,15 @@ inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
       BOOST_SYSTEM_CONSTEXPR const error_category &  category() const BOOST_SYSTEM_NOEXCEPT { return *m_cat; }
       std::string             message() const  { return m_cat->message(value()); }
 
+#if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
+
+      explicit operator bool() const BOOST_SYSTEM_NOEXCEPT  // true if error
+      {
+        return m_val != 0;
+      }
+
+#else
+
       typedef void (*unspecified_bool_type)();
       static void unspecified_bool_true() {}
 
@@ -553,6 +563,8 @@ inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
       {
         return m_val == 0;
       }
+
+#endif
 
       // relationals:
       //  the more symmetrical non-member syntax allows enum
@@ -640,6 +652,15 @@ inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
         { return m_cat->default_error_condition(value()); }
       std::string             message() const  { return m_cat->message(value()); }
 
+#if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
+
+      explicit operator bool() const BOOST_SYSTEM_NOEXCEPT  // true if error
+      {
+        return m_val != 0;
+      }
+
+#else
+
       typedef void (*unspecified_bool_type)();
       static void unspecified_bool_true() {}
 
@@ -652,6 +673,8 @@ inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
       {
         return m_val == 0;
       }
+
+#endif
 
       // relationals:
       BOOST_SYSTEM_CONSTEXPR inline friend bool operator==( const error_code & lhs,
