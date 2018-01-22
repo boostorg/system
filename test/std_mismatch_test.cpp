@@ -12,9 +12,12 @@
 # define _CRT_SECURE_NO_WARNINGS
 
 #include <boost/config.hpp>
+#include <boost/config/pragma_message.hpp>
 #include <iostream>
 
 #if defined(BOOST_NO_CXX11_HDR_SYSTEM_ERROR)
+
+BOOST_PRAGMA_MESSAGE("Skipping test, BOOST_NO_CXX11_HDR_SYSTEM_ERROR is defined")
 
 int main()
 {
@@ -22,6 +25,11 @@ int main()
     << "The version of the C++ standard library being used does not"
     " support header <system_error> so interoperation will not be tested.\n";
 }
+
+#elif defined(UBSAN)
+
+BOOST_PRAGMA_MESSAGE("Skipping test, UBSAN is defined")
+int main() {}
 
 #else
 
