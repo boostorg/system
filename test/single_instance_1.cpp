@@ -4,8 +4,8 @@
 
 #include <boost/config.hpp>
 
-#if defined(SINGLE_INSTANCE_DYN_LINK) && defined(BOOST_HAS_DECLSPEC)
-# define EXPORT __declspec(dllexport)
+#if defined(SINGLE_INSTANCE_DYN_LINK)
+# define EXPORT BOOST_SYMBOL_EXPORT
 #else
 # define EXPORT
 #endif
