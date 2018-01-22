@@ -348,6 +348,12 @@ class generic_error_category: public error_category
 {
 public:
 
+    // clang++ 3.8 and below: initialization of const object
+    // requires a user-provided default constructor
+    BOOST_SYSTEM_CONSTEXPR generic_error_category() BOOST_SYSTEM_NOEXCEPT
+    {
+    }
+
     const char * name() const BOOST_SYSTEM_NOEXCEPT
     {
         return "generic";
@@ -359,6 +365,10 @@ public:
 class system_error_category: public error_category
 {
 public:
+
+    BOOST_SYSTEM_CONSTEXPR system_error_category() BOOST_SYSTEM_NOEXCEPT
+    {
+    }
 
     const char * name() const BOOST_SYSTEM_NOEXCEPT
     {
