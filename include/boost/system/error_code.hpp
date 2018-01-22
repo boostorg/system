@@ -544,7 +544,7 @@ inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
 
 #if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
 
-      explicit operator bool() const BOOST_SYSTEM_NOEXCEPT  // true if error
+      BOOST_SYSTEM_CONSTEXPR explicit operator bool() const BOOST_SYSTEM_NOEXCEPT  // true if error
       {
         return m_val != 0;
       }
@@ -654,7 +654,7 @@ inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
 
 #if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
 
-      explicit operator bool() const BOOST_SYSTEM_NOEXCEPT  // true if error
+      BOOST_SYSTEM_CONSTEXPR explicit operator bool() const BOOST_SYSTEM_NOEXCEPT  // true if error
       {
         return m_val != 0;
       }
