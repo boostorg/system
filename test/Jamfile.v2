@@ -8,6 +8,7 @@
 # See library home page at http://www.boost.org/libs/system
 
 import testing ;
+import os ;
 
 project
     : requirements
@@ -75,6 +76,16 @@ project
       return $(result) ;
    }
 
+if [ os.environ UBSAN ]
+{
+   rule system-run ( sources + )
+   {
+      # The 03/11 tests are ODR violations, no point running them under -fsanitize=undefined
+      return [ system-run- $(sources) ] ;
+   }
+}
+else
+{
    rule system-run ( sources + )
    {
       local result = [ system-run- $(sources) ] ;
@@ -89,6 +100,7 @@ project
 
       return $(result) ;
    }
+}
 
    test-suite "system"
        : [ system-run error_code_test.cpp ]
