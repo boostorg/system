@@ -38,7 +38,7 @@
 #define BOOST_SYSTEM_NOEXCEPT BOOST_NOEXCEPT
 #endif
 
-#if !defined(BOOST_NO_CXX14_CONSTEXPR) && !defined(BOOST_ERROR_CODE_HEADER_ONLY)
+#if !defined(BOOST_NO_CXX14_CONSTEXPR)
 # define BOOST_SYSTEM_HAS_CONSTEXPR
 #endif
 
@@ -373,19 +373,58 @@ public:
 
 } // namespace detail
 
+#define BOOST_SYSTEM_REQUIRE_CONST_INIT
+
+#if defined(__has_cpp_attribute)
+#if __has_cpp_attribute(clang::require_constant_initialization)
+# undef BOOST_SYSTEM_REQUIRE_CONST_INIT
+# define BOOST_SYSTEM_REQUIRE_CONST_INIT [[clang::require_constant_initialization]]
+#endif
+#endif
+
 #if defined(BOOST_ERROR_CODE_HEADER_ONLY)
 
-BOOST_SYSTEM_CONSTEXPR inline const error_category & system_category() BOOST_SYSTEM_NOEXCEPT
+# if defined(BOOST_SYSTEM_HAS_CONSTEXPR)
+
+namespace detail
+{
+
+template<class T> struct cat_holder
+{
+    static system_error_category system_category_instance;
+    static generic_error_category generic_category_instance;
+};
+
+template<class T> BOOST_SYSTEM_REQUIRE_CONST_INIT system_error_category cat_holder<T>::system_category_instance;
+template<class T> BOOST_SYSTEM_REQUIRE_CONST_INIT generic_error_category cat_holder<T>::generic_category_instance;
+
+} // namespace detail
+
+constexpr const error_category & system_category() BOOST_SYSTEM_NOEXCEPT
+{
+    return detail::cat_holder<void>::system_category_instance;
+}
+
+constexpr const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
+{
+    return detail::cat_holder<void>::generic_category_instance;
+}
+
+# else
+
+inline const error_category & system_category() BOOST_SYSTEM_NOEXCEPT
 {
     static const detail::system_error_category system_category_instance;
     return system_category_instance;
 }
 
-BOOST_SYSTEM_CONSTEXPR inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
+inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
 {
     static const detail::generic_error_category generic_category_instance;
     return generic_category_instance;
 }
+
+# endif
 
 #elif defined(BOOST_SYSTEM_HAS_CONSTEXPR)
 

@@ -452,20 +452,11 @@ namespace detail
 
 #elif defined(BOOST_SYSTEM_HAS_CONSTEXPR)
 
-#define BOOST_SYSTEM_CONST_INIT
-
-#if defined(__has_cpp_attribute)
-#if __has_cpp_attribute(clang::require_constant_initialization)
-# undef BOOST_SYSTEM_CONST_INIT
-# define BOOST_SYSTEM_CONST_INIT [[clang::require_constant_initialization]]
-#endif
-#endif
-
 namespace detail
 {
 
-BOOST_SYSTEM_CONST_INIT BOOST_SYSTEM_DECL system_error_category system_category_instance;
-BOOST_SYSTEM_CONST_INIT BOOST_SYSTEM_DECL generic_error_category generic_category_instance;
+BOOST_SYSTEM_REQUIRE_CONST_INIT BOOST_SYSTEM_DECL system_error_category system_category_instance;
+BOOST_SYSTEM_REQUIRE_CONST_INIT BOOST_SYSTEM_DECL generic_error_category generic_category_instance;
 
 BOOST_SYSTEM_DECL const error_category & system_category_ncx() BOOST_SYSTEM_NOEXCEPT
 {
@@ -478,8 +469,6 @@ BOOST_SYSTEM_DECL const error_category & generic_category_ncx() BOOST_SYSTEM_NOE
 }
 
 } // namespace detail
-
-#undef BOOST_SYSTEM_CONST_INIT
 
 #else
 
