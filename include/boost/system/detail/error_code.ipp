@@ -43,19 +43,14 @@ namespace detail
 {
 
 #ifdef BOOST_ERROR_CODE_HEADER_ONLY
-# define BOOST_SYSTEM_INLINE inline
+# define BOOST_SYSTEM_DECL_ inline
 #else
-# define BOOST_SYSTEM_INLINE
+# define BOOST_SYSTEM_DECL_ BOOST_SYSTEM_DECL
 #endif
 
   //  generic_error_category implementation  ---------------------------------//
 
-  BOOST_SYSTEM_INLINE const char * generic_error_category::name() const BOOST_SYSTEM_NOEXCEPT
-  {
-    return "generic";
-  }
-
-  BOOST_SYSTEM_INLINE std::string generic_error_category::message( int ev ) const
+  BOOST_SYSTEM_DECL_ std::string generic_error_category::message( int ev ) const
   {
     using namespace boost::system::errc;
 #if defined(__PGI)
@@ -148,12 +143,7 @@ namespace detail
   }
   //  system_error_category implementation  --------------------------------------------//
 
-  BOOST_SYSTEM_INLINE const char * system_error_category::name() const BOOST_SYSTEM_NOEXCEPT
-  {
-    return "system";
-  }
-
-  BOOST_SYSTEM_INLINE error_condition system_error_category::default_error_condition( int ev ) const
+  BOOST_SYSTEM_DECL_ error_condition system_error_category::default_error_condition( int ev ) const
     BOOST_SYSTEM_NOEXCEPT
   {
     using namespace boost::system::errc;
@@ -358,13 +348,13 @@ namespace detail
 
 # if !defined( BOOST_WINDOWS_API )
 
-  BOOST_SYSTEM_INLINE std::string system_error_category::message( int ev ) const
+  BOOST_SYSTEM_DECL_ std::string system_error_category::message( int ev ) const
   {
     return generic_category().message( ev );
   }
 # else
 
-  BOOST_SYSTEM_INLINE std::string system_error_category::message( int ev ) const
+  BOOST_SYSTEM_DECL_ std::string system_error_category::message( int ev ) const
   {
 #if defined(UNDER_CE) || BOOST_PLAT_WINDOWS_RUNTIME || defined(BOOST_NO_ANSI_APIS)
     std::wstring buf(128, wchar_t());
@@ -443,7 +433,7 @@ namespace detail
   }
 # endif
 
-#undef BOOST_SYSTEM_INLINE
+#undef BOOST_SYSTEM_DECL_
 
 } // namespace detail
 
@@ -474,17 +464,17 @@ namespace detail
 namespace detail
 {
 
-BOOST_SYSTEM_CONST_INIT const system_error_category system_category_const;
-BOOST_SYSTEM_CONST_INIT const generic_error_category generic_category_const;
+BOOST_SYSTEM_CONST_INIT BOOST_SYSTEM_DECL system_error_category system_category_instance;
+BOOST_SYSTEM_CONST_INIT BOOST_SYSTEM_DECL generic_error_category generic_category_instance;
 
 BOOST_SYSTEM_DECL const error_category & system_category_ncx() BOOST_SYSTEM_NOEXCEPT
 {
-    return system_category_const;
+    return system_category_instance;
 }
 
 BOOST_SYSTEM_DECL const error_category & generic_category_ncx() BOOST_SYSTEM_NOEXCEPT
 {
-    return generic_category_const;
+    return generic_category_instance;
 }
 
 } // namespace detail
@@ -498,14 +488,14 @@ namespace detail
 
 BOOST_SYSTEM_DECL const error_category & system_category_ncx() BOOST_SYSTEM_NOEXCEPT
 {
-    static const detail::system_error_category system_category_const;
-    return system_category_const;
+    static const detail::system_error_category system_category_instance;
+    return system_category_instance;
 }
 
 BOOST_SYSTEM_DECL const error_category & generic_category_ncx() BOOST_SYSTEM_NOEXCEPT
 {
-    static const detail::generic_error_category generic_category_const;
-    return generic_category_const;
+    static const detail::generic_error_category generic_category_instance;
+    return generic_category_instance;
 }
 
 } // namespace detail

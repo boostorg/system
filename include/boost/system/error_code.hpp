@@ -338,22 +338,38 @@ namespace boost
 namespace detail
 {
 
-    class generic_error_category : public error_category
-    {
-    public:
-      BOOST_SYSTEM_CONSTEXPR generic_error_category(){}
-      const char *   name() const BOOST_SYSTEM_NOEXCEPT;
-      std::string    message( int ev ) const;
-    };
+#ifdef BOOST_ERROR_CODE_HEADER_ONLY
+# define BOOST_SYSTEM_DECL_
+#else
+# define BOOST_SYSTEM_DECL_ BOOST_SYSTEM_DECL
+#endif
 
-    class system_error_category : public error_category
+class generic_error_category: public error_category
+{
+public:
+
+    const char * name() const BOOST_SYSTEM_NOEXCEPT
     {
-    public:
-      BOOST_SYSTEM_CONSTEXPR system_error_category(){}
-      const char *        name() const BOOST_SYSTEM_NOEXCEPT;
-      std::string         message( int ev ) const;
-      error_condition     default_error_condition( int ev ) const BOOST_SYSTEM_NOEXCEPT;
-    };
+        return "generic";
+    }
+
+    BOOST_SYSTEM_DECL_ std::string message( int ev ) const;
+};
+
+class system_error_category: public error_category
+{
+public:
+
+    const char * name() const BOOST_SYSTEM_NOEXCEPT
+    {
+        return "system";
+    }
+
+    BOOST_SYSTEM_DECL_ std::string message( int ev ) const;
+    BOOST_SYSTEM_DECL_ error_condition default_error_condition( int ev ) const BOOST_SYSTEM_NOEXCEPT;
+};
+
+#undef BOOST_SYSTEM_DECL_
 
 } // namespace detail
 
@@ -361,14 +377,14 @@ namespace detail
 
 BOOST_SYSTEM_CONSTEXPR inline const error_category & system_category() BOOST_SYSTEM_NOEXCEPT
 {
-    static const detail::system_error_category system_category_const;
-    return system_category_const;
+    static const detail::system_error_category system_category_instance;
+    return system_category_instance;
 }
 
 BOOST_SYSTEM_CONSTEXPR inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
 {
-    static const detail::generic_error_category generic_category_const;
-    return generic_category_const;
+    static const detail::generic_error_category generic_category_instance;
+    return generic_category_instance;
 }
 
 #elif defined(BOOST_SYSTEM_HAS_CONSTEXPR)
@@ -376,19 +392,19 @@ BOOST_SYSTEM_CONSTEXPR inline const error_category & generic_category() BOOST_SY
 namespace detail
 {
 
-extern const system_error_category system_category_const;
-extern const generic_error_category generic_category_const;
+extern system_error_category system_category_instance;
+extern generic_error_category generic_category_instance;
 
 } // namespace detail
 
 constexpr const error_category & system_category() BOOST_SYSTEM_NOEXCEPT
 {
-    return detail::system_category_const;
+    return detail::system_category_instance;
 }
 
 constexpr const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
 {
-    return detail::generic_category_const;
+    return detail::generic_category_instance;
 }
 
 #else
