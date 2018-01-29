@@ -578,10 +578,14 @@ namespace boost
     inline system::error_code* throws()
     {
       // See github.com/boostorg/system/pull/12 by visigoth for why the return
-      // is poisoned with (1) rather than (0). A test, test_throws_usage(), has
-      // been added to error_code_test.cpp, and as visigoth mentioned it fails
-      // on clang for release builds with a return of 0 but works fine with (1).
-      return reinterpret_cast<system::error_code*>(1);
+      // is poisoned with nonzero rather than (0). A test, test_throws_usage(),
+      // has been added to error_code_test.cpp, and as visigoth mentioned it
+      // fails on clang for release builds with a return of 0 but works fine
+      // with (1).
+      // Since the undefined behavior sanitizer (-fsanitize=undefined) does not
+      // allow a reference to be formed to the unaligned address of (1), we use
+      // (8) instead.
+      return reinterpret_cast<system::error_code*>(8);
     }
   }
 
