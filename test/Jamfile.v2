@@ -125,6 +125,7 @@ else
          [ run single_instance_test.cpp single_instance_lib1 single_instance_lib2 : : : <link>static : single_instance_lib_static ]
          [ run single_instance_test.cpp single_instance_lib1 single_instance_lib2 : : : <link>shared : single_instance_lib_shared ]
          [ system-run before_main_test.cpp ]
+         [ run-fail throws_assign_fail.cpp ]
          [ system-run- constexpr_test.cpp ]
          ;
 
