@@ -43,7 +43,7 @@
 # define BOOST_SYSTEM_HAS_CONSTEXPR
 #endif
 
-#if defined(__GNUC__) && (__GNUC__ == 7 || __GNUC__ == 8) && __cplusplus >= 201700L
+#if defined(__GNUC__) && (__GNUC__ == 7 && __GNUC_MINOR__ < 4) && __cplusplus >= 201700L
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83835
 #  undef BOOST_SYSTEM_HAS_CONSTEXPR
 #endif
