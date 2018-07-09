@@ -57,6 +57,9 @@ environment:
       ADDPATH: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin;
       TOOLSET: gcc
       CXXSTD: 03,11
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      TOOLSET: clang
+      CXXSTD: 14
 
 install:
   - set BOOST_BRANCH=develop
