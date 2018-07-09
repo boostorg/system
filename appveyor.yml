@@ -15,9 +15,9 @@ branches:
 environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      TOOLSET: clang-win
-      CXXSTD: 14
+      TOOLSET: msvc-clang
       CLANG_WIN: 1
+      USER_CONFIG: using msvc : clang : clang-cl.exe ;
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       TOOLSET: msvc-9.0
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
@@ -81,4 +81,5 @@ build: off
 test_script:
   - PATH=%ADDPATH%%PATH%
   - if not "%CXXSTD%" == "" set CXXSTD=cxxstd=%CXXSTD%
+  - if not "%USER_CONFIG%" == "" echo %USER_CONFIG% > %HOMEDRIVE%%HOMEPATH%\user-config.jam
   - b2 -j3 libs/system/test toolset=%TOOLSET% variant=debug,release %CXXSTD%
