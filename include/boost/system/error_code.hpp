@@ -48,6 +48,12 @@
 #  undef BOOST_SYSTEM_HAS_CONSTEXPR
 #endif
 
+#if defined(__clang__) && defined(_MSC_VER) && defined(_CPPLIB_VER)
+// Clang on Windows with MSVC headers, the constructor of std::error_category
+// is not constexpr at least up to VS2017 15.7.x (_MSVC_STL_UPDATE 201803)
+#  undef BOOST_SYSTEM_HAS_CONSTEXPR
+#endif
+
 #if defined(BOOST_SYSTEM_HAS_CONSTEXPR)
 # define BOOST_SYSTEM_CONSTEXPR constexpr
 #else
