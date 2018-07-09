@@ -15,7 +15,7 @@ branches:
 environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      TOOLSET: clang
+      TOOLSET: clang-win
       CXXSTD: 14
       CLANG_WIN: 1
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
