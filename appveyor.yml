@@ -14,10 +14,10 @@ branches:
 
 environment:
   matrix:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      TOOLSET: msvc
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      TOOLSET: clang
       CLANG_WIN: 1
-      USER_CONFIG: "using msvc : : clang-cl.exe ;"
+      USER_CONFIG: "using clang-win : : : <compatibility>vc14 ;"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       TOOLSET: msvc-9.0
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
