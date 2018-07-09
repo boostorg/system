@@ -76,11 +76,12 @@ project
       return $(result) ;
    }
 
-if [ os.environ UBSAN ]
+if [ os.environ UBSAN ] || [ os.environ CLANG_WIN ]
 {
    rule system-run ( sources + )
    {
       # The 03/11 tests are ODR violations, no point running them under -fsanitize=undefined
+      # Clang on Windows uses MSVC headers, which don't parse under 03/11
       return [ system-run- $(sources) ] ;
    }
 }
