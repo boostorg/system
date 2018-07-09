@@ -15,7 +15,7 @@ branches:
 environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      TOOLSET: clang
+      TOOLSET: clang-win
       CLANG_WIN: 1
       USER_CONFIG: "using clang-win : : clang-cl.exe : <compatibility>vc14 ;"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
