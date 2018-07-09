@@ -17,7 +17,7 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       TOOLSET: msvc-clang
       CLANG_WIN: 1
-      USER_CONFIG: using msvc : clang : clang-cl.exe ;
+      USER_CONFIG: "using msvc : clang : clang-cl.exe ;"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       TOOLSET: msvc-9.0
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
