@@ -54,6 +54,11 @@
 #  undef BOOST_SYSTEM_HAS_CONSTEXPR
 #endif
 
+#if defined(__clang__) && defined(BOOST_LIBSTDCXX_VERSION) && BOOST_LIBSTDCXX_VERSION < 40900
+// The constructor of std::error_category is not constexpr in libstdc++ 4.8
+#  undef BOOST_SYSTEM_HAS_CONSTEXPR
+#endif
+
 #if defined(BOOST_SYSTEM_HAS_CONSTEXPR)
 # define BOOST_SYSTEM_CONSTEXPR constexpr
 #else
