@@ -15,7 +15,7 @@
 #include <boost/system/config.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/enable_if.hpp>
 #include <ostream>
 #include <string>
 #include <stdexcept>
@@ -528,7 +528,7 @@ inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
 
       template <class ErrorConditionEnum>
         error_condition(ErrorConditionEnum e,
-          typename boost::enable_if<is_error_condition_enum<ErrorConditionEnum> >::type*
+          typename boost::enable_if_<is_error_condition_enum<ErrorConditionEnum>::value>::type*
             = 0) BOOST_SYSTEM_NOEXCEPT
       {
         *this = make_error_condition(e);
@@ -543,7 +543,7 @@ inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
       }
 
       template<typename ErrorConditionEnum>
-        typename boost::enable_if<is_error_condition_enum<ErrorConditionEnum>,
+        typename boost::enable_if_<is_error_condition_enum<ErrorConditionEnum>::value,
           error_condition>::type &
           operator=( ErrorConditionEnum val ) BOOST_SYSTEM_NOEXCEPT
       {
@@ -638,7 +638,7 @@ inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
 
       template <class ErrorCodeEnum>
         error_code(ErrorCodeEnum e,
-          typename boost::enable_if<is_error_code_enum<ErrorCodeEnum> >::type* = 0)
+          typename boost::enable_if_<is_error_code_enum<ErrorCodeEnum>::value>::type* = 0)
           BOOST_SYSTEM_NOEXCEPT
       {
         *this = make_error_code(e);
@@ -652,7 +652,7 @@ inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
       }
 
       template<typename ErrorCodeEnum>
-        typename boost::enable_if<is_error_code_enum<ErrorCodeEnum>, error_code>::type &
+        typename boost::enable_if_<is_error_code_enum<ErrorCodeEnum>::value, error_code>::type &
           operator=( ErrorCodeEnum val ) BOOST_SYSTEM_NOEXCEPT
       {
         *this = make_error_code(val);
