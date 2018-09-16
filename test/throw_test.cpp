@@ -18,7 +18,6 @@
 #define BOOST_SYSTEM_SOURCE 
 
 #include <boost/system/system_error.hpp>
-#include <boost/system/config.hpp>
 
 namespace boost
 {
