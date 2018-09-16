@@ -1,6 +1,7 @@
-//  error_code support implementation file  ----------------------------------//
+//  error_code stub implementation, for compatibility only
 
 //  Copyright Beman Dawes 2002, 2006
+//  Copyright Peter Dimov 2018
 
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -9,12 +10,24 @@
 
 //----------------------------------------------------------------------------//
 
-// define BOOST_SYSTEM_SOURCE so that <boost/system/config.hpp> knows
-// the library is being built (possibly exporting rather than importing code)
-#define BOOST_SYSTEM_SOURCE
+#include <boost/config.hpp>
 
-#include <boost/system/error_code.hpp>
-
-#ifndef BOOST_ERROR_CODE_HEADER_ONLY
-#include <boost/system/detail/error_code.ipp>
+#if defined(BOOST_ALL_DYN_LINK) || defined(BOOST_SYSTEM_DYN_LINK)
+# define BOOST_SYSTEM_DECL BOOST_SYMBOL_EXPORT
+#else
+# define BOOST_SYSTEM_DECL
 #endif
+
+namespace boost
+{
+
+namespace system
+{
+
+BOOST_SYSTEM_DECL void dummy_exported_function()
+{
+}
+
+} // namespace system
+
+} // namespace boost
