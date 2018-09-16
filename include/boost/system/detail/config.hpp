@@ -65,10 +65,4 @@
 #endif
 #endif
 
-// BOOST_SYSTEM_WIN32
-
-#if defined( _WIN32 ) || defined( __CYGWIN__ )
-# define BOOST_SYSTEM_WIN32
-#endif
-
 #endif // BOOST_SYSTEM_DETAIL_CONFIG_HPP_INCLUDED

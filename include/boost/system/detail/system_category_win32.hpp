@@ -1,18 +1,17 @@
 // Windows implementation of system_error_category
-
+//
 // Copyright Beman Dawes 2002, 2006
 // Copyright (c) Microsoft Corporation 2014
 // Copyright 2018 Peter Dimov
-
-//  Distributed under the Boost Software License, Version 1.0. (See accompanying
-//  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-
-//  See library home page at http://www.boost.org/libs/system
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+// See library home page at http://www.boost.org/libs/system
 
 #include <boost/winapi/error_codes.hpp>
 #include <boost/winapi/error_handling.hpp>
 #include <boost/winapi/character_code_conversion.hpp>
-#include <vector>
 
 //
 

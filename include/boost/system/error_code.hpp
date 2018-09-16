@@ -10,6 +10,7 @@
 //
 //  See library home page at http://www.boost.org/libs/system
 
+#include <boost/system/api_config.hpp>
 #include <boost/system/detail/config.hpp>
 #include <boost/type_traits/enable_if.hpp>
 #include <boost/cstdint.hpp>
@@ -748,7 +749,7 @@ inline std::string generic_error_category::message( int ev ) const
 
 // system_error_category implementation
 
-#if defined(BOOST_SYSTEM_WIN32)
+#if defined(BOOST_WINDOWS_API)
 
 #include <boost/system/detail/system_category_win32.hpp>
 
@@ -762,7 +763,9 @@ inline boost::system::error_condition boost::system::detail::system_error_catego
     return system_category_default_error_condition_win32( ev );
 }
 
-#else // #if defined(BOOST_SYSTEM_WIN32)
+#else // #if defined(BOOST_WINDOWS_API)
+
+#include <boost/system/detail/system_category_posix.hpp>
 
 inline std::string boost::system::detail::system_error_category::message( int ev ) const
 {
@@ -771,10 +774,10 @@ inline std::string boost::system::detail::system_error_category::message( int ev
 
 inline boost::system::error_condition boost::system::detail::system_error_category::default_error_condition( int ev ) const BOOST_NOEXCEPT
 {
-    return boost::system::error_condition( ev, generic_category() );
+    return system_category_default_error_condition_posix( ev );
 }
 
-#endif // #if defined(BOOST_SYSTEM_WIN32)
+#endif // #if defined(BOOST_WINDOWS_API)
 
 // interoperability with std::error_code, std::error_condition
 
