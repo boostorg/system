@@ -9,11 +9,17 @@
 // See http://www.boost.org/libs/system for documentation.
 
 #include <boost/config.hpp>
+#include <boost/config/workaround.hpp>
 
 // BOOST_SYSTEM_HAS_SYSTEM_ERROR
 
 #if !defined(BOOST_NO_CXX11_HDR_SYSTEM_ERROR)
 # define BOOST_SYSTEM_HAS_SYSTEM_ERROR
+#endif
+
+#if BOOST_WORKAROUND(BOOST_GCC, < 40600)
+// g++ 4.4's <map> is not good enough
+# undef BOOST_SYSTEM_HAS_SYSTEM_ERROR
 #endif
 
 // BOOST_SYSTEM_NOEXCEPT
