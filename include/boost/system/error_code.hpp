@@ -27,6 +27,10 @@
 # include <system_error>
 #endif
 
+#if !defined(BOOST_POSIX_API) && !defined(BOOST_WINDOWS_API)
+#  error BOOST_POSIX_API or BOOST_WINDOWS_API must be defined
+#endif
+
 namespace boost
 {
 
