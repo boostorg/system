@@ -15,12 +15,8 @@ project
       <library>/boost/system//boost_system
       <toolset>msvc:<asynch-exceptions>on
     ;
-    
-   lib throw_test
-     : throw_test.cpp
-     : <link>shared:<define>BOOST_SYSTEM_DYN_LINK=1
-       <link>static:<define>BOOST_SYSTEM_STATIC_LINK=1
-     ;
+
+   lib throw_test : throw_test.cpp : <link>shared:<define>THROW_DYN_LINK=1 ;
 
    lib single_instance_lib1 : single_instance_1.cpp : <link>shared:<define>SINGLE_INSTANCE_DYN_LINK ;
    lib single_instance_lib2 : single_instance_2.cpp : <link>shared:<define>SINGLE_INSTANCE_DYN_LINK ;
