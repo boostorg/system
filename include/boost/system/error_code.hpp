@@ -159,7 +159,7 @@ template<> struct is_error_condition_enum<errc::errc_t>
 #pragma warning( disable: 4355 )
 #endif
 
-class error_category
+class BOOST_SYMBOL_VISIBLE error_category
 {
 #if !defined(BOOST_NO_CXX11_DELETED_FUNCTIONS)
 public:
@@ -257,7 +257,7 @@ public:
 namespace detail
 {
 
-class generic_error_category: public error_category
+class BOOST_SYMBOL_VISIBLE generic_error_category: public error_category
 {
 public:
 
@@ -275,7 +275,7 @@ public:
     std::string message( int ev ) const;
 };
 
-class system_error_category: public error_category
+class BOOST_SYMBOL_VISIBLE system_error_category: public error_category
 {
 public:
 

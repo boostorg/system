@@ -22,7 +22,7 @@ namespace system
 namespace detail
 {
 
-class std_category: public std::error_category
+class BOOST_SYMBOL_VISIBLE std_category: public std::error_category
 {
 private:
 
