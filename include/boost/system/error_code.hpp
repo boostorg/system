@@ -225,13 +225,13 @@ namespace boost
 
     //  class error_category  ------------------------------------------------//
 
-    class error_category : public noncopyable
+    class BOOST_SYMBOL_VISIBLE error_category : public noncopyable
     {
 #ifndef BOOST_NO_CXX11_HDR_SYSTEM_ERROR
 
     private:
 
-      class std_category: public std::error_category
+      class BOOST_SYMBOL_VISIBLE std_category: public std::error_category
       {
       private:
 
@@ -282,7 +282,7 @@ namespace boost
 
     private:
 
-      class std_category
+      class BOOST_SYMBOL_VISIBLE std_category
       {
       private:
 
