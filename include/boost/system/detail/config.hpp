@@ -16,11 +16,6 @@
 # define BOOST_SYSTEM_HAS_SYSTEM_ERROR
 #endif
 
-#if defined(BOOST_MSVC) && BOOST_MSVC < 1700
-// msvc-10.0 has no two-argument map::emplace
-# undef BOOST_SYSTEM_HAS_SYSTEM_ERROR
-#endif
-
 // BOOST_SYSTEM_NOEXCEPT
 // Retained for backward compatibility only
 

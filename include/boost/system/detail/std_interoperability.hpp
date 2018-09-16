@@ -9,6 +9,7 @@
 
 #include <system_error>
 #include <map>
+#include <memory>
 
 //
 
@@ -29,7 +30,7 @@ private:
 
 public:
 
-    std_category( boost::system::error_category const * pc ): pc_( pc )
+    explicit std_category( boost::system::error_category const * pc ): pc_( pc )
     {
     }
 
@@ -54,13 +55,22 @@ public:
 
 inline std::error_category const & to_std_category( boost::system::error_category const & cat )
 {
-    typedef std::map<boost::system::error_category const *, std_category> map_type;
+    typedef std::map< boost::system::error_category const *, std::unique_ptr<std_category> > map_type;
 
     static map_type map_;
 
-    std::pair<map_type::iterator, bool> p = map_.emplace( &cat, &cat );
+    map_type::iterator i = map_.find( &cat );
 
-    return p.first->second;
+    if( i == map_.end() )
+    {
+        std::unique_ptr<std_category> p( new std_category( &cat ) );
+
+        std::pair<map_type::iterator, bool> r = map_.insert( map_type::value_type( &cat, std::move( p ) ) );
+
+        i = r.first;
+    }
+
+    return *i->second;
 }
 
 inline bool std_category::equivalent( int code, const std::error_condition & condition ) const BOOST_NOEXCEPT
