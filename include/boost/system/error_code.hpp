@@ -162,8 +162,14 @@ template<> struct is_error_condition_enum<errc::errc_t>
 #pragma warning( disable: 4355 )
 #endif
 
+std::size_t hash_value( error_code const & ec );
+
 class BOOST_SYMBOL_VISIBLE error_category
 {
+private:
+
+    friend std::size_t hash_value( error_code const & ec );
+
 #if !defined(BOOST_NO_CXX11_DELETED_FUNCTIONS)
 public:
 
@@ -692,10 +698,31 @@ template <class charT, class traits>
     return os;
 }
 
-inline std::size_t hash_value( const error_code & ec )
+inline std::size_t hash_value( error_code const & ec )
 {
-    // TODO use category id_, FNV combiner
-    return static_cast<std::size_t>( ec.value() ) + reinterpret_cast<std::size_t>( &ec.category() );
+    error_category const & cat = ec.category();
+
+    boost::ulong_long_type id = cat.id_;
+
+    if( id == 0 )
+    {
+        id = reinterpret_cast<boost::ulong_long_type>( &cat );
+    }
+
+    boost::ulong_long_type hv = 0xCBF29CE484222325ull;
+    boost::ulong_long_type const prime = 0x00000100000001B3ull;
+
+    // id
+
+    hv ^= id;
+    hv *= prime;
+
+    // value
+
+    hv ^= static_cast<unsigned>( ec.value() );
+    hv *= prime;
+
+    return static_cast<std::size_t>( hv );
 }
 
 // make_* functions for errc::errc_t

@@ -25,8 +25,23 @@ error_code get_generic_code();
 
 int main()
 {
-    BOOST_TEST_EQ( lib1::get_system_code(), lib2::get_system_code() );
-    BOOST_TEST_EQ( lib1::get_generic_code(), lib2::get_generic_code() );
+    {
+        error_code e1 = lib1::get_system_code();
+        error_code e2 = lib2::get_system_code();
+
+        BOOST_TEST_EQ( e1, e2 );
+
+        BOOST_TEST_EQ( hash_value( e1 ), hash_value( e2 ) );
+    }
+
+    {
+        error_code e1 = lib1::get_generic_code();
+        error_code e2 = lib2::get_generic_code();
+
+        BOOST_TEST_EQ( e1, e2 );
+
+        BOOST_TEST_EQ( hash_value( e1 ), hash_value( e2 ) );
+    }
 
     return boost::report_errors();
 }
