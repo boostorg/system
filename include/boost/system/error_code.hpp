@@ -12,7 +12,6 @@
 
 #include <boost/system/api_config.hpp>
 #include <boost/system/detail/config.hpp>
-#include <boost/type_traits/enable_if.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/config.hpp>
 #include <ostream>
@@ -355,6 +354,22 @@ static const error_category & native_ecat BOOST_ATTRIBUTE_UNUSED = system_catego
 
 #endif
 
+// enable_if
+
+namespace detail
+{
+
+template<bool C, class T = void> struct enable_if
+{
+    typedef T type;
+};
+
+template<class T> struct enable_if<false, T>
+{
+};
+
+} // namespace detail
+
 // class error_condition
 
 // error_conditions are portable, error_codes are system or library specific
@@ -379,7 +394,7 @@ public:
     }
 
     template<class ErrorConditionEnum> BOOST_SYSTEM_CONSTEXPR error_condition( ErrorConditionEnum e,
-        typename boost::enable_if_<is_error_condition_enum<ErrorConditionEnum>::value>::type* = 0) BOOST_NOEXCEPT
+        typename detail::enable_if<is_error_condition_enum<ErrorConditionEnum>::value>::type* = 0) BOOST_NOEXCEPT
     {
         *this = make_error_condition( e );
     }
@@ -393,7 +408,7 @@ public:
     }
 
     template<typename ErrorConditionEnum>
-        BOOST_SYSTEM_CONSTEXPR typename boost::enable_if_<is_error_condition_enum<ErrorConditionEnum>::value, error_condition>::type &
+        BOOST_SYSTEM_CONSTEXPR typename detail::enable_if<is_error_condition_enum<ErrorConditionEnum>::value, error_condition>::type &
         operator=( ErrorConditionEnum val ) BOOST_NOEXCEPT
     {
         *this = make_error_condition( val );
@@ -499,8 +514,8 @@ public:
     {
     }
 
-    template <class ErrorCodeEnum> BOOST_SYSTEM_CONSTEXPR error_code( ErrorCodeEnum e,
-        typename boost::enable_if_<is_error_code_enum<ErrorCodeEnum>::value>::type* = 0 ) BOOST_NOEXCEPT
+    template<class ErrorCodeEnum> BOOST_SYSTEM_CONSTEXPR error_code( ErrorCodeEnum e,
+        typename detail::enable_if<is_error_code_enum<ErrorCodeEnum>::value>::type* = 0 ) BOOST_NOEXCEPT
     {
         *this = make_error_code( e );
     }
@@ -514,7 +529,7 @@ public:
     }
 
     template<typename ErrorCodeEnum>
-        BOOST_SYSTEM_CONSTEXPR typename boost::enable_if_<is_error_code_enum<ErrorCodeEnum>::value, error_code>::type &
+        BOOST_SYSTEM_CONSTEXPR typename detail::enable_if<is_error_code_enum<ErrorCodeEnum>::value, error_code>::type &
         operator=( ErrorCodeEnum val ) BOOST_NOEXCEPT
     {
         *this = make_error_code( val );
