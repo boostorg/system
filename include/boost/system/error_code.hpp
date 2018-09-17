@@ -252,7 +252,7 @@ public:
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
-    operator std::error_category const & () const BOOST_NOEXCEPT;
+    operator std::error_category const & () const;
 
 #endif
 };
@@ -831,7 +831,7 @@ inline boost::system::error_condition boost::system::detail::system_error_catego
 
 #include <boost/system/detail/std_interoperability.hpp>
 
-inline boost::system::error_category::operator std::error_category const & () const BOOST_NOEXCEPT
+inline boost::system::error_category::operator std::error_category const & () const
 {
     return boost::system::detail::to_std_category( *this );
 }
