@@ -10,14 +10,15 @@
 
 #include <boost/system/error_code.hpp>
 #include <boost/config/pragma_message.hpp>
-#include <boost/core/lightweight_test.hpp>
 
 #if !defined(BOOST_WINDOWS_API)
 
 BOOST_PRAGMA_MESSAGE( "Skipping test, BOOST_WINDOWS_API is not defined" )
+int main() {}
 
 #else
 
+#include <boost/core/lightweight_test.hpp>
 #include <windows.h>
 
 int main()
