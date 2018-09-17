@@ -10,13 +10,11 @@
 
 //----------------------------------------------------------------------------//
 
-#include <boost/config.hpp>
+// define BOOST_SYSTEM_SOURCE so that <boost/system/config.hpp> knows
+// the library is being built (possibly exporting rather than importing code)
+#define BOOST_SYSTEM_SOURCE
 
-#if defined(BOOST_ALL_DYN_LINK) || defined(BOOST_SYSTEM_DYN_LINK)
-# define BOOST_SYSTEM_DECL BOOST_SYMBOL_EXPORT
-#else
-# define BOOST_SYSTEM_DECL
-#endif
+#include <boost/system/config.hpp>
 
 namespace boost
 {
