@@ -17,7 +17,6 @@
 #include <ostream>
 #include <string>
 #include <functional>
-#include <cstring>
 
 // TODO: undef these macros if not already defined
 #include <boost/cerrno.hpp>
@@ -761,37 +760,18 @@ inline bool error_category::equivalent( const error_code & code, int condition )
     return *this == code.category() && code.value() == condition;
 }
 
-// generic_error_category implementation
-
-namespace detail
-{
-
-inline char const * generic_error_category_message( int ev )
-{
-#ifdef BOOST_MSVC
-#pragma warning( push )
-#pragma warning( disable: 4996 )
-#endif
-
-    char const * m = std::strerror( ev );
-
-#ifdef BOOST_MSVC
-#pragma warning( pop )
-#endif
-
-    return m? m: "Unknown error";
-}
-
-inline std::string generic_error_category::message( int ev ) const
-{
-    return generic_error_category_message( ev );
-}
-
-} // namespace detail
-
 } // namespace system
 
 } // namespace boost
+
+// generic_error_category implementation
+
+#include <boost/system/detail/generic_category.hpp>
+
+inline std::string boost::system::detail::generic_error_category::message( int ev ) const
+{
+    return generic_error_category_message( ev );
+}
 
 // system_error_category implementation
 
