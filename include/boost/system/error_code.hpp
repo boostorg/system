@@ -14,8 +14,8 @@
 
 #include <boost/system/config.hpp>
 #include <boost/cstdint.hpp>
-#include <boost/core/noncopyable.hpp>
-#include <boost/core/enable_if.hpp>
+#include <boost/noncopyable.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <ostream>
 #include <string>
 #include <stdexcept>
