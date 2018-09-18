@@ -58,12 +58,6 @@
 #  undef BOOST_SYSTEM_HAS_CONSTEXPR
 #endif
 
-#if defined(BOOST_MSVC) && BOOST_MSVC < 1920
-// msvc-14.1 does not implement correct static initialization for
-// classes with constexpr constructors
-#  undef BOOST_SYSTEM_HAS_CONSTEXPR
-#endif
-
 #if defined(BOOST_SYSTEM_HAS_CONSTEXPR)
 # define BOOST_SYSTEM_CONSTEXPR constexpr
 #else
