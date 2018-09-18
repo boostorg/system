@@ -361,7 +361,7 @@ namespace detail
 # define BOOST_SYSTEM_DECL_ BOOST_SYSTEM_DECL
 #endif
 
-class BOOST_SYMBOL_VISIBLE generic_error_category: public error_category
+class generic_error_category: public error_category
 {
 public:
 
@@ -379,7 +379,7 @@ public:
     BOOST_SYSTEM_DECL_ std::string message( int ev ) const;
 };
 
-class BOOST_SYMBOL_VISIBLE system_error_category: public error_category
+class system_error_category: public error_category
 {
 public:
 
