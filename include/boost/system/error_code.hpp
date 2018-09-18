@@ -452,17 +452,13 @@ inline const error_category & generic_category() BOOST_SYSTEM_NOEXCEPT
 namespace detail
 {
 
-#if defined(BOOST_SYSTEM_SOURCE) || defined(_MSC_VER)
+#if defined(BOOST_SYSTEM_SOURCE)
 
 // clang++ requires a strictly matching declaration
-// MSVC requires __declspec(dllimport)
-
 BOOST_SYSTEM_DECL extern system_error_category system_category_instance;
 BOOST_SYSTEM_DECL extern generic_error_category generic_category_instance;
 
 #else
-
-// g++ constexpr requires absence of __declspec(dllimport)
 
 extern system_error_category system_category_instance;
 extern generic_error_category generic_category_instance;
