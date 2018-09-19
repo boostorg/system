@@ -45,7 +45,6 @@ inline std::string generic_error_category_message( int ev )
 
 inline std::string generic_error_category_message( int ev )
 {
-
 # if defined( BOOST_MSVC )
 #  pragma warning( push )
 #  pragma warning( disable: 4996 )
@@ -58,9 +57,9 @@ inline std::string generic_error_category_message( int ev )
 # endif
 
     return m? m: "Unknown error";
+}
 
 #endif
-}
 
 } // namespace detail
 
