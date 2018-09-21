@@ -14,6 +14,7 @@
 #include <boost/system/error_code.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <cstring>
+#include <cstdio>
 
 //
 
@@ -51,7 +52,10 @@ std::string sys_strerror( int ev )
 
     if( retval == 0 )
     {
-        return "Unknown error";
+        char buffer[ 38 ];
+
+        std::sprintf( buffer, "Unknown error (%d)", ev );
+        return buffer;
     }
 
     std::string str( static_cast<char const*>( lpMsgBuf ) );

@@ -13,6 +13,7 @@
 #include <boost/winapi/error_handling.hpp>
 #include <boost/winapi/character_code_conversion.hpp>
 #include <boost/winapi/local_memory.hpp>
+#include <cstdio>
 
 //
 
@@ -24,6 +25,35 @@ namespace system
 
 namespace detail
 {
+
+#if defined(_MSC_VER) && _MSC_VER < 1900
+
+inline char const * unknown_message_win32( int ev, char * buffer, std::size_t len )
+{
+# if defined( BOOST_MSVC )
+#  pragma warning( push )
+#  pragma warning( disable: 4996 )
+# endif
+
+    _snprintf( buffer, len - 1, "Unknown error (%d)", ev );
+
+    buffer[ len - 1 ] = 0;
+    return buffer;
+
+# if defined( BOOST_MSVC )
+#  pragma warning( pop )
+# endif
+}
+
+#else
+
+inline char const * unknown_message_win32( int ev, char * buffer, std::size_t len )
+{
+    std::snprintf( buffer, len, "Unknown error (%d)", ev );
+    return buffer;
+}
+
+#endif
 
 inline char const * system_category_message_win32( int ev, char * buffer, std::size_t len ) BOOST_NOEXCEPT
 {
@@ -62,14 +92,14 @@ inline char const * system_category_message_win32( int ev, char * buffer, std::s
 
     if( retval == 0 )
     {
-        return "Unknown error";
+        return unknown_message_win32( ev, buffer, len );
     }
 
     int r = boost::winapi::WideCharToMultiByte( CP_ACP_, 0, wbuffer, -1, buffer, static_cast<int>( len ), NULL, NULL );
 
     if( r == 0 )
     {
-        return "Unknown error";
+        return unknown_message_win32( ev, buffer, len );
     }
 
     --r; // exclude null terminator
@@ -97,11 +127,17 @@ struct local_free
     }
 };
 
+inline std::string unknown_message_win32( int ev )
+{
+    char buffer[ 38 ];
+    return unknown_message_win32( ev, buffer, sizeof( buffer ) );
+}
+
 inline std::string system_category_message_win32( int ev )
 {
     using namespace boost::winapi;
 
-    void * lpMsgBuf = 0;
+    wchar_t * lpMsgBuf = 0;
 
     DWORD_ retval = boost::winapi::FormatMessageW(
         FORMAT_MESSAGE_ALLOCATE_BUFFER_ | FORMAT_MESSAGE_FROM_SYSTEM_ | FORMAT_MESSAGE_IGNORE_INSERTS_,
@@ -113,20 +149,27 @@ inline std::string system_category_message_win32( int ev )
         NULL
     );
 
-    local_free lf_ = { lpMsgBuf };
-
     if( retval == 0 )
     {
-        return "Unknown error";
+        return unknown_message_win32( ev );
     }
 
-    std::string buffer( retval * 2 + 1, char() );
+    local_free lf_ = { lpMsgBuf };
 
-    int r = boost::winapi::WideCharToMultiByte( CP_ACP_, 0, static_cast<wchar_t const*>( lpMsgBuf ), -1, &buffer[0], static_cast<int>( buffer.size() ), NULL, NULL );
+    int r = boost::winapi::WideCharToMultiByte( CP_ACP_, 0, lpMsgBuf, -1, 0, 0, NULL, NULL );
 
     if( r == 0 )
     {
-        return "Unknown error";
+        return unknown_message_win32( ev );
+    }
+
+    std::string buffer( r, char() );
+
+    r = boost::winapi::WideCharToMultiByte( CP_ACP_, 0, lpMsgBuf, -1, &buffer[0], r, NULL, NULL );
+
+    if( r == 0 )
+    {
+        return unknown_message_win32( ev );
     }
 
     --r; // exclude null terminator
