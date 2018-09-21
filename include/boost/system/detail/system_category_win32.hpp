@@ -95,7 +95,17 @@ inline char const * system_category_message_win32( int ev, char * buffer, std::s
         return unknown_message_win32( ev, buffer, len );
     }
 
-    int r = boost::winapi::WideCharToMultiByte( CP_ACP_, 0, wbuffer, -1, buffer, static_cast<int>( len ), NULL, NULL );
+#if defined(BOOST_SYSTEM_USE_UTF8)
+
+    UINT_ code_page = CP_UTF8_;
+
+#else
+
+    UINT_ code_page = CP_ACP_;
+
+#endif
+
+    int r = boost::winapi::WideCharToMultiByte( code_page, 0, wbuffer, -1, buffer, static_cast<int>( len ), NULL, NULL );
 
     if( r == 0 )
     {
@@ -156,7 +166,17 @@ inline std::string system_category_message_win32( int ev )
 
     local_free lf_ = { lpMsgBuf };
 
-    int r = boost::winapi::WideCharToMultiByte( CP_ACP_, 0, lpMsgBuf, -1, 0, 0, NULL, NULL );
+#if defined(BOOST_SYSTEM_USE_UTF8)
+
+    UINT_ code_page = CP_UTF8_;
+
+#else
+
+    UINT_ code_page = CP_ACP_;
+
+#endif
+
+    int r = boost::winapi::WideCharToMultiByte( code_page, 0, lpMsgBuf, -1, 0, 0, NULL, NULL );
 
     if( r == 0 )
     {
@@ -165,7 +185,7 @@ inline std::string system_category_message_win32( int ev )
 
     std::string buffer( r, char() );
 
-    r = boost::winapi::WideCharToMultiByte( CP_ACP_, 0, lpMsgBuf, -1, &buffer[0], r, NULL, NULL );
+    r = boost::winapi::WideCharToMultiByte( code_page, 0, lpMsgBuf, -1, &buffer[0], r, NULL, NULL );
 
     if( r == 0 )
     {
