@@ -17,6 +17,7 @@
 #include <ostream>
 #include <string>
 #include <functional>
+#include <cstring>
 
 // TODO: undef these macros if not already defined
 #include <boost/cerrno.hpp>
@@ -213,11 +214,12 @@ public:
 
     virtual const char * name() const BOOST_NOEXCEPT = 0;
 
-    virtual std::string message( int ev ) const = 0;
-
     virtual error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT;
     virtual bool equivalent( int code, const error_condition & condition ) const BOOST_NOEXCEPT;
     virtual bool equivalent( const error_code & code, int condition ) const BOOST_NOEXCEPT;
+
+    virtual std::string message( int ev ) const = 0;
+    virtual char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT;
 
     BOOST_SYSTEM_CONSTEXPR bool operator==( const error_category & rhs ) const BOOST_NOEXCEPT
     {
@@ -281,6 +283,7 @@ public:
     }
 
     std::string message( int ev ) const;
+    char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT;
 };
 
 class BOOST_SYMBOL_VISIBLE system_error_category: public error_category
@@ -296,8 +299,10 @@ public:
         return "system";
     }
 
-    std::string message( int ev ) const;
     error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT;
+
+    std::string message( int ev ) const;
+    char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT;
 };
 
 } // namespace detail
@@ -443,6 +448,11 @@ public:
         return m_cat->message( value() );
     }
 
+    char const * message( char * buffer, std::size_t len ) const BOOST_NOEXCEPT
+    {
+        return m_cat->message( value(), buffer, len );
+    }
+
 #if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
 
     BOOST_SYSTEM_CONSTEXPR explicit operator bool() const BOOST_NOEXCEPT  // true if error
@@ -567,6 +577,11 @@ public:
     std::string message() const
     {
         return m_cat->message( value() );
+    }
+
+    char const * message( char * buffer, std::size_t len ) const BOOST_NOEXCEPT
+    {
+        return m_cat->message( value(), buffer, len );
     }
 
 #if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
@@ -760,6 +775,47 @@ inline bool error_category::equivalent( const error_code & code, int condition )
     return *this == code.category() && code.value() == condition;
 }
 
+inline char const * error_category::message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT
+{
+    if( len == 0 )
+    {
+        return buffer;
+    }
+
+    if( len == 1 )
+    {
+        buffer[0] = 0;
+        return buffer;
+    }
+
+#if !defined(BOOST_NO_EXCEPTIONS)
+    try
+#endif
+    {
+        std::string m = this->message( ev );
+
+# if defined( BOOST_MSVC )
+#  pragma warning( push )
+#  pragma warning( disable: 4996 )
+# endif
+
+        std::strncpy( buffer, m.c_str(), len - 1 );
+        buffer[ len-1 ] = 0;
+
+# if defined( BOOST_MSVC )
+#  pragma warning( pop )
+# endif
+
+        return buffer;
+    }
+#if !defined(BOOST_NO_EXCEPTIONS)
+    catch( ... )
+    {
+        return "Message text unavailable";
+    }
+#endif
+}
+
 } // namespace system
 
 } // namespace boost
@@ -773,34 +829,49 @@ inline std::string boost::system::detail::generic_error_category::message( int e
     return generic_error_category_message( ev );
 }
 
+inline char const * boost::system::detail::generic_error_category::message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT
+{
+    return generic_error_category_message( ev, buffer, len );
+}
+
 // system_error_category implementation
 
 #if defined(BOOST_WINDOWS_API)
 
 #include <boost/system/detail/system_category_win32.hpp>
 
+inline boost::system::error_condition boost::system::detail::system_error_category::default_error_condition( int ev ) const BOOST_NOEXCEPT
+{
+    return system_category_default_error_condition_win32( ev );
+}
+
 inline std::string boost::system::detail::system_error_category::message( int ev ) const
 {
     return system_category_message_win32( ev );
 }
 
-inline boost::system::error_condition boost::system::detail::system_error_category::default_error_condition( int ev ) const BOOST_NOEXCEPT
+inline char const * boost::system::detail::system_error_category::message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT
 {
-    return system_category_default_error_condition_win32( ev );
+    return system_category_message_win32( ev, buffer, len );
 }
 
 #else // #if defined(BOOST_WINDOWS_API)
 
 #include <boost/system/detail/system_category_posix.hpp>
 
+inline boost::system::error_condition boost::system::detail::system_error_category::default_error_condition( int ev ) const BOOST_NOEXCEPT
+{
+    return system_category_default_error_condition_posix( ev );
+}
+
 inline std::string boost::system::detail::system_error_category::message( int ev ) const
 {
     return generic_error_category_message( ev );
 }
 
-inline boost::system::error_condition boost::system::detail::system_error_category::default_error_condition( int ev ) const BOOST_NOEXCEPT
+inline char const * boost::system::detail::system_error_category::message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT
 {
-    return system_category_default_error_condition_posix( ev );
+    return generic_error_category_message( ev, buffer, len );
 }
 
 #endif // #if defined(BOOST_WINDOWS_API)

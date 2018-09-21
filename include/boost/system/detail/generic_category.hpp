@@ -20,44 +20,70 @@ namespace detail
 
 #if defined(__GLIBC__)
 
-// std::strerror is not thread-safe on glibc (for no reason)
-// glibc also has two incompatible strerror_r definitions (for no reason)
+// glibc has two incompatible strerror_r definitions
 
-inline char const * strerror_r_helper( char const * r, char const * )
+inline char const * strerror_r_helper( char const * r, char const * ) BOOST_NOEXCEPT
 {
     return r;
 }
 
-inline char const * strerror_r_helper( int r, char const * buffer )
+inline char const * strerror_r_helper( int r, char const * buffer ) BOOST_NOEXCEPT
 {
     return r == 0? buffer: "Unknown error";
+}
+
+inline char const * generic_error_category_message( int ev, char * buffer, std::size_t len ) BOOST_NOEXCEPT
+{
+    return strerror_r_helper( strerror_r( ev, buffer, len ), buffer );
 }
 
 inline std::string generic_error_category_message( int ev )
 {
     char buffer[ 128 ];
-    return strerror_r_helper( strerror_r( ev, buffer, sizeof( buffer ) ), buffer );
+    return generic_error_category_message( ev, buffer, sizeof( buffer ) );
 }
 
 #else
 
 // std::strerror is thread-safe on everything else, incl. Windows
 
-inline std::string generic_error_category_message( int ev )
-{
 # if defined( BOOST_MSVC )
 #  pragma warning( push )
 #  pragma warning( disable: 4996 )
 # endif
 
+inline std::string generic_error_category_message( int ev )
+{
     char const * m = std::strerror( ev );
+    return m? m: "Unknown error";
+}
+
+inline char const * generic_error_category_message( int ev, char * buffer, std::size_t len ) BOOST_NOEXCEPT
+{
+    if( len == 0 )
+    {
+        return buffer;
+    }
+
+    if( len == 1 )
+    {
+        buffer[0] = 0;
+        return buffer;
+    }
+
+    char const * m = std::strerror( ev );
+
+    if( m == 0 ) return "Unknown error";
+
+    std::strncpy( buffer, m, len - 1 );
+    buffer[ len-1 ] = 0;
+
+    return buffer;
+}
 
 # if defined( BOOST_MSVC )
 #  pragma warning( pop )
 # endif
-
-    return m? m: "Unknown error";
-}
 
 #endif
 
