@@ -214,12 +214,11 @@ public:
 
     virtual const char * name() const BOOST_NOEXCEPT = 0;
 
-    virtual std::string message( int ev ) const = 0;
-
     virtual error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT;
     virtual bool equivalent( int code, const error_condition & condition ) const BOOST_NOEXCEPT;
     virtual bool equivalent( const error_code & code, int condition ) const BOOST_NOEXCEPT;
 
+    virtual std::string message( int ev ) const = 0;
     virtual char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT;
 
     BOOST_SYSTEM_CONSTEXPR bool operator==( const error_category & rhs ) const BOOST_NOEXCEPT
