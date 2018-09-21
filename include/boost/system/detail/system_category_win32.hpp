@@ -12,6 +12,7 @@
 #include <boost/winapi/error_codes.hpp>
 #include <boost/winapi/error_handling.hpp>
 #include <boost/winapi/character_code_conversion.hpp>
+#include <boost/winapi/local_memory.hpp>
 
 //
 
@@ -86,10 +87,63 @@ inline char const * system_category_message_win32( int ev, char * buffer, std::s
     return buffer;
 }
 
+struct local_free
+{
+    void * p_;
+
+    ~local_free()
+    {
+        boost::winapi::LocalFree( p_ );
+    }
+};
+
 inline std::string system_category_message_win32( int ev )
 {
-    char buffer[ 256 ];
-    return system_category_message_win32( ev, buffer, sizeof( buffer ) );
+    using namespace boost::winapi;
+
+    void * lpMsgBuf = 0;
+
+    DWORD_ retval = boost::winapi::FormatMessageW(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER_ | FORMAT_MESSAGE_FROM_SYSTEM_ | FORMAT_MESSAGE_IGNORE_INSERTS_,
+        NULL,
+        ev,
+        MAKELANGID_( LANG_NEUTRAL_, SUBLANG_DEFAULT_ ), // Default language
+        (LPWSTR_) &lpMsgBuf,
+        0,
+        NULL
+    );
+
+    local_free lf_ = { lpMsgBuf };
+
+    if( retval == 0 )
+    {
+        return "Unknown error";
+    }
+
+    std::string buffer( retval * 2 + 1, char() );
+
+    int r = boost::winapi::WideCharToMultiByte( CP_ACP_, 0, static_cast<wchar_t const*>( lpMsgBuf ), -1, &buffer[0], static_cast<int>( buffer.size() ), NULL, NULL );
+
+    if( r == 0 )
+    {
+        return "Unknown error";
+    }
+
+    --r; // exclude null terminator
+
+    while( r > 0 && ( buffer[ r-1 ] == '\n' || buffer[ r-1 ] == '\r' ) )
+    {
+        --r;
+    }
+
+    if( r > 0 && buffer[ r-1 ] == '.' )
+    {
+        --r;
+    }
+
+    buffer.resize( r );
+
+    return buffer;
 }
 
 inline error_condition system_category_default_error_condition_win32( int ev ) BOOST_NOEXCEPT

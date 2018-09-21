@@ -125,6 +125,7 @@ system-run win32_hresult_test.cpp ;
 
 system-run error_category_test.cpp ;
 system-run generic_category_test.cpp ;
+system-run system_category_test.cpp ;
 
 # Quick (CI) test
 run quick.cpp ;

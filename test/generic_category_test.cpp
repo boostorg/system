@@ -25,7 +25,7 @@ int main()
 
     // message
 
-    for( int i = -1; i < 1024; ++i )
+    for( int i = -2; i < 1024; ++i )
     {
         {
             BOOST_TEST_CSTR_EQ( cat.message( i ).c_str(), std::strerror( i ) );
