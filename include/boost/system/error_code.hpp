@@ -494,7 +494,7 @@ public:
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
-    operator std::error_condition () const BOOST_NOEXCEPT
+    operator std::error_condition () const
     {
         return std::error_condition( value(), category() );
     }
@@ -626,7 +626,7 @@ public:
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
-    operator std::error_code () const BOOST_NOEXCEPT
+    operator std::error_code () const
     {
         return std::error_code( value(), category() );
     }
