@@ -5,6 +5,7 @@
 #include <boost/system/error_code.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/core/quick_exit.hpp>
+#include <cerrno>
 
 using namespace boost::system;
 
@@ -20,6 +21,9 @@ struct Z
 };
 
 static Z z;
+
+static error_code e1( 1, system_category() );
+static error_code e2( ENOENT, generic_category() );
 
 int main()
 {
