@@ -128,6 +128,7 @@ system-run generic_category_test.cpp ;
 system-run system_category_test.cpp ;
 system-run after_main_test.cpp ;
 system-run failed_test.cpp ;
+system-run- failed_constexpr_test.cpp ;
 
 # Quick (CI) test
 run quick.cpp ;
