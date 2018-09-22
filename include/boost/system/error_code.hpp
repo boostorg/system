@@ -385,7 +385,33 @@ template<class T> struct enable_if<false, T>
 
 // failed_impl
 
-#if defined(BOOST_SYSTEM_HAS_CONSTEXPR)
+#if !defined(BOOST_SYSTEM_HAS_CONSTEXPR)
+
+inline bool failed_impl( int ev, error_category const & cat )
+{
+    return cat.failed( ev );
+}
+
+#elif BOOST_WORKAROUND(BOOST_GCC, < 60000)
+
+inline bool failed2_impl( int ev, error_category const & cat )
+{
+    return cat.failed( ev );
+}
+
+BOOST_SYSTEM_CONSTEXPR inline bool failed_impl( int ev, error_category const & cat )
+{
+    if( cat == system_category() || cat == generic_category() )
+    {
+        return ev != 0;
+    }
+    else
+    {
+        return failed2_impl( ev, cat );
+    }
+}
+
+#else
 
 BOOST_SYSTEM_CONSTEXPR inline bool failed_impl( int ev, error_category const & cat )
 {
@@ -397,13 +423,6 @@ BOOST_SYSTEM_CONSTEXPR inline bool failed_impl( int ev, error_category const & c
     {
         return cat.failed( ev );
     }
-}
-
-#else
-
-inline bool failed_impl( int ev, error_category const & cat )
-{
-    return cat.failed( ev );
 }
 
 #endif
