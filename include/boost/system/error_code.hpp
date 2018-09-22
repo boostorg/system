@@ -196,9 +196,12 @@ protected:
 
 #else
 
-    ~error_category()
-    {
-    }
+    // We'd like to make the destructor protected, to make code that deletes
+    // an error_category* not compile; unfortunately, doing the below makes
+    // the destructor user-provided and hence breaks use after main, as the
+    // categories may get destroyed before code that uses them
+
+    // ~error_category() {}
 
 #endif
 
