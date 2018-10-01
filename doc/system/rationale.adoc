@@ -11,15 +11,15 @@ http://www.boost.org/LICENSE_1_0.txt
 # Design Rationale
 :idprefix: rationale_
 
-`error_code` and `error_condition` are designed as a value types so 
+`error_code` and `error_condition` are designed as value types so
 they can be copied without slicing and do not requiring heap allocation, but
 still have polymorphic behavior based on the error category. This is achieved
 by abstract base class `error_category` supplying the polymorphic behavior,
 and `error_code` and `error_condition` containing a pointer to an object of a
 type derived from `error_category`.
 
-Many of the detailed design decisions were driven by the requirements that 
-users to be able to add additional error categories, and that it be no more 
+Many of the detailed design decisions were driven by the requirements that
+users to be able to add additional error categories, and that it be no more
 difficult to write portable code than system-specific code.
 
 The `operator<<` overload for `error_code` eliminates a misleading conversion to

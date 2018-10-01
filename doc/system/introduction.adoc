@@ -45,5 +45,6 @@ platforms other than their intended target.
 
 Boost.System is part of the {cpp}11 Standard Library.
 A number of changes, particularly to names, were made by the C++ committee
-during standardization. The Boost implementation has been tracking those changes. 
-See _Deprecated names_ for synonyms provided to prevent breakage of existing user code.
+during standardization. The Boost implementation has been tracking those changes.
+See <<#ref_deprecated_names,Deprecated Names>> for synonyms provided to prevent
+breakage of existing user code.
