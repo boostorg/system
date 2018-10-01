@@ -205,15 +205,15 @@ protected:
 
 #endif
 
+    BOOST_SYSTEM_CONSTEXPR error_category() BOOST_NOEXCEPT: id_( 0 )
+    {
+    }
+
     explicit BOOST_SYSTEM_CONSTEXPR error_category( boost::ulong_long_type id ) BOOST_NOEXCEPT: id_( id )
     {
     }
 
 public:
-
-    BOOST_SYSTEM_CONSTEXPR error_category() BOOST_NOEXCEPT: id_( 0 )
-    {
-    }
 
     virtual const char * name() const BOOST_NOEXCEPT = 0;
 
@@ -746,7 +746,7 @@ inline bool operator!=( const error_code & lhs, const error_condition & rhs ) BO
 
 inline bool operator==( const error_condition & condition, const error_code & code ) BOOST_NOEXCEPT
 {
-    return condition.category().equivalent( code, condition.value() ) || code.category().equivalent( code.value(), condition );
+    return code.category().equivalent( code.value(), condition ) || condition.category().equivalent( code, condition.value() );
 }
 
 inline bool operator!=( const error_condition & lhs, const error_code & rhs ) BOOST_NOEXCEPT
