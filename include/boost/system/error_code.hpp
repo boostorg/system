@@ -278,7 +278,8 @@ public:
 
     // clang++ 3.8 and below: initialization of const object
     // requires a user-provided default constructor
-    BOOST_SYSTEM_CONSTEXPR generic_error_category() BOOST_NOEXCEPT: error_category( 0xB2AB117A257EDF0Dull )
+    BOOST_SYSTEM_CONSTEXPR generic_error_category() BOOST_NOEXCEPT:
+        error_category( ( boost::ulong_long_type( 0xB2AB117A ) << 32 ) + 0x257EDF0D )
     {
     }
 
@@ -295,7 +296,8 @@ class BOOST_SYMBOL_VISIBLE system_error_category: public error_category
 {
 public:
 
-    BOOST_SYSTEM_CONSTEXPR system_error_category() BOOST_NOEXCEPT: error_category( 0x8FAFD21E25C5E09Bull )
+    BOOST_SYSTEM_CONSTEXPR system_error_category() BOOST_NOEXCEPT:
+        error_category( ( boost::ulong_long_type( 0x8FAFD21E ) << 32 ) + 0x25C5E09B )
     {
     }
 
@@ -651,7 +653,7 @@ public:
         return failed_? unspecified_bool_true: 0;
     }
 
-    BOOST_SYSTEM_CONSTEXPR bool operator!() const  BOOST_NOEXCEPT // true if no error
+    BOOST_SYSTEM_CONSTEXPR bool operator!() const BOOST_NOEXCEPT // true if no error
     {
         return !failed_;
     }
@@ -773,8 +775,8 @@ inline std::size_t hash_value( error_code const & ec )
         id = reinterpret_cast<boost::ulong_long_type>( &cat );
     }
 
-    boost::ulong_long_type hv = 0xCBF29CE484222325ull;
-    boost::ulong_long_type const prime = 0x00000100000001B3ull;
+    boost::ulong_long_type hv = ( boost::ulong_long_type( 0xCBF29CE4 ) << 32 ) + 0x84222325;
+    boost::ulong_long_type const prime = ( boost::ulong_long_type( 0x00000100 ) << 32 ) + 0x000001B3;
 
     // id
 
