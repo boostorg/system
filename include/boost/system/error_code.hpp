@@ -196,9 +196,12 @@ protected:
 
 #else
 
-    ~error_category()
-    {
-    }
+    // We'd like to make the destructor protected, to make code that deletes
+    // an error_category* not compile; unfortunately, doing the below makes
+    // the destructor user-provided and hence breaks use after main, as the
+    // categories may get destroyed before code that uses them
+
+    // ~error_category() {}
 
 #endif
 
@@ -220,6 +223,8 @@ public:
 
     virtual std::string message( int ev ) const = 0;
     virtual char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT;
+
+    virtual bool failed( int ev ) const BOOST_NOEXCEPT;
 
     BOOST_SYSTEM_CONSTEXPR bool operator==( const error_category & rhs ) const BOOST_NOEXCEPT
     {
@@ -378,6 +383,31 @@ template<class T> struct enable_if<false, T>
 {
 };
 
+// failed_impl
+
+#if !defined(BOOST_SYSTEM_HAS_CONSTEXPR)
+
+inline bool failed_impl( int ev, error_category const & cat )
+{
+    return cat.failed( ev );
+}
+
+#else
+
+BOOST_SYSTEM_CONSTEXPR inline bool failed_impl( int ev, error_category const & cat )
+{
+    if( cat == system_category() || cat == generic_category() )
+    {
+        return ev != 0;
+    }
+    else
+    {
+        return cat.failed( ev );
+    }
+}
+
+#endif
+
 } // namespace detail
 
 // class error_condition
@@ -388,18 +418,21 @@ class error_condition
 {
 private:
 
-    int m_val;
-    error_category const * m_cat;
+    int val_;
+    bool failed_;
+    error_category const * cat_;
 
 public:
 
     // constructors:
 
-    BOOST_SYSTEM_CONSTEXPR error_condition() BOOST_NOEXCEPT: m_val( 0 ), m_cat( &generic_category() )
+    BOOST_SYSTEM_CONSTEXPR error_condition() BOOST_NOEXCEPT:
+        val_( 0 ), failed_( false ), cat_( &generic_category() )
     {
     }
 
-    BOOST_SYSTEM_CONSTEXPR error_condition( int val, const error_category & cat ) BOOST_NOEXCEPT: m_val( val ), m_cat( &cat )
+    BOOST_SYSTEM_CONSTEXPR error_condition( int val, const error_category & cat ) BOOST_NOEXCEPT:
+        val_( val ), failed_( detail::failed_impl( val, cat ) ), cat_( &cat )
     {
     }
 
@@ -413,8 +446,9 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR void assign( int val, const error_category & cat ) BOOST_NOEXCEPT
     {
-        m_val = val;
-        m_cat = &cat;
+        val_ = val;
+        failed_ = detail::failed_impl( val, cat );
+        cat_ = &cat;
     }
 
     template<typename ErrorConditionEnum>
@@ -427,37 +461,43 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR void clear() BOOST_NOEXCEPT
     {
-        m_val = 0;
-        m_cat = &generic_category();
+        val_ = 0;
+        failed_ = false;
+        cat_ = &generic_category();
     }
 
     // observers:
 
     BOOST_SYSTEM_CONSTEXPR int value() const BOOST_NOEXCEPT
     {
-        return m_val;
+        return val_;
     }
 
     BOOST_SYSTEM_CONSTEXPR const error_category & category() const BOOST_NOEXCEPT
     {
-        return *m_cat;
+        return *cat_;
     }
 
     std::string message() const
     {
-        return m_cat->message( value() );
+        return cat_->message( value() );
     }
 
     char const * message( char * buffer, std::size_t len ) const BOOST_NOEXCEPT
     {
-        return m_cat->message( value(), buffer, len );
+        return cat_->message( value(), buffer, len );
+    }
+
+    BOOST_SYSTEM_CONSTEXPR bool failed() const BOOST_NOEXCEPT
+    {
+        return failed_;
     }
 
 #if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
 
     BOOST_SYSTEM_CONSTEXPR explicit operator bool() const BOOST_NOEXCEPT  // true if error
     {
-        return m_val != 0;
+        return failed_;
     }
 
 #else
@@ -467,12 +507,12 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR operator unspecified_bool_type() const BOOST_NOEXCEPT  // true if error
     {
-        return m_val == 0? 0 : unspecified_bool_true;
+        return failed_? unspecified_bool_true: 0;
     }
 
     BOOST_SYSTEM_CONSTEXPR bool operator!() const BOOST_NOEXCEPT  // true if no error
     {
-        return m_val == 0;
+        return !failed_;
     }
 
 #endif
@@ -483,12 +523,12 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR inline friend bool operator==( const error_condition & lhs, const error_condition & rhs ) BOOST_NOEXCEPT
     {
-        return lhs.m_val == rhs.m_val && *lhs.m_cat == *rhs.m_cat;
+        return lhs.val_ == rhs.val_ && *lhs.cat_ == *rhs.cat_;
     }
 
     BOOST_SYSTEM_CONSTEXPR inline friend bool operator<( const error_condition & lhs, const error_condition & rhs ) BOOST_NOEXCEPT
     {
-        return *lhs.m_cat < *rhs.m_cat || ( *lhs.m_cat == *rhs.m_cat && lhs.m_val < rhs.m_val );
+        return *lhs.cat_ < *rhs.cat_ || ( *lhs.cat_ == *rhs.cat_ && lhs.val_ < rhs.val_ );
     }
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
@@ -514,18 +554,21 @@ class error_code
 {
 private:
 
-    int m_val;
-    const error_category * m_cat;
+    int val_;
+    bool failed_;
+    const error_category * cat_;
 
 public:
 
     // constructors:
 
-    BOOST_SYSTEM_CONSTEXPR error_code() BOOST_NOEXCEPT: m_val( 0 ), m_cat( &system_category() )
+    BOOST_SYSTEM_CONSTEXPR error_code() BOOST_NOEXCEPT:
+        val_( 0 ), failed_( false ), cat_( &system_category() )
     {
     }
 
-    BOOST_SYSTEM_CONSTEXPR error_code( int val, const error_category & cat ) BOOST_NOEXCEPT: m_val( val ), m_cat( &cat )
+    BOOST_SYSTEM_CONSTEXPR error_code( int val, const error_category & cat ) BOOST_NOEXCEPT:
+        val_( val ), failed_( detail::failed_impl( val, cat ) ), cat_( &cat )
     {
     }
 
@@ -539,8 +582,9 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR void assign( int val, const error_category & cat ) BOOST_NOEXCEPT
     {
-        m_val = val;
-        m_cat = &cat;
+        val_ = val;
+        failed_ = detail::failed_impl( val, cat );
+        cat_ = &cat;
     }
 
     template<typename ErrorCodeEnum>
@@ -553,42 +597,48 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR void clear() BOOST_NOEXCEPT
     {
-        m_val = 0;
-        m_cat = &system_category();
+        val_ = 0;
+        failed_ = false;
+        cat_ = &system_category();
     }
 
     // observers:
 
     BOOST_SYSTEM_CONSTEXPR int value() const BOOST_NOEXCEPT
     {
-        return m_val;
+        return val_;
     }
 
     BOOST_SYSTEM_CONSTEXPR const error_category & category() const BOOST_NOEXCEPT
     {
-        return *m_cat;
+        return *cat_;
     }
 
     error_condition default_error_condition() const BOOST_NOEXCEPT
     {
-        return m_cat->default_error_condition( value() );
+        return cat_->default_error_condition( value() );
     }
 
     std::string message() const
     {
-        return m_cat->message( value() );
+        return cat_->message( value() );
     }
 
     char const * message( char * buffer, std::size_t len ) const BOOST_NOEXCEPT
     {
-        return m_cat->message( value(), buffer, len );
+        return cat_->message( value(), buffer, len );
+    }
+
+    BOOST_SYSTEM_CONSTEXPR bool failed() const BOOST_NOEXCEPT
+    {
+        return failed_;
     }
 
 #if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
 
     BOOST_SYSTEM_CONSTEXPR explicit operator bool() const BOOST_NOEXCEPT  // true if error
     {
-        return m_val != 0;
+        return failed_;
     }
 
 #else
@@ -598,12 +648,12 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR operator unspecified_bool_type() const  BOOST_NOEXCEPT // true if error
     {
-        return m_val == 0? 0 : unspecified_bool_true;
+        return failed_? unspecified_bool_true: 0;
     }
 
     BOOST_SYSTEM_CONSTEXPR bool operator!() const  BOOST_NOEXCEPT // true if no error
     {
-        return m_val == 0;
+        return !failed_;
     }
 
 #endif
@@ -615,12 +665,12 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR inline friend bool operator==( const error_code & lhs, const error_code & rhs ) BOOST_NOEXCEPT
     {
-        return lhs.m_val == rhs.m_val && *lhs.m_cat == *rhs.m_cat;
+        return lhs.val_ == rhs.val_ && *lhs.cat_ == *rhs.cat_;
     }
 
     BOOST_SYSTEM_CONSTEXPR inline friend bool operator<( const error_code & lhs, const error_code & rhs ) BOOST_NOEXCEPT
     {
-        return *lhs.m_cat < *rhs.m_cat || ( *lhs.m_cat == *rhs.m_cat && lhs.m_val < rhs.m_val );
+        return *lhs.cat_ < *rhs.cat_ || ( *lhs.cat_ == *rhs.cat_ && lhs.val_ < rhs.val_ );
     }
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
@@ -814,6 +864,11 @@ inline char const * error_category::message( int ev, char * buffer, std::size_t 
         return "Message text unavailable";
     }
 #endif
+}
+
+inline bool error_category::failed( int ev ) const BOOST_NOEXCEPT
+{
+    return ev != 0;
 }
 
 } // namespace system
