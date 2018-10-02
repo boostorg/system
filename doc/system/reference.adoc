@@ -198,9 +198,6 @@ namespace boost {
     std::size_t hash_value( const error_code & ec );
 
   } // namespace system
-
-  system::error_code & throws();
-
 } // namespace boost
 ```
 
@@ -884,18 +881,62 @@ namespace boost
     {
     public:
 
-      system_error( error_code ec );
+      explicit system_error( error_code ec );
       system_error( error_code ec, const char * what_arg );
       system_error( error_code ec, const std::string & what_arg );
-      system_error( int ev, const error_category & ecat,
-                    const char * what_arg );
-      system_error( int ev, const error_category & ecat,
-                    const std::string & what_arg );
-      system_error( int ev, const error_category & ecat );
 
-      const error_code & code() const noexcept;
+      system_error( int ev, const error_category & ecat );
+      system_error( int ev, const error_category & ecat,
+        const char * what_arg );
+      system_error( int ev, const error_category & ecat,
+        const std::string & what_arg );
+
+      error_code code() const noexcept;
       const char * what() const noexcept;
     };
   }
 }
 ```
+
+#### Constructors
+
+```
+explicit system_error( error_code ec );
+system_error( error_code ec, const char * what_arg );
+system_error( error_code ec, const std::string & what_arg );
+```
+[none]
+* {blank}
++
+Ensures: :: `code() == ec`.
+
+```
+system_error( int ev, const error_category & ecat,
+  const char * what_arg );
+system_error( int ev, const error_category & ecat,
+  const std::string & what_arg );
+system_error( int ev, const error_category & ecat );
+```
+[none]
+* {blank}
++
+Ensures: :: `code() == error_code( ev, ecat )`.
+
+#### Observers
+
+```
+error_code code() const noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `ec` or `error_code( ev, ecat )`, from the constructor, as appropriate.
+
+```
+const char * what() const noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: A null-terminated character string incorporating the arguments supplied
+  in the constructor, typically of the form `what_arg + ": " + code.message()`.
