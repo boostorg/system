@@ -170,6 +170,7 @@ inline std::string system_category_message_win32( int ev )
     }
 
     local_free lf_ = { lpMsgBuf };
+    (void)lf_;
 
     UINT_ const code_page = message_cp_win32();
 
