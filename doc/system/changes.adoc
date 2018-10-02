@@ -38,7 +38,7 @@ In addition to enabling use in constant expressions (and `constexpr`
 functions), this significantly improves the quality of the generated code.
 
 As a result of this change, however, now using Boost.System from {cpp}14
-or {cpp}17 code requires that the library is also built with {cpp}14 or
+or {cpp}17 code requires that the library be also built with {cpp}14 or
 above. This is the default on GCC 6 and newer, but not on GCC 5 or Clang.
 One can build Boost for {cpp}14 by passing the `cxxstd=14` option to `b2`.
 

@@ -12,7 +12,7 @@ http://www.boost.org/LICENSE_1_0.txt
 :idprefix: rationale_
 
 `error_code` and `error_condition` are designed as value types so
-they can be copied without slicing and do not requiring heap allocation, but
+they can be copied without slicing and do not require heap allocation, but
 still have polymorphic behavior based on the error category. This is achieved
 by abstract base class `error_category` supplying the polymorphic behavior,
 and `error_code` and `error_condition` containing a pointer to an object of a
