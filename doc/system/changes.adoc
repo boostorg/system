@@ -27,6 +27,9 @@ http://www.boost.org/LICENSE_1_0.txt
   which success is not synonymous with 0.
 * The deprecated `boost::system::throws` object has been removed.
 * `boost::throws()` is now deprecated and its use is discouraged.
+* The constructor of `system_error` taking a single `error_code` argument
+  is now explicit.
+* `system_error::code()` now returns by value.
 
 ## Changes in Boost 1.68
 

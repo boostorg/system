@@ -363,6 +363,27 @@ Effects: ::
    `buffer`, truncating it to `len-1` characters and storing a null terminator.
    If `len` is 0, copies nothing. Returns `buffer`. If `message(ev)` throws an
    exception, the string `"Message text unavailable"` is used.
+Example: ::
++
+```
+const char* my_category::message(int ev, char* buffer, size_t len) const noexcept
+{
+  switch(ev)
+  {
+  case 0: return "no error";
+  case 1: return "voltage out of range";
+  case 2: return "impedance mismatch";
+  case 31:
+  case 32:
+  case 33:
+    std::snprintf(buffer, len, "component %d failure", ev-30);
+    return buffer;
+  default:
+    std::snprintf(buffer, len, "unknown error %d", ev);
+    return buffer;
+  }
+}
+```
 
 ```
 virtual bool failed( int ev ) const noexcept;
