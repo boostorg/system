@@ -50,6 +50,11 @@ inline std::string generic_error_category_message( int ev )
 # if defined( BOOST_MSVC )
 #  pragma warning( push )
 #  pragma warning( disable: 4996 )
+# elif defined(__clang__) && defined(__has_warning)
+#  pragma clang diagnostic push
+#  if __has_warning("-Wdeprecated-declarations")
+#   pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#  endif
 # endif
 
 inline std::string generic_error_category_message( int ev )
@@ -83,6 +88,8 @@ inline char const * generic_error_category_message( int ev, char * buffer, std::
 
 # if defined( BOOST_MSVC )
 #  pragma warning( pop )
+# elif defined(__clang__) && defined(__has_warning)
+#  pragma clang diagnostic pop
 # endif
 
 #endif
