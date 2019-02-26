@@ -108,6 +108,10 @@ system-run initialization_test.cpp ;
 
 run header_only_test.cpp : : : -<library>/boost/system//boost_system ;
 run header_only_test.cpp : : : -<library>/boost/system//boost_system <define>BOOST_NO_ANSI_APIS : header_only_test_no_ansi ;
+run header_only_test.cpp : : : -<library>/boost/system//boost_system <define>BOOST_SYSTEM_USE_UTF8 : header_only_test_utf8 ;
+
+run error_code_test.cpp : : : -<library>/boost/system//boost_system <define>BOOST_ERROR_CODE_HEADER_ONLY <define>BOOST_NO_ANSI_APIS : error_code_test_no_ansi ;
+run error_code_test.cpp : : : -<library>/boost/system//boost_system <define>BOOST_ERROR_CODE_HEADER_ONLY <define>BOOST_SYSTEM_USE_UTF8 : error_code_test_utf8 ;
 
 run config_test.cpp : : : <test-info>always_show_run_output ;
 
