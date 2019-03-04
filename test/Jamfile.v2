@@ -61,4 +61,4 @@ system-run failed_constexpr_test.cpp ;
 # Quick (CI) test
 run quick.cpp ;
 
-run quick.cpp : : : <warnings>all <warnings-as-errors>on <toolset>gcc:<cxxflags>-Wnon-virtual-dtor <toolset>clang:<cxxflags>-Wnon-virtual-dtor : warnings_test ;
+run warnings_test.cpp : : : <warnings>all <warnings-as-errors>on <toolset>gcc:<cxxflags>-Wnon-virtual-dtor <toolset>clang:<cxxflags>-Wnon-virtual-dtor ;
