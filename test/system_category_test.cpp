@@ -90,7 +90,7 @@ static void test_message( sys::error_category const & cat, int ev )
 {
     BOOST_TEST_EQ( cat.message( ev ), sys_strerror( ev ) );
 
-    char buffer[ 2048 ]; // yes, really
+    char buffer[ 4096 ]; // yes, really
     BOOST_TEST_CSTR_EQ( cat.message( ev, buffer, sizeof( buffer ) ), sys_strerror( ev ).c_str() );
 }
 
