@@ -18,6 +18,16 @@
 
 //
 
+#if defined(BOOST_WINDOWS_API) && defined(BOOST_SYSTEM_USE_UTF8)
+
+#include <boost/config/pragma_message.hpp>
+
+BOOST_PRAGMA_MESSAGE( "Skipping test due to BOOST_WINDOWS_API && BOOST_SYSTEM_USE_UTF8" )
+
+int main() {}
+
+#else
+
 #if defined(BOOST_WINDOWS_API)
 
 #include <windows.h>
@@ -114,3 +124,5 @@ int main()
 
     return boost::report_errors();
 }
+
+#endif // #if defined(BOOST_WINDOWS_API) && defined(BOOST_SYSTEM_USE_UTF8)
