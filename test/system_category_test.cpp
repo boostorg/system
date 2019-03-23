@@ -110,14 +110,7 @@ int main()
 
     // message
 
-    for( int i = -2; i < 1024; ++i )
-    {
-        test_message( cat, i );
-    }
-
-    test_message( cat, 5810 );
-
-    for( int i = 10000; i < 11032; ++i )
+    for( int i = -2; i < 16000; ++i )
     {
         test_message( cat, i );
     }
