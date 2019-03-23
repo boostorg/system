@@ -126,6 +126,7 @@ inline char const * system_category_message_win32( int ev, char * buffer, std::s
         {
             r = boost::winapi::WideCharToMultiByte( code_page, 0, lpMsgBuf, -1, buffer, static_cast<int>( len ), NULL, NULL );
             boost::winapi::LocalFree( lpMsgBuf );
+            if ( r != 0 ) --r; // exclude null terminator
         }
     }
 
@@ -133,8 +134,6 @@ inline char const * system_category_message_win32( int ev, char * buffer, std::s
     {
         return unknown_message_win32( ev, buffer, len );
     }
-
-    --r; // exclude null terminator
 
     while( r > 0 && ( buffer[ r-1 ] == '\n' || buffer[ r-1 ] == '\r' ) )
     {
