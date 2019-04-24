@@ -1,0 +1,26 @@
+
+// Copyright 2019 Peter Dimov.
+// Distributed under the Boost Software License, Version 1.0.
+
+#include <boost/system/error_code.hpp>
+
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+
+#include <system_error>
+
+namespace lib1
+{
+
+std::error_code get_system_code()
+{
+    return boost::system::error_code( 0, boost::system::system_category() );
+}
+
+std::error_code get_generic_code()
+{
+    return boost::system::error_code( 0, boost::system::generic_category() );
+}
+
+} // namespace lib1
+
+#endif

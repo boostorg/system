@@ -62,3 +62,5 @@ system-run failed_constexpr_test.cpp ;
 run quick.cpp ;
 
 run warnings_test.cpp : : : <warnings>all <warnings-as-errors>on <toolset>gcc:<cxxflags>-Wnon-virtual-dtor <toolset>clang:<cxxflags>-Wnon-virtual-dtor ;
+
+system-run std_ec_mismatch_test.cpp std_ec_mismatch_1.cpp std_ec_mismatch_2.cpp ;
