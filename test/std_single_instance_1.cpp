@@ -31,4 +31,10 @@ EXPORT std::error_code get_generic_code()
 
 } // namespace lib1
 
+#else
+
+EXPORT void lib1_f()
+{
+}
+
 #endif

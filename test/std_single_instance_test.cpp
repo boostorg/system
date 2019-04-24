@@ -4,11 +4,31 @@
 
 #include <boost/system/error_code.hpp>
 #include <boost/config/pragma_message.hpp>
+#include <boost/config/helper_macros.hpp>
 
 #if !defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
 BOOST_PRAGMA_MESSAGE( "BOOST_SYSTEM_HAS_SYSTEM_ERROR not defined, test will be skipped" )
+int main() {}
 
+#elif defined(STD_SINGLE_INSTANCE_SHARED) && defined(__CYGWIN__)
+
+BOOST_PRAGMA_MESSAGE( "Skipping Windows/DLL test, __CYGWIN__" )
+int main() {}
+
+#elif defined(STD_SINGLE_INSTANCE_SHARED) && defined(_WIN32) && !defined(_MSC_VER)
+
+BOOST_PRAGMA_MESSAGE( "Skipping Windows/DLL test, no _MSC_VER" )
+int main() {}
+
+#elif defined(STD_SINGLE_INSTANCE_SHARED) && defined(_WIN32) && !defined(_CPPLIB_VER)
+
+BOOST_PRAGMA_MESSAGE( "Skipping Windows/DLL test, no _CPPLIB_VER" )
+int main() {}
+
+#elif defined(STD_SINGLE_INSTANCE_SHARED) && defined(_WIN32) && (_MSC_VER < 1900 || _MSC_VER >= 2000)
+
+BOOST_PRAGMA_MESSAGE( "Skipping Windows/DLL test, _MSC_VER is " BOOST_STRINGIZE(_MSC_VER) )
 int main() {}
 
 #else
