@@ -53,6 +53,8 @@ public:
     virtual bool equivalent( const std::error_code & code, int condition ) const BOOST_NOEXCEPT;
 };
 
+inline std::error_category const & to_std_category( boost::system::error_category const & cat ) BOOST_SYMBOL_VISIBLE;
+
 inline std::error_category const & to_std_category( boost::system::error_category const & cat )
 {
     typedef std::map< boost::system::error_category const *, std::unique_ptr<std_category> > map_type;
