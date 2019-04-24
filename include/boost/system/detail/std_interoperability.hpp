@@ -10,6 +10,7 @@
 #include <system_error>
 #include <map>
 #include <memory>
+#include <mutex>
 
 //
 
@@ -92,6 +93,9 @@ inline std::error_category const & to_std_category( boost::system::error_categor
         typedef std::map< boost::system::error_category const *, std::unique_ptr<std_category>, cat_ptr_less > map_type;
 
         static map_type map_;
+        static std::mutex map_mx_;
+
+        std::lock_guard<std::mutex> guard( map_mx_ );
 
         map_type::iterator i = map_.find( &cat );
 
