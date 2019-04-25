@@ -329,7 +329,7 @@ public:
 namespace detail
 {
 
-template<class T> struct cat_holder
+template<class T> struct BOOST_SYMBOL_VISIBLE cat_holder
 {
     BOOST_SYSTEM_REQUIRE_CONST_INIT static constexpr system_error_category system_category_instance{};
     BOOST_SYSTEM_REQUIRE_CONST_INIT static constexpr generic_error_category generic_category_instance{};
@@ -352,11 +352,15 @@ constexpr error_category const & generic_category() BOOST_NOEXCEPT
 
 #else // #if defined(BOOST_SYSTEM_HAS_CONSTEXPR)
 
+inline error_category const & system_category() BOOST_NOEXCEPT BOOST_SYMBOL_VISIBLE;
+
 inline error_category const & system_category() BOOST_NOEXCEPT
 {
     static const detail::system_error_category system_category_instance;
     return system_category_instance;
 }
+
+inline error_category const & generic_category() BOOST_NOEXCEPT BOOST_SYMBOL_VISIBLE;
 
 inline error_category const & generic_category() BOOST_NOEXCEPT
 {
