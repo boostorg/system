@@ -331,12 +331,12 @@ namespace detail
 
 template<class T> struct BOOST_SYMBOL_VISIBLE cat_holder
 {
-    BOOST_SYSTEM_REQUIRE_CONST_INIT static constexpr system_error_category system_category_instance{};
-    BOOST_SYSTEM_REQUIRE_CONST_INIT static constexpr generic_error_category generic_category_instance{};
+    static constexpr system_error_category system_category_instance{};
+    static constexpr generic_error_category generic_category_instance{};
 };
 
-template<class T> BOOST_SYSTEM_REQUIRE_CONST_INIT constexpr system_error_category cat_holder<T>::system_category_instance;
-template<class T> BOOST_SYSTEM_REQUIRE_CONST_INIT constexpr generic_error_category cat_holder<T>::generic_category_instance;
+template<class T> constexpr system_error_category cat_holder<T>::system_category_instance;
+template<class T> constexpr generic_error_category cat_holder<T>::generic_category_instance;
 
 } // namespace detail
 
