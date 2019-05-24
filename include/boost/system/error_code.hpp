@@ -784,7 +784,7 @@ inline std::size_t hash_value( error_code const & ec )
 
     if( id == 0 )
     {
-        id = reinterpret_cast<boost::ulong_long_type>( &cat );
+        id = reinterpret_cast<boost::uintptr_t>( &cat );
     }
 
     boost::ulong_long_type hv = ( boost::ulong_long_type( 0xCBF29CE4 ) << 32 ) + 0x84222325;
