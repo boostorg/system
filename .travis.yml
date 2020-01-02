@@ -160,6 +160,7 @@ matrix:
             - clang-3.4
 
     - os: linux
+      dist: trusty
       compiler: clang++-3.5
       env: TOOLSET=clang COMPILER=clang++-3.5 CXXSTD=03,11,14,1z
       addons:
@@ -292,6 +293,7 @@ matrix:
             - clang-8
           sources:
             - ubuntu-toolchain-r-test
+            - llvm-toolchain-xenial-8
 
     - os: linux
       dist: trusty
@@ -303,6 +305,7 @@ matrix:
             - libc++-dev
 
     - os: linux
+      dist: trusty
       compiler: clang++-libc++
       env: UBSAN=1 TOOLSET=clang COMPILER=clang++-libc++ CXXSTD=03,11,14,1z UBSAN_OPTIONS=print_stacktrace=1
       addons:
