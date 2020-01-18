@@ -4,14 +4,10 @@
 
 cmake_minimum_required(VERSION 3.5...3.16)
 
-project(cmake_subdir_test LANGUAGES CXX)
+project(cmake_install_test LANGUAGES CXX)
 
-add_subdirectory(../.. boostorg/system)
-add_subdirectory(../../../assert boostorg/assert)
-add_subdirectory(../../../config boostorg/config)
-add_subdirectory(../../../core boostorg/core)
-add_subdirectory(../../../predef boostorg/predef)
-add_subdirectory(../../../winapi boostorg/winapi)
+find_package(boost_system REQUIRED)
+find_package(boost_core REQUIRED)
 
 add_executable(quick ../quick.cpp)
 target_link_libraries(quick Boost::system Boost::core)
