@@ -315,14 +315,14 @@ matrix:
       env: CMAKE=1
       script:
         - mkdir __build__ && cd __build__
-        - cmake -DBOOST_ENABLE_CMAKE=1 -DBoost_VERBOSE=1 -DBOOST_INCLUDE_LIBRARIES=system ..
+        - cmake -DBOOST_ENABLE_CMAKE=1 -DBoost_VERBOSE=1 -DBOOST_INCLUDE_LIBRARIES=system -DBUILD_TESTING=ON ..
         - ctest --output-on-failure -R boost_system
 
     - os: linux
       env: CMAKE=1 BUILD_SHARED_LIBS=ON
       script:
         - mkdir __build__ && cd __build__
-        - cmake -DBOOST_ENABLE_CMAKE=1 -DBoost_VERBOSE=1 -DBUILD_SHARED_LIBS=ON -DBOOST_INCLUDE_LIBRARIES=system ..
+        - cmake -DBOOST_ENABLE_CMAKE=1 -DBoost_VERBOSE=1 -DBUILD_SHARED_LIBS=ON -DBOOST_INCLUDE_LIBRARIES=system -DBUILD_TESTING=ON ..
         - ctest --output-on-failure -R boost_system
 
     - os: linux
@@ -345,7 +345,7 @@ matrix:
       script:
         - pip install --user cmake
         - mkdir __build__ && cd __build__
-        - cmake -DBOOST_ENABLE_CMAKE=1 -DBoost_VERBOSE=1 -DBOOST_INCLUDE_LIBRARIES="system;core" -DCMAKE_INSTALL_PREFIX=~/.local ..
+        - cmake -DBOOST_ENABLE_CMAKE=1 -DBoost_VERBOSE=1 -DBOOST_INCLUDE_LIBRARIES="system;core" -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=~/.local ..
         - cmake --build . --target install
         - cd ../libs/system/test/cmake_install_test && mkdir __build__ && cd __build__
         - cmake -DCMAKE_INSTALL_PREFIX=~/.local ..
