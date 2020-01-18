@@ -345,7 +345,7 @@ matrix:
       script:
         - pip install --user cmake
         - mkdir __build__ && cd __build__
-        - cmake -DBOOST_ENABLE_CMAKE=1 -DBoost_VERBOSE=1 -DBOOST_INCLUDE_LIBRARIES=system -DCMAKE_INSTALL_PREFIX=~/.local ..
+        - cmake -DBOOST_ENABLE_CMAKE=1 -DBoost_VERBOSE=1 -DBOOST_INCLUDE_LIBRARIES="system;core" -DCMAKE_INSTALL_PREFIX=~/.local ..
         - cmake --build . --target install
         - cd ../libs/system/test/cmake_install_test && mkdir __build__ && cd __build__
         - cmake -DCMAKE_INSTALL_PREFIX=~/.local ..

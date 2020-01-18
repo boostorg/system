@@ -20,7 +20,7 @@ endmacro()
 
 macro(lib name macro)
 
-  add_library(${name} ${ARGN})
+  add_library(${name} EXCLUDE_FROM_ALL ${ARGN})
   target_compile_definitions(${name} PRIVATE $<$<BOOL:BUILD_SHARED_LIBS>:${macro}=1>)
   target_link_libraries(${name} PRIVATE Boost::system Boost::config)
 
