@@ -355,15 +355,16 @@ constexpr error_category const & generic_category() BOOST_NOEXCEPT
 
 #else // #if defined(BOOST_SYSTEM_HAS_CONSTEXPR)
 
+#if !defined(__SUNPRO_CC) // trailing __global is not supported
 inline error_category const & system_category() BOOST_NOEXCEPT BOOST_SYMBOL_VISIBLE;
+inline error_category const & generic_category() BOOST_NOEXCEPT BOOST_SYMBOL_VISIBLE;
+#endif
 
 inline error_category const & system_category() BOOST_NOEXCEPT
 {
     static const detail::system_error_category system_category_instance;
     return system_category_instance;
 }
-
-inline error_category const & generic_category() BOOST_NOEXCEPT BOOST_SYMBOL_VISIBLE;
 
 inline error_category const & generic_category() BOOST_NOEXCEPT
 {
