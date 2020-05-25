@@ -14,10 +14,10 @@
 #include <boost/system/detail/config.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/config.hpp>
-#include <ostream>
-#include <string>
 #include <functional>
 #include <cstring>
+#include <ostream>
+#include <string>
 
 // TODO: undef these macros if not already defined
 #include <boost/cerrno.hpp>
@@ -287,13 +287,13 @@ public:
     {
     }
 
-    const char * name() const BOOST_NOEXCEPT
+    const char * name() const BOOST_NOEXCEPT BOOST_OVERRIDE
     {
         return "generic";
     }
 
-    std::string message( int ev ) const;
-    char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT;
+    std::string message( int ev ) const BOOST_OVERRIDE;
+    char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT BOOST_OVERRIDE;
 };
 
 class BOOST_SYMBOL_VISIBLE system_error_category: public error_category
@@ -305,15 +305,15 @@ public:
     {
     }
 
-    const char * name() const BOOST_NOEXCEPT
+    const char * name() const BOOST_NOEXCEPT BOOST_OVERRIDE
     {
         return "system";
     }
 
-    error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT;
+    error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT BOOST_OVERRIDE;
 
-    std::string message( int ev ) const;
-    char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT;
+    std::string message( int ev ) const BOOST_OVERRIDE;
+    char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT BOOST_OVERRIDE;
 };
 
 } // namespace detail

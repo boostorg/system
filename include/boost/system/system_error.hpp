@@ -8,10 +8,11 @@
 #ifndef BOOST_SYSTEM_SYSTEM_ERROR_HPP
 #define BOOST_SYSTEM_SYSTEM_ERROR_HPP
 
+#include <boost/config.hpp>
 #include <boost/system/error_code.hpp>
-#include <string>
-#include <stdexcept>
 #include <cassert>
+#include <stdexcept>
+#include <string>
 
 namespace boost
 {
@@ -44,10 +45,10 @@ namespace boost
         const char * what_arg )
           : std::runtime_error(what_arg), m_error_code(ev,ecat) {}
 
-      virtual ~system_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+      ~system_error() BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE {}
 
       error_code code() const BOOST_NOEXCEPT { return m_error_code; }
-      const char * what() const BOOST_NOEXCEPT_OR_NOTHROW;
+      const char * what() const BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE;
 
     private:
       error_code           m_error_code;
@@ -80,5 +81,3 @@ namespace boost
 } // namespace boost
 
 #endif // BOOST_SYSTEM_SYSTEM_ERROR_HPP
-
-
