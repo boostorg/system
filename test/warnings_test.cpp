@@ -43,10 +43,10 @@ int main()
 
     BOOST_TEST( bc == bn );
 
-    boost::system::system_error x( bc, "what_arg" );
+    boost::system::system_error x( bc, "prefix" );
 
     BOOST_TEST_EQ( x.code(), bc );
-    BOOST_TEST_CSTR_EQ( x.what(), "what_arg" );
+    BOOST_TEST_EQ( std::string( x.what() ), "prefix: " + bc.message() );
 
     return boost::report_errors();
 }
