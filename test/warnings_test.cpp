@@ -8,6 +8,10 @@
 
 // See library home page at http://www.boost.org/libs/system
 
+#if defined(__GNUC__) && __GNUC__ >= 5 && __cplusplus >= 201103L
+# pragma GCC diagnostic error "-Wsuggest-override"
+#endif
+
 #include <boost/config.hpp>
 
 #if defined( BOOST_GCC ) && BOOST_GCC < 40600
