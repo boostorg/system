@@ -128,6 +128,17 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
+      dist: bionic
+      compiler: g++-10
+      env: TOOLSET=gcc COMPILER=g++-10 CXXSTD=03,11,14,17,2a
+      addons:
+        apt:
+          packages:
+            - g++-10
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
       compiler: g++-9
       env: UBSAN=1 TOOLSET=gcc COMPILER=g++-9 CXXSTD=03,11,14,17,2a UBSAN_OPTIONS=print_stacktrace=1 LINKFLAGS=-fuse-ld=gold
       addons:
@@ -275,15 +286,30 @@ matrix:
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
 
     - os: linux
-      compiler: clang++-8
-      env: UBSAN=1 TOOLSET=clang COMPILER=clang++-8 CXXSTD=03,11,14,17,2a UBSAN_OPTIONS=print_stacktrace=1
+      dist: xenial
+      compiler: clang++-10
+      env: TOOLSET=clang COMPILER=clang++-10 CXXSTD=03,11,14,17,2a
       addons:
         apt:
           packages:
-            - clang-8
+            - clang-10
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-8
+            - sourceline: 'deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-10 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+
+    - os: linux
+      dist: xenial
+      compiler: clang++-10
+      env: UBSAN=1 TOOLSET=clang COMPILER=clang++-10 CXXSTD=03,11,14,17,2a UBSAN_OPTIONS=print_stacktrace=1
+      addons:
+        apt:
+          packages:
+            - clang-10
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: 'deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-10 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
 
     - os: linux
       dist: trusty
@@ -310,6 +336,10 @@ matrix:
     - os: osx
       compiler: clang++
       env: UBSAN=1 TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z UBSAN_OPTIONS=print_stacktrace=1
+
+    - os: freebsd
+      compiler: clang++
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,17,2a
 
     - os: linux
       env: CMAKE=1
