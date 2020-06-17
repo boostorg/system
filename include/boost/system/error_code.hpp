@@ -14,10 +14,10 @@
 #include <boost/system/detail/config.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/config.hpp>
-#include <ostream>
-#include <string>
 #include <functional>
 #include <cstring>
+#include <ostream>
+#include <string>
 
 // TODO: undef these macros if not already defined
 #include <boost/cerrno.hpp>

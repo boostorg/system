@@ -7,10 +7,11 @@
 //
 // See library home page at http://www.boost.org/libs/system
 
-#include <system_error>
+#include <boost/config.hpp>
 #include <map>
 #include <memory>
 #include <mutex>
+#include <system_error>
 
 //
 
