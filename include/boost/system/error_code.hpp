@@ -13,6 +13,7 @@
 #include <boost/system/is_error_code_enum.hpp>
 #include <boost/system/is_error_condition_enum.hpp>
 #include <boost/system/detail/errc.hpp>
+#include <boost/system/detail/error_category.hpp>
 #include <boost/system/api_config.hpp>
 #include <boost/system/detail/config.hpp>
 #include <boost/cstdint.hpp>
@@ -40,124 +41,12 @@ class error_code;         // values defined by the operating system
 class error_condition;    // portable generic values defined below, but ultimately
                           // based on the POSIX standard
 
-// class error_category
+// predefined error categories
+
 #if ( defined( BOOST_GCC ) && BOOST_GCC >= 40600 ) || defined( BOOST_CLANG )
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 #endif
-
-#ifdef BOOST_MSVC
-#pragma warning( push )
-// 'this' : used in base member initializer list
-#pragma warning( disable: 4355 )
-#endif
-
-std::size_t hash_value( error_code const & ec );
-
-class BOOST_SYMBOL_VISIBLE error_category
-{
-private:
-
-    friend std::size_t hash_value( error_code const & ec );
-
-#if !defined(BOOST_NO_CXX11_DELETED_FUNCTIONS)
-public:
-
-    error_category( error_category const & ) = delete;
-    error_category& operator=( error_category const & ) = delete;
-
-#else
-private:
-
-    error_category( error_category const & );
-    error_category& operator=( error_category const & );
-
-#endif
-
-private:
-
-    boost::ulong_long_type id_;
-
-protected:
-
-#if !defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS) && !defined(BOOST_NO_CXX11_NON_PUBLIC_DEFAULTED_FUNCTIONS)
-
-    ~error_category() = default;
-
-#else
-
-    // We'd like to make the destructor protected, to make code that deletes
-    // an error_category* not compile; unfortunately, doing the below makes
-    // the destructor user-provided and hence breaks use after main, as the
-    // categories may get destroyed before code that uses them
-
-    // ~error_category() {}
-
-#endif
-
-    BOOST_SYSTEM_CONSTEXPR error_category() BOOST_NOEXCEPT: id_( 0 )
-    {
-    }
-
-    explicit BOOST_SYSTEM_CONSTEXPR error_category( boost::ulong_long_type id ) BOOST_NOEXCEPT: id_( id )
-    {
-    }
-
-public:
-
-    virtual const char * name() const BOOST_NOEXCEPT = 0;
-
-    virtual error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT;
-    virtual bool equivalent( int code, const error_condition & condition ) const BOOST_NOEXCEPT;
-    virtual bool equivalent( const error_code & code, int condition ) const BOOST_NOEXCEPT;
-
-    virtual std::string message( int ev ) const = 0;
-    virtual char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT;
-
-    virtual bool failed( int ev ) const BOOST_NOEXCEPT;
-
-    BOOST_SYSTEM_CONSTEXPR bool operator==( const error_category & rhs ) const BOOST_NOEXCEPT
-    {
-        return rhs.id_ == 0? this == &rhs: id_ == rhs.id_;
-    }
-
-    BOOST_SYSTEM_CONSTEXPR bool operator!=( const error_category & rhs ) const BOOST_NOEXCEPT
-    {
-        return !( *this == rhs );
-    }
-
-    BOOST_SYSTEM_CONSTEXPR bool operator<( const error_category & rhs ) const BOOST_NOEXCEPT
-    {
-        if( id_ < rhs.id_ )
-        {
-            return true;
-        }
-
-        if( id_ > rhs.id_ )
-        {
-            return false;
-        }
-
-        if( rhs.id_ != 0 )
-        {
-            return false; // equal
-        }
-
-        return std::less<error_category const *>()( this, &rhs );
-    }
-
-#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
-
-    operator std::error_category const & () const;
-
-#endif
-};
-
-#ifdef BOOST_MSVC
-#pragma warning( pop )
-#endif
-
-// predefined error categories
 
 namespace detail
 {
