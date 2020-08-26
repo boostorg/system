@@ -27,21 +27,30 @@ namespace boost
 namespace system
 {
 
+class error_category;
 class error_code;
 class error_condition;
+
+std::size_t hash_value( error_code const & ec );
+
+namespace detail
+{
+
+BOOST_SYSTEM_CONSTEXPR bool failed_impl( int ev, error_category const & cat );
+
+} // namespace detail
 
 #if ( defined( BOOST_GCC ) && BOOST_GCC >= 40600 ) || defined( BOOST_CLANG )
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 #endif
 
-std::size_t hash_value( error_code const & ec );
-
 class BOOST_SYMBOL_VISIBLE error_category
 {
 private:
 
     friend std::size_t hash_value( error_code const & ec );
+    friend BOOST_SYSTEM_CONSTEXPR bool detail::failed_impl( int ev, error_category const & cat );
 
 #if !defined(BOOST_NO_CXX11_DELETED_FUNCTIONS)
 public:
@@ -97,7 +106,10 @@ public:
     virtual std::string message( int ev ) const = 0;
     virtual char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT;
 
-    virtual bool failed( int ev ) const BOOST_NOEXCEPT;
+    virtual bool failed( int ev ) const BOOST_NOEXCEPT
+    {
+        return ev != 0;
+    }
 
     BOOST_SYSTEM_CONSTEXPR bool operator==( const error_category & rhs ) const BOOST_NOEXCEPT
     {
@@ -139,6 +151,26 @@ public:
 #if ( defined( BOOST_GCC ) && BOOST_GCC >= 40600 ) || defined( BOOST_CLANG )
 #pragma GCC diagnostic pop
 #endif
+
+namespace detail
+{
+
+static const boost::ulong_long_type generic_category_id = ( boost::ulong_long_type( 0xB2AB117A ) << 32 ) + 0x257EDF0D;
+static const boost::ulong_long_type system_category_id = ( boost::ulong_long_type( 0x8FAFD21E ) << 32 ) + 0x25C5E09B;
+
+BOOST_SYSTEM_CONSTEXPR inline bool failed_impl( int ev, error_category const & cat )
+{
+    if( cat.id_ == system_category_id || cat.id_ == generic_category_id )
+    {
+        return ev != 0;
+    }
+    else
+    {
+        return cat.failed( ev );
+    }
+}
+
+} // namespace detail
 
 } // namespace system
 

@@ -37,7 +37,7 @@ class BOOST_SYMBOL_VISIBLE system_error_category: public error_category
 public:
 
     BOOST_SYSTEM_CONSTEXPR system_error_category() BOOST_NOEXCEPT:
-        error_category( ( boost::ulong_long_type( 0x8FAFD21E ) << 32 ) + 0x25C5E09B )
+        error_category( detail::system_category_id )
     {
     }
 

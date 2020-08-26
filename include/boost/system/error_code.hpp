@@ -109,36 +109,6 @@ static const error_category & native_ecat BOOST_ATTRIBUTE_UNUSED = system_catego
 
 #endif
 
-namespace detail
-{
-
-// failed_impl
-
-#if !defined(BOOST_SYSTEM_HAS_CONSTEXPR)
-
-inline bool failed_impl( int ev, error_category const & cat )
-{
-    return cat.failed( ev );
-}
-
-#else
-
-BOOST_SYSTEM_CONSTEXPR inline bool failed_impl( int ev, error_category const & cat )
-{
-    if( cat == system_category() || cat == generic_category() )
-    {
-        return ev != 0;
-    }
-    else
-    {
-        return cat.failed( ev );
-    }
-}
-
-#endif
-
-} // namespace detail
-
 // class error_condition
 
 // error_conditions are portable, error_codes are system or library specific
@@ -600,11 +570,6 @@ inline char const * error_category::message( int ev, char * buffer, std::size_t 
         return "Message text unavailable";
     }
 #endif
-}
-
-inline bool error_category::failed( int ev ) const BOOST_NOEXCEPT
-{
-    return ev != 0;
 }
 
 } // namespace system

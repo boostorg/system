@@ -36,10 +36,8 @@ class BOOST_SYMBOL_VISIBLE generic_error_category: public error_category
 {
 public:
 
-    // clang++ 3.8 and below: initialization of const object
-    // requires a user-provided default constructor
     BOOST_SYSTEM_CONSTEXPR generic_error_category() BOOST_NOEXCEPT:
-        error_category( ( boost::ulong_long_type( 0xB2AB117A ) << 32 ) + 0x257EDF0D )
+        error_category( detail::generic_category_id )
     {
     }
 
