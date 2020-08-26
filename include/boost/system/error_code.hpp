@@ -10,6 +10,8 @@
 //
 //  See library home page at http://www.boost.org/libs/system
 
+#include <boost/system/is_error_code_enum.hpp>
+#include <boost/system/is_error_condition_enum.hpp>
 #include <boost/system/api_config.hpp>
 #include <boost/system/detail/config.hpp>
 #include <boost/cstdint.hpp>
@@ -39,18 +41,6 @@ namespace system
 class error_code;         // values defined by the operating system
 class error_condition;    // portable generic values defined below, but ultimately
                           // based on the POSIX standard
-
-// "Concept" helpers
-
-template<class T> struct is_error_code_enum
-{
-    static const bool value = false;
-};
-
-template<class T> struct is_error_condition_enum
-{
-    static const bool value = false;
-};
 
 // Generic error_conditions
 

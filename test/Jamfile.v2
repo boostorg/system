@@ -73,3 +73,6 @@ lib std_single_instance_lib2 : std_single_instance_2.cpp : <link>shared:<define>
 system-run std_single_instance_test.cpp std_single_instance_1.cpp std_single_instance_2.cpp ;
 run std_single_instance_test.cpp std_single_instance_lib1 std_single_instance_lib2 : : : <link>static : std_single_instance_lib_static ;
 run std_single_instance_test.cpp std_single_instance_lib1 std_single_instance_lib2 : : : <link>shared <define>STD_SINGLE_INSTANCE_SHARED : std_single_instance_lib_shared ;
+
+run is_error_code_enum_test.cpp ;
+run is_error_condition_enum_test.cpp ;
