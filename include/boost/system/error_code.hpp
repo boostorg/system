@@ -87,11 +87,6 @@ inline system::error_code& throws()
 namespace system
 {
 
-BOOST_SYSTEM_CONSTEXPR inline bool operator!=( const error_condition & lhs, const error_condition & rhs ) BOOST_NOEXCEPT
-{
-    return !( lhs == rhs );
-}
-
 inline bool operator==( const error_code & code, const error_condition & condition ) BOOST_NOEXCEPT
 {
     return code.category().equivalent( code.value(), condition ) || condition.category().equivalent( code, condition.value() );

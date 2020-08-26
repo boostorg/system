@@ -14,6 +14,8 @@
 #include <boost/system/detail/generic_category.hpp>
 #include <boost/system/detail/enable_if.hpp>
 #include <boost/system/is_error_condition_enum.hpp>
+#include <boost/system/detail/config.hpp>
+#include <boost/config.hpp>
 
 namespace boost
 {
@@ -151,6 +153,11 @@ public:
 
 #endif
 };
+
+BOOST_SYSTEM_CONSTEXPR inline bool operator!=( const error_condition & lhs, const error_condition & rhs ) BOOST_NOEXCEPT
+{
+    return !( lhs == rhs );
+}
 
 } // namespace system
 
