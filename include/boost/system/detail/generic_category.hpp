@@ -134,6 +134,55 @@ inline char const * generic_error_category::message( int ev, char * buffer, std:
 
 } // namespace detail
 
+// generic_category()
+
+#if defined(BOOST_SYSTEM_HAS_CONSTEXPR)
+
+namespace detail
+{
+
+template<class T> struct BOOST_SYMBOL_VISIBLE generic_cat_holder
+{
+    static constexpr generic_error_category instance{};
+};
+
+// Before C++17 it was mandatory to redeclare all static constexpr
+#if defined(BOOST_NO_CXX17_INLINE_VARIABLES)
+template<class T> constexpr generic_error_category generic_cat_holder<T>::instance;
+#endif
+
+} // namespace detail
+
+constexpr error_category const & generic_category() BOOST_NOEXCEPT
+{
+    return detail::generic_cat_holder<void>::instance;
+}
+
+#else // #if defined(BOOST_SYSTEM_HAS_CONSTEXPR)
+
+#if !defined(__SUNPRO_CC) // trailing __global is not supported
+inline error_category const & generic_category() BOOST_NOEXCEPT BOOST_SYMBOL_VISIBLE;
+#endif
+
+inline error_category const & generic_category() BOOST_NOEXCEPT
+{
+    static const detail::generic_error_category instance;
+    return instance;
+}
+
+#endif // #if defined(BOOST_SYSTEM_HAS_CONSTEXPR)
+
+// deprecated synonyms
+
+#ifdef BOOST_SYSTEM_ENABLE_DEPRECATED
+
+inline const error_category & get_generic_category() { return generic_category(); }
+inline const error_category & get_posix_category() { return generic_category(); }
+static const error_category & posix_category BOOST_ATTRIBUTE_UNUSED = generic_category();
+static const error_category & errno_ecat BOOST_ATTRIBUTE_UNUSED = generic_category();
+
+#endif
+
 } // namespace system
 
 } // namespace boost
