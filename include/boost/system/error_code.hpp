@@ -14,6 +14,7 @@
 #include <boost/system/is_error_condition_enum.hpp>
 #include <boost/system/detail/errc.hpp>
 #include <boost/system/detail/error_category.hpp>
+#include <boost/system/detail/generic_category.hpp>
 #include <boost/system/api_config.hpp>
 #include <boost/system/detail/config.hpp>
 #include <boost/cstdint.hpp>
@@ -50,26 +51,6 @@ class error_condition;    // portable generic values defined below, but ultimate
 
 namespace detail
 {
-
-class BOOST_SYMBOL_VISIBLE generic_error_category: public error_category
-{
-public:
-
-    // clang++ 3.8 and below: initialization of const object
-    // requires a user-provided default constructor
-    BOOST_SYSTEM_CONSTEXPR generic_error_category() BOOST_NOEXCEPT:
-        error_category( ( boost::ulong_long_type( 0xB2AB117A ) << 32 ) + 0x257EDF0D )
-    {
-    }
-
-    const char * name() const BOOST_NOEXCEPT BOOST_OVERRIDE
-    {
-        return "generic";
-    }
-
-    std::string message( int ev ) const BOOST_OVERRIDE;
-    char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT BOOST_OVERRIDE;
-};
 
 class BOOST_SYMBOL_VISIBLE system_error_category: public error_category
 {
@@ -674,20 +655,6 @@ inline bool error_category::failed( int ev ) const BOOST_NOEXCEPT
 } // namespace system
 
 } // namespace boost
-
-// generic_error_category implementation
-
-#include <boost/system/detail/generic_category_impl.hpp>
-
-inline std::string boost::system::detail::generic_error_category::message( int ev ) const
-{
-    return generic_error_category_message( ev );
-}
-
-inline char const * boost::system::detail::generic_error_category::message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT
-{
-    return generic_error_category_message( ev, buffer, len );
-}
 
 // system_error_category implementation
 
