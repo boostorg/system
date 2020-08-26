@@ -677,7 +677,7 @@ inline bool error_category::failed( int ev ) const BOOST_NOEXCEPT
 
 // generic_error_category implementation
 
-#include <boost/system/detail/generic_category.hpp>
+#include <boost/system/detail/generic_category_impl.hpp>
 
 inline std::string boost::system::detail::generic_error_category::message( int ev ) const
 {
