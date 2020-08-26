@@ -16,6 +16,7 @@
 #include <boost/system/detail/error_category.hpp>
 #include <boost/system/detail/generic_category.hpp>
 #include <boost/system/detail/system_category.hpp>
+#include <boost/system/detail/enable_if.hpp>
 #include <boost/system/api_config.hpp>
 #include <boost/system/detail/config.hpp>
 #include <boost/cstdint.hpp>
@@ -108,19 +109,8 @@ static const error_category & native_ecat BOOST_ATTRIBUTE_UNUSED = system_catego
 
 #endif
 
-// enable_if
-
 namespace detail
 {
-
-template<bool C, class T = void> struct enable_if
-{
-    typedef T type;
-};
-
-template<class T> struct enable_if<false, T>
-{
-};
 
 // failed_impl
 
