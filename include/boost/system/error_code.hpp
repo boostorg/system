@@ -15,6 +15,7 @@
 #include <boost/system/detail/errc.hpp>
 #include <boost/system/detail/error_category.hpp>
 #include <boost/system/detail/generic_category.hpp>
+#include <boost/system/detail/system_category.hpp>
 #include <boost/system/api_config.hpp>
 #include <boost/system/detail/config.hpp>
 #include <boost/cstdint.hpp>
@@ -41,42 +42,6 @@ namespace system
 class error_code;         // values defined by the operating system
 class error_condition;    // portable generic values defined below, but ultimately
                           // based on the POSIX standard
-
-// predefined error categories
-
-#if ( defined( BOOST_GCC ) && BOOST_GCC >= 40600 ) || defined( BOOST_CLANG )
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
-#endif
-
-namespace detail
-{
-
-class BOOST_SYMBOL_VISIBLE system_error_category: public error_category
-{
-public:
-
-    BOOST_SYSTEM_CONSTEXPR system_error_category() BOOST_NOEXCEPT:
-        error_category( ( boost::ulong_long_type( 0x8FAFD21E ) << 32 ) + 0x25C5E09B )
-    {
-    }
-
-    const char * name() const BOOST_NOEXCEPT BOOST_OVERRIDE
-    {
-        return "system";
-    }
-
-    error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT BOOST_OVERRIDE;
-
-    std::string message( int ev ) const BOOST_OVERRIDE;
-    char const * message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT BOOST_OVERRIDE;
-};
-
-} // namespace detail
-
-#if ( defined( BOOST_GCC ) && BOOST_GCC >= 40600 ) || defined( BOOST_CLANG )
-#pragma GCC diagnostic pop
-#endif
 
 // generic_category(), system_category()
 
