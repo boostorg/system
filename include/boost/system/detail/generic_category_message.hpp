@@ -1,7 +1,7 @@
-#ifndef BOOST_SYSTEM_DETAIL_GENERIC_CATEGORY_IMPL_HPP_INCLUDED
-#define BOOST_SYSTEM_DETAIL_GENERIC_CATEGORY_IMPL_HPP_INCLUDED
+#ifndef BOOST_SYSTEM_DETAIL_GENERIC_CATEGORY_MESSAGE_HPP_INCLUDED
+#define BOOST_SYSTEM_DETAIL_GENERIC_CATEGORY_MESSAGE_HPP_INCLUDED
 
-// Implementation details of generic_error_category
+// Implementation of generic_error_category_message
 //
 // Copyright 2018 Peter Dimov
 //
@@ -105,4 +105,4 @@ inline char const * generic_error_category_message( int ev, char * buffer, std::
 
 } // namespace boost
 
-#endif // #ifndef BOOST_SYSTEM_DETAIL_GENERIC_CATEGORY_IMPL_HPP_INCLUDED
+#endif // #ifndef BOOST_SYSTEM_DETAIL_GENERIC_CATEGORY_MESSAGE_HPP_INCLUDED
