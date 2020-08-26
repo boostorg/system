@@ -1,0 +1,15 @@
+#ifndef BOOST_SYSTEM_ERRC_HPP_INCLUDED
+#define BOOST_SYSTEM_ERRC_HPP_INCLUDED
+
+// Copyright Beman Dawes 2006, 2007
+// Copyright Christoper Kohlhoff 2007
+// Copyright Peter Dimov 2017, 2018, 2020
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+// See library home page at http://www.boost.org/libs/system
+
+#include <boost/system/detail/errc.hpp>
+
+#endif // #ifndef BOOST_SYSTEM_ERRC_HPP_INCLUDED

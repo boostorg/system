@@ -76,3 +76,4 @@ run std_single_instance_test.cpp std_single_instance_lib1 std_single_instance_li
 
 run is_error_code_enum_test.cpp ;
 run is_error_condition_enum_test.cpp ;
+run errc_test.cpp ;
