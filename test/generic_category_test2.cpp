@@ -4,7 +4,6 @@
 
 #include <boost/system/generic_category.hpp>
 #include <boost/core/lightweight_test.hpp>
-#include <cstring>
 
 // Tests whether generic_category() is functional when only
 // generic_category.hpp is included

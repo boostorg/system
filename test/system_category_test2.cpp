@@ -4,7 +4,6 @@
 
 #include <boost/system/system_category.hpp>
 #include <boost/core/lightweight_test.hpp>
-#include <cstring>
 
 // Tests whether system_category() is functional when only
 // system_category.hpp is included
