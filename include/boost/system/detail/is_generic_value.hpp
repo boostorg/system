@@ -1,11 +1,14 @@
-// POSIX-specific implementation details of system_error_category
-//
+#ifndef BOOST_SYSTEM_DETAIL_IS_GENERIC_VALUE_HPP_INCLUDED
+#define BOOST_SYSTEM_DETAIL_IS_GENERIC_VALUE_HPP_INCLUDED
+
 // Copyright 2018 Peter Dimov
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 // See library home page at http://www.boost.org/libs/system
+
+#include <boost/system/detail/errc.hpp>
 
 namespace boost
 {
@@ -113,20 +116,10 @@ inline bool is_generic_value( int ev ) BOOST_NOEXCEPT
     return false;
 }
 
-inline error_condition system_category_default_error_condition_posix( int ev ) BOOST_NOEXCEPT
-{
-    if( is_generic_value( ev ) )
-    {
-        return error_condition( ev, generic_category() );
-    }
-    else
-    {
-        return error_condition( ev, system_category() );
-    }
-}
-
 } // namespace detail
 
 } // namespace system
 
 } // namespace boost
+
+#endif // #ifndef BOOST_SYSTEM_DETAIL_IS_GENERIC_VALUE_HPP_INCLUDED
