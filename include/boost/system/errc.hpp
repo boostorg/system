@@ -14,6 +14,7 @@
 #include <boost/system/detail/error_code.hpp>
 #include <boost/system/detail/error_condition.hpp>
 #include <boost/system/detail/generic_category.hpp>
+#include <boost/system/detail/error_category_impl.hpp>
 #include <boost/system/detail/config.hpp>
 #include <boost/config.hpp>
 
