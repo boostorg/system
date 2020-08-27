@@ -92,4 +92,17 @@ inline char const * error_category::message( int ev, char * buffer, std::size_t 
 
 } // namespace boost
 
+// interoperability with std::error_code, std::error_condition
+
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+
+#include <boost/system/detail/std_interoperability.hpp>
+
+inline boost::system::error_category::operator std::error_category const & () const
+{
+    return boost::system::detail::to_std_category( *this );
+}
+
+#endif // #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+
 #endif // #ifndef BOOST_SYSTEM_DETAIL_ERROR_CATEGORY_IMPL_HPP_INCLUDED
