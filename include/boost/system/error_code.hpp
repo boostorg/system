@@ -19,6 +19,7 @@
 #include <boost/system/detail/enable_if.hpp>
 #include <boost/system/detail/error_condition.hpp>
 #include <boost/system/detail/error_code.hpp>
+#include <boost/system/detail/throws.hpp>
 #include <boost/system/api_config.hpp>
 #include <boost/system/detail/config.hpp>
 #include <boost/cstdint.hpp>
@@ -47,40 +48,6 @@ class error_condition;    // portable generic values defined below, but ultimate
                           // based on the POSIX standard
 
 }  // namespace system
-
-// boost::throws()
-
-namespace detail
-{
-
-//  Misuse of the error_code object is turned into a noisy failure by
-//  poisoning the reference. This particular implementation doesn't
-//  produce warnings or errors from popular compilers, is very efficient
-//  (as determined by inspecting generated code), and does not suffer
-//  from order of initialization problems. In practice, it also seems
-//  cause user function error handling implementation errors to be detected
-//  very early in the development cycle.
-
-inline system::error_code* throws()
-{
-    // See github.com/boostorg/system/pull/12 by visigoth for why the return
-    // is poisoned with nonzero rather than (0). A test, test_throws_usage(),
-    // has been added to error_code_test.cpp, and as visigoth mentioned it
-    // fails on clang for release builds with a return of 0 but works fine
-    // with (1).
-    // Since the undefined behavior sanitizer (-fsanitize=undefined) does not
-    // allow a reference to be formed to the unaligned address of (1), we use
-    // (8) instead.
-
-    return reinterpret_cast<system::error_code*>(8);
-}
-
-} // namespace detail
-
-inline system::error_code& throws()
-{
-    return *detail::throws();
-}
 
 // non-member functions of error_code and error_condition
 
