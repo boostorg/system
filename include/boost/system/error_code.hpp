@@ -14,9 +14,8 @@
 #include <boost/system/error_category.hpp>
 #include <boost/system/error_condition.hpp>
 #include <boost/system/errc.hpp>
-#include <boost/system/detail/generic_category.hpp>
-#include <boost/system/detail/system_category.hpp>
-#include <boost/system/detail/system_category_impl.hpp>
+#include <boost/system/generic_category.hpp>
+#include <boost/system/system_category.hpp>
 #include <boost/system/detail/throws.hpp>
 #include <boost/config.hpp>
 

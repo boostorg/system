@@ -81,3 +81,4 @@ run error_category_test2.cpp ;
 run error_condition_test.cpp ;
 run error_condition_test2.cpp ;
 run generic_category_test2.cpp ;
+run system_category_test2.cpp ;

@@ -11,6 +11,7 @@
 //  See library home page at http://www.boost.org/libs/system
 
 #include <boost/system/detail/system_category.hpp>
+#include <boost/system/detail/error_condition.hpp>
 #include <boost/system/api_config.hpp>
 #include <boost/config.hpp>
 
@@ -22,11 +23,22 @@
 
 #if defined(BOOST_WINDOWS_API)
 
-#include <boost/system/detail/system_category_win32.hpp>
+#include <boost/system/detail/system_category_message_win32.hpp>
+#include <boost/system/detail/system_category_condition_win32.hpp>
+#include <boost/system/detail/generic_category.hpp>
 
 inline boost::system::error_condition boost::system::detail::system_error_category::default_error_condition( int ev ) const BOOST_NOEXCEPT
 {
-    return system_category_default_error_condition_win32( ev );
+    int e2 = system_category_condition_win32( ev );
+
+    if( e2 == -1 )
+    {
+        return error_condition( ev, *this );
+    }
+    else
+    {
+        return error_condition( e2, generic_category() );
+    }
 }
 
 inline std::string boost::system::detail::system_error_category::message( int ev ) const
@@ -41,7 +53,7 @@ inline char const * boost::system::detail::system_error_category::message( int e
 
 #else // #if defined(BOOST_WINDOWS_API)
 
-#include <boost/system/detail/generic_category.hpp>
+#include <boost/system/detail/generic_category_message.hpp>
 #include <boost/system/detail/system_category_posix.hpp>
 
 inline boost::system::error_condition boost::system::detail::system_error_category::default_error_condition( int ev ) const BOOST_NOEXCEPT
