@@ -30,5 +30,10 @@ int main()
 
 #endif
 
+    // failed
+    BOOST_TEST( !cat.failed( 0 ) );
+    BOOST_TEST( cat.failed( 5 ) );
+    BOOST_TEST( cat.failed( -1 ) );
+
     return boost::report_errors();
 }

@@ -21,5 +21,10 @@ int main()
     BOOST_TEST( cat.default_error_condition( ENOENT ) == sys::error_condition( ENOENT, cat ) );
     BOOST_TEST( cat.default_error_condition( -1 ) == sys::error_condition( -1, cat ) );
 
+    // failed
+    BOOST_TEST( !cat.failed( 0 ) );
+    BOOST_TEST( cat.failed( ENOENT ) );
+    BOOST_TEST( cat.failed( -1 ) );
+
     return boost::report_errors();
 }
