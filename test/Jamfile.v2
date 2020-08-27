@@ -79,3 +79,4 @@ run is_error_condition_enum_test.cpp ;
 run errc_test.cpp ;
 run error_category_test2.cpp ;
 run error_condition_test.cpp ;
+run error_condition_test2.cpp ;

@@ -10,17 +10,13 @@
 //
 //  See library home page at http://www.boost.org/libs/system
 
-#include <boost/system/is_error_code_enum.hpp>
-#include <boost/system/is_error_condition_enum.hpp>
-#include <boost/system/detail/errc.hpp>
-#include <boost/system/detail/error_category.hpp>
+#include <boost/system/detail/error_code.hpp>
+#include <boost/system/error_category.hpp>
+#include <boost/system/error_condition.hpp>
+#include <boost/system/errc.hpp>
 #include <boost/system/detail/generic_category.hpp>
 #include <boost/system/detail/system_category.hpp>
-#include <boost/system/detail/enable_if.hpp>
-#include <boost/system/detail/error_condition.hpp>
-#include <boost/system/detail/error_code.hpp>
 #include <boost/system/detail/throws.hpp>
-#include <boost/system/detail/error_category_impl.hpp>
 #include <boost/system/api_config.hpp>
 #include <boost/system/detail/config.hpp>
 #include <boost/cstdint.hpp>
@@ -74,25 +70,6 @@ inline bool operator!=( const error_condition & lhs, const error_code & rhs ) BO
 {
     return !( lhs == rhs );
 }
-
-// make_* functions for errc::errc_t
-
-namespace errc
-{
-
-// explicit conversion:
-BOOST_SYSTEM_CONSTEXPR inline error_code make_error_code( errc_t e ) BOOST_NOEXCEPT
-{
-    return error_code( e, generic_category() );
-}
-
-// implicit conversion:
-BOOST_SYSTEM_CONSTEXPR inline error_condition make_error_condition( errc_t e ) BOOST_NOEXCEPT
-{
-    return error_condition( e, generic_category() );
-}
-
-} // namespace errc
 
 } // namespace system
 

@@ -11,6 +11,7 @@
 //  See library home page at http://www.boost.org/libs/system
 
 #include <boost/system/detail/error_category.hpp>
+#include <boost/system/detail/error_condition.hpp>
 #include <boost/system/detail/system_category.hpp>
 #include <boost/system/detail/enable_if.hpp>
 #include <boost/system/is_error_code_enum.hpp>
