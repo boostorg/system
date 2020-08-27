@@ -38,6 +38,12 @@ namespace detail
 
 BOOST_SYSTEM_CONSTEXPR bool failed_impl( int ev, error_category const & cat );
 
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+
+std::error_category const & to_std_category( error_category const & cat );
+
+#endif
+
 } // namespace detail
 
 #if ( defined( BOOST_GCC ) && BOOST_GCC >= 40600 ) || defined( BOOST_CLANG )
@@ -51,6 +57,10 @@ private:
 
     friend std::size_t hash_value( error_code const & ec );
     friend BOOST_SYSTEM_CONSTEXPR bool detail::failed_impl( int ev, error_category const & cat );
+
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+    friend std::error_category const & detail::to_std_category( error_category const & cat );
+#endif
 
 #if !defined(BOOST_NO_CXX11_DELETED_FUNCTIONS)
 public:

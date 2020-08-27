@@ -1,3 +1,6 @@
+#ifndef BOOST_SYSTEM_DETAIL_TO_STD_CATEGORY_HPP_INCLUDED
+#define BOOST_SYSTEM_DETAIL_TO_STD_CATEGORY_HPP_INCLUDED
+
 // Support for interoperability between Boost.System and <system_error>
 //
 // Copyright 2018 Peter Dimov
@@ -7,6 +10,10 @@
 //
 // See library home page at http://www.boost.org/libs/system
 
+#include <boost/system/detail/error_category.hpp>
+#include <boost/system/detail/error_condition.hpp>
+#include <boost/system/detail/error_code.hpp>
+#include <boost/system/detail/generic_category.hpp>
 #include <system_error>
 #include <map>
 #include <memory>
@@ -80,12 +87,12 @@ struct cat_ptr_less
 
 inline std::error_category const & to_std_category( boost::system::error_category const & cat )
 {
-    if( cat == boost::system::system_category() )
+    if( cat.id_ == boost::system::detail::system_category_id )
     {
         static const std_category system_instance( &cat, 0x1F4D7 );
         return system_instance;
     }
-    else if( cat == boost::system::generic_category() )
+    else if( cat.id_ == boost::system::detail::generic_category_id )
     {
         static const std_category generic_instance( &cat, 0x1F4D3 );
         return generic_instance;
@@ -180,3 +187,5 @@ inline bool std_category::equivalent( const std::error_code & code, int conditio
 } // namespace system
 
 } // namespace boost
+
+#endif // #ifndef BOOST_SYSTEM_DETAIL_TO_STD_CATEGORY_HPP_INCLUDED
