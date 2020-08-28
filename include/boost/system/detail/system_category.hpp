@@ -12,9 +12,7 @@
 
 #include <boost/system/detail/error_category.hpp>
 #include <boost/system/detail/config.hpp>
-#include <boost/cstdint.hpp>
 #include <boost/config.hpp>
-#include <cstring>
 
 namespace boost
 {
