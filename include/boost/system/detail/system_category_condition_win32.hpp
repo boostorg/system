@@ -101,7 +101,7 @@ inline int system_category_condition_win32( int ev ) BOOST_NOEXCEPT
     case ERROR_WRITE_FAULT_: return io_error;
     case ERROR_WRITE_PROTECT_: return permission_denied;
 
-	case WSAEACCES_: return permission_denied;
+    case WSAEACCES_: return permission_denied;
     case WSAEADDRINUSE_: return address_in_use;
     case WSAEADDRNOTAVAIL_: return address_not_available;
     case WSAEAFNOSUPPORT_: return address_family_not_supported;
