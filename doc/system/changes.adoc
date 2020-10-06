@@ -19,7 +19,7 @@ http://www.boost.org/LICENSE_1_0.txt
 * The old names for `generic_category()` and `system_category()` emit
   deprecation messages and are slated for removal.
 * `error_condition::failed` is deprecated and is slated for removal.
-  `operator bool()` for `error_category` has been reverted to its old
+  `operator bool()` for `error_condition` has been reverted to its old
   meaning of `value() != 0`. This is done for compatibility with
   `std::error_condition` as the next release is expected to improve
   interoperability with `<system_error>` even further. _Note that this
