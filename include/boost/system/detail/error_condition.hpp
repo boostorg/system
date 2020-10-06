@@ -32,7 +32,6 @@ class error_condition
 private:
 
     int val_;
-    bool failed_;
     error_category const * cat_;
 
 public:
@@ -40,12 +39,12 @@ public:
     // constructors:
 
     BOOST_SYSTEM_CONSTEXPR error_condition() BOOST_NOEXCEPT:
-        val_( 0 ), failed_( false ), cat_( &generic_category() )
+        val_( 0 ), cat_( &generic_category() )
     {
     }
 
     BOOST_SYSTEM_CONSTEXPR error_condition( int val, const error_category & cat ) BOOST_NOEXCEPT:
-        val_( val ), failed_( detail::failed_impl( val, cat ) ), cat_( &cat )
+        val_( val ), cat_( &cat )
     {
     }
 
@@ -60,7 +59,6 @@ public:
     BOOST_SYSTEM_CONSTEXPR void assign( int val, const error_category & cat ) BOOST_NOEXCEPT
     {
         val_ = val;
-        failed_ = detail::failed_impl( val, cat );
         cat_ = &cat;
     }
 
@@ -75,7 +73,6 @@ public:
     BOOST_SYSTEM_CONSTEXPR void clear() BOOST_NOEXCEPT
     {
         val_ = 0;
-        failed_ = false;
         cat_ = &generic_category();
     }
 
@@ -96,21 +93,21 @@ public:
         return cat_->message( value() );
     }
 
-    char const * message( char * buffer, std::size_t len ) const BOOST_NOEXCEPT
+    BOOST_SYSTEM_DEPRECATED("this function is slated for removal") char const * message( char * buffer, std::size_t len ) const BOOST_NOEXCEPT
     {
         return cat_->message( value(), buffer, len );
     }
 
-    BOOST_SYSTEM_CONSTEXPR bool failed() const BOOST_NOEXCEPT
+    BOOST_SYSTEM_DEPRECATED("this function is slated for removal") BOOST_SYSTEM_CONSTEXPR bool failed() const BOOST_NOEXCEPT
     {
-        return failed_;
+        return detail::failed_impl( val_, *cat_ );
     }
 
 #if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
 
     BOOST_SYSTEM_CONSTEXPR explicit operator bool() const BOOST_NOEXCEPT  // true if error
     {
-        return failed_;
+        return val_ != 0;
     }
 
 #else
@@ -120,12 +117,12 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR operator unspecified_bool_type() const BOOST_NOEXCEPT  // true if error
     {
-        return failed_? unspecified_bool_true: 0;
+        return val_ != 0? unspecified_bool_true: 0;
     }
 
     BOOST_SYSTEM_CONSTEXPR bool operator!() const BOOST_NOEXCEPT  // true if no error
     {
-        return !failed_;
+        return val_ == 0;
     }
 
 #endif
