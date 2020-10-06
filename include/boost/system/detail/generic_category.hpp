@@ -109,10 +109,10 @@ inline error_category const & generic_category() BOOST_NOEXCEPT
 
 #ifdef BOOST_SYSTEM_ENABLE_DEPRECATED
 
-inline const error_category & get_generic_category() { return generic_category(); }
-inline const error_category & get_posix_category() { return generic_category(); }
-static const error_category & posix_category BOOST_ATTRIBUTE_UNUSED = generic_category();
-static const error_category & errno_ecat BOOST_ATTRIBUTE_UNUSED = generic_category();
+BOOST_SYSTEM_DEPRECATED("please use generic_category()") inline const error_category & get_generic_category() { return generic_category(); }
+BOOST_SYSTEM_DEPRECATED("please use generic_category()") inline const error_category & get_posix_category() { return generic_category(); }
+BOOST_SYSTEM_DEPRECATED("please use generic_category()") static const error_category & posix_category BOOST_ATTRIBUTE_UNUSED = generic_category();
+BOOST_SYSTEM_DEPRECATED("please use generic_category()") static const error_category & errno_ecat BOOST_ATTRIBUTE_UNUSED = generic_category();
 
 #endif
 

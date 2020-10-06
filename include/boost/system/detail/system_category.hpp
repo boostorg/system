@@ -98,8 +98,8 @@ inline error_category const & system_category() BOOST_NOEXCEPT
 
 #ifdef BOOST_SYSTEM_ENABLE_DEPRECATED
 
-inline const error_category & get_system_category() { return system_category(); }
-static const error_category & native_ecat BOOST_ATTRIBUTE_UNUSED = system_category();
+BOOST_SYSTEM_DEPRECATED("please use system_category()") inline const error_category & get_system_category() { return system_category(); }
+BOOST_SYSTEM_DEPRECATED("please use system_category()") static const error_category & native_ecat BOOST_ATTRIBUTE_UNUSED = system_category();
 
 #endif
 
