@@ -84,7 +84,7 @@ protected:
 
 #if !defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS) && !defined(BOOST_NO_CXX11_NON_PUBLIC_DEFAULTED_FUNCTIONS)
 
-    ~error_category() = default;
+    virtual ~error_category() = default;
 
 #else
 
