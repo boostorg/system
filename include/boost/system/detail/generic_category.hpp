@@ -33,9 +33,9 @@ namespace detail
 
 class BOOST_SYMBOL_VISIBLE generic_error_category: public error_category
 {
-    ~generic_error_category() override = default;
-
 public:
+
+    ~generic_error_category() BOOST_OVERRIDE {};
 
     BOOST_SYSTEM_CONSTEXPR generic_error_category() BOOST_NOEXCEPT:
         error_category( detail::generic_category_id )

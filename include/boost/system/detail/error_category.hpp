@@ -80,22 +80,18 @@ private:
 
     boost::ulong_long_type id_;
 
+#if !defined(BOOST_NO_CXX11_NON_PUBLIC_DEFAULTED_FUNCTIONS)
+
 protected:
-
-#if !defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS) && !defined(BOOST_NO_CXX11_NON_PUBLIC_DEFAULTED_FUNCTIONS)
-
-    virtual ~error_category() = default;
-
+    virtual ~error_category() {}
 #else
 
-    // We'd like to make the destructor protected, to make code that deletes
-    // an error_category* not compile; unfortunately, doing the below makes
-    // the destructor user-provided and hence breaks use after main, as the
-    // categories may get destroyed before code that uses them
-
-    // ~error_category() {}
+public:
+    virtual ~error_category() {}
 
 #endif
+
+protected:
 
     BOOST_SYSTEM_CONSTEXPR error_category() BOOST_NOEXCEPT: id_( 0 )
     {
