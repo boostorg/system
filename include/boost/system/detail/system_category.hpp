@@ -32,6 +32,8 @@ namespace detail
 
 class BOOST_SYMBOL_VISIBLE system_error_category: public error_category
 {
+    ~system_error_category() override = default;
+
 public:
 
     BOOST_SYSTEM_CONSTEXPR system_error_category() BOOST_NOEXCEPT:

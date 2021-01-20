@@ -33,6 +33,8 @@ namespace detail
 
 class BOOST_SYMBOL_VISIBLE generic_error_category: public error_category
 {
+    ~generic_error_category() override = default;
+
 public:
 
     BOOST_SYSTEM_CONSTEXPR generic_error_category() BOOST_NOEXCEPT:
