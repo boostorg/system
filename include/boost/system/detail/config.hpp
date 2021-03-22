@@ -60,6 +60,8 @@
 # endif
 #elif defined(_MSC_VER)
 #  define BOOST_SYSTEM_DEPRECATED(msg) __declspec(deprecated(msg))
+#elif defined(__sun)
+#  define BOOST_SYSTEM_DEPRECATED(msg) __attribute__((deprecated(msg)))
 #else
 # define BOOST_SYSTEM_DEPRECATED(msg)
 #endif
