@@ -56,8 +56,7 @@ system-run generic_category_test.cpp ;
 system-run system_category_test.cpp ;
 system-run after_main_test.cpp ;
 system-run failed_test.cpp ;
-compile failed_constexpr_test.cpp
-  : <toolset>gcc,<undefined-sanitizer>norecover:<build>no ;
+compile failed_constexpr_test.cpp : <toolset>gcc,<undefined-sanitizer>norecover:<build>no ;
 
 # Quick (CI) test
 run quick.cpp ;
