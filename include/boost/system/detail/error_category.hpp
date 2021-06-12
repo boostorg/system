@@ -19,6 +19,7 @@
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 # include <system_error>
+# include <atomic>
 #endif
 
 namespace boost
@@ -38,11 +39,7 @@ namespace detail
 
 BOOST_SYSTEM_CONSTEXPR bool failed_impl( int ev, error_category const & cat );
 
-#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
-
-std::error_category const & to_std_category( error_category const & cat );
-
-#endif
+class std_category;
 
 } // namespace detail
 
@@ -57,10 +54,6 @@ private:
 
     friend std::size_t hash_value( error_code const & ec );
     friend BOOST_SYSTEM_CONSTEXPR bool detail::failed_impl( int ev, error_category const & cat );
-
-#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
-    friend std::error_category const & detail::to_std_category( error_category const & cat );
-#endif
 
 #if !defined(BOOST_NO_CXX11_DELETED_FUNCTIONS)
 public:
@@ -80,6 +73,16 @@ private:
 
     boost::ulong_long_type id_;
 
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+
+    mutable std::atomic< boost::system::detail::std_category* > ps_;
+
+#else
+
+    boost::system::detail::std_category* ps_;
+
+#endif
+
 protected:
 
 #if !defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS) && !defined(BOOST_NO_CXX11_NON_PUBLIC_DEFAULTED_FUNCTIONS)
@@ -97,11 +100,11 @@ protected:
 
 #endif
 
-    BOOST_SYSTEM_CONSTEXPR error_category() BOOST_NOEXCEPT: id_( 0 )
+    BOOST_SYSTEM_CONSTEXPR error_category() BOOST_NOEXCEPT: id_( 0 ), ps_()
     {
     }
 
-    explicit BOOST_SYSTEM_CONSTEXPR error_category( boost::ulong_long_type id ) BOOST_NOEXCEPT: id_( id )
+    explicit BOOST_SYSTEM_CONSTEXPR error_category( boost::ulong_long_type id ) BOOST_NOEXCEPT: id_( id ), ps_()
     {
     }
 
