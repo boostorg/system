@@ -124,24 +124,24 @@ public:
         return ev != 0;
     }
 
-    BOOST_SYSTEM_CONSTEXPR bool operator==( const error_category & rhs ) const BOOST_NOEXCEPT
+    friend BOOST_SYSTEM_CONSTEXPR bool operator==( error_category const & lhs, error_category const & rhs ) BOOST_NOEXCEPT
     {
-        return rhs.id_ == 0? this == &rhs: id_ == rhs.id_;
+        return rhs.id_ == 0? &lhs == &rhs: lhs.id_ == rhs.id_;
     }
 
-    BOOST_SYSTEM_CONSTEXPR bool operator!=( const error_category & rhs ) const BOOST_NOEXCEPT
+    friend BOOST_SYSTEM_CONSTEXPR bool operator!=( error_category const & lhs, error_category const & rhs ) BOOST_NOEXCEPT
     {
-        return !( *this == rhs );
+        return !( lhs == rhs );
     }
 
-    BOOST_SYSTEM_CONSTEXPR bool operator<( const error_category & rhs ) const BOOST_NOEXCEPT
+    friend BOOST_SYSTEM_CONSTEXPR bool operator<( error_category const & lhs, error_category const & rhs ) BOOST_NOEXCEPT
     {
-        if( id_ < rhs.id_ )
+        if( lhs.id_ < rhs.id_ )
         {
             return true;
         }
 
-        if( id_ > rhs.id_ )
+        if( lhs.id_ > rhs.id_ )
         {
             return false;
         }
@@ -151,7 +151,7 @@ public:
             return false; // equal
         }
 
-        return std::less<error_category const *>()( this, &rhs );
+        return std::less<error_category const *>()( &lhs, &rhs );
     }
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
