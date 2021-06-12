@@ -155,9 +155,11 @@ public:
     }
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
-
+# if defined(__SUNPRO_CC) // trailing __global is not supported
+    operator std::error_category const & () const;
+# else
     operator std::error_category const & () const BOOST_SYMBOL_VISIBLE;
-
+# endif
 #endif
 };
 
