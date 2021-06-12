@@ -156,7 +156,7 @@ public:
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
-    operator std::error_category const & () const;
+    operator std::error_category const & () const BOOST_SYMBOL_VISIBLE;
 
 #endif
 };
