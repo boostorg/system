@@ -330,13 +330,21 @@ public:
     {
         if( flags_ != 1 )
         {
-            std::error_code e2 = *this;
+            std::error_code e2( *this );
             ::new( d2_ ) std::error_code( e2 );
             flags_ = 1;
         }
 
         return *reinterpret_cast<std::error_code*>( d2_ );
     }
+
+#if defined(__clang__) && __clang_major__ < 7
+
+    template<class T,
+      class E = typename std::enable_if<std::is_same<T, std::error_code>::value>::type>
+      operator T const& () = delete;
+
+#endif
 
 #endif
 
