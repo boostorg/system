@@ -89,3 +89,5 @@ run system_category_test3.cpp ;
 run windows_error_test.cpp ;
 run cygwin_error_test.cpp ;
 run linux_error_test.cpp ;
+
+link errc_test3.cpp ;
