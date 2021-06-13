@@ -156,7 +156,7 @@ public:
         }
         else
         {
-            detail::std_error_code const& ec = reinterpret_cast<detail::std_error_code const&>( d2_ );
+            detail::std_error_code const& ec = *reinterpret_cast<detail::std_error_code const*>( d2_ );
             return ec.value() + static_cast<unsigned>( reinterpret_cast<boost::uintptr_t>( &ec.category() ) % 1073741789 /* 2^30-35, prime*/ );
         }
     }
@@ -189,7 +189,7 @@ public:
 
         if( flags_ == 1 )
         {
-            detail::std_error_code const& ec = reinterpret_cast<detail::std_error_code const&>( d2_ );
+            detail::std_error_code const& ec = *reinterpret_cast<detail::std_error_code const*>( d2_ );
             return ec.message();
         }
 
@@ -207,7 +207,7 @@ public:
             try
 #endif
             {
-                detail::std_error_code const& ec = reinterpret_cast<detail::std_error_code const&>( d2_ );
+                detail::std_error_code const& ec = *reinterpret_cast<detail::std_error_code const*>( d2_ );
                 detail::snprintf( buffer, len, "%s", ec.message().c_str() );
                 return buffer;
             }
@@ -230,7 +230,7 @@ public:
         }
         else if( flags_ == 1 )
         {
-            detail::std_error_code const& ec = reinterpret_cast<detail::std_error_code const&>( d2_ );
+            detail::std_error_code const& ec = *reinterpret_cast<detail::std_error_code const*>( d2_ );
             return ec.value() != 0;
         }
         else
@@ -289,7 +289,7 @@ public:
     {
         if( flags_ == 1 )
         {
-            return reinterpret_cast<std::error_code const&>( d2_ );
+            return *reinterpret_cast<std::error_code const*>( d2_ );
         }
         else if( flags_ == 0 )
         {
@@ -318,7 +318,7 @@ public:
             flags_ = 1;
         }
 
-        return reinterpret_cast<std::error_code&>( d2_ );
+        return *reinterpret_cast<std::error_code*>( d2_ );
     }
 
 #endif
@@ -331,7 +331,7 @@ public:
 
         if( ec.flags_ == 1 )
         {
-            detail::std_error_code const& e2 = reinterpret_cast<detail::std_error_code const&>( ec.d2_ );
+            detail::std_error_code const& e2 = *reinterpret_cast<detail::std_error_code const*>( ec.d2_ );
             os << "std:" << e2.category().name() << ':' << e2.value();
         }
         else
