@@ -93,3 +93,7 @@ run linux_error_test.cpp ;
 link errc_test3.cpp ;
 
 run snprintf_test.cpp ;
+
+run std_interop_test2.cpp ;
+run std_interop_test3.cpp ;
+run std_interop_test4.cpp ;
