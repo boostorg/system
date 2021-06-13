@@ -29,6 +29,11 @@
 # include <system_error>
 #endif
 
+#if defined(BOOST_GCC) && BOOST_GCC < 60000
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif
+
 namespace boost
 {
 
@@ -396,5 +401,9 @@ inline std::size_t hash_value( error_code const & ec )
 } // namespace system
 
 } // namespace boost
+
+#if defined(BOOST_GCC) && BOOST_GCC < 60000
+# pragma GCC diagnostic pop
+#endif
 
 #endif // #ifndef BOOST_SYSTEM_DETAIL_ERROR_CODE_HPP_INCLUDED
