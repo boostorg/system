@@ -139,7 +139,7 @@ public:
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
             std::error_code const& ec = *reinterpret_cast<std::error_code const*>( d2_ );
-            return ec.value() + static_cast<unsigned>( reinterpret_cast<boost::uintptr_t>( &ec.category() ) % 1073741789 /* 2^30-35, prime*/ );
+            return ec.value() + 1000 * static_cast<unsigned>( reinterpret_cast<boost::uintptr_t>( &ec.category() ) % 2097143 ); // 2^21-9, prime
 #else
 
             return -1;
