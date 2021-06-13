@@ -37,7 +37,9 @@ int main()
         boost::system::error_code e2( e1 );
 
         f1( e1, e1.value(), e1.category() );
+#if !(defined(__clang__) && __clang_major__ < 7)
         f2( e1, e1.value(), e1.category() );
+#endif
 
         BOOST_TEST_EQ( e1, e2 );
     }
@@ -47,7 +49,9 @@ int main()
         boost::system::error_code e2( e1 );
 
         f1( e1, e1.value(), e1.category() );
+#if !(defined(__clang__) && __clang_major__ < 7)
         f2( e1, e1.value(), e1.category() );
+#endif
 
         BOOST_TEST_EQ( e1, e2 );
     }
@@ -57,7 +61,9 @@ int main()
         boost::system::error_code e2( e1 );
 
         f1( e1, e1.value(), e1.category() );
+#if !(defined(__clang__) && __clang_major__ < 7)
         f2( e1, e1.value(), e1.category() );
+#endif
 
         BOOST_TEST_EQ( e1, e2 );
     }
@@ -67,7 +73,9 @@ int main()
         boost::system::error_code e2( e1 );
 
         f1( e1, e1.value(), e1.category() );
+#if !(defined(__clang__) && __clang_major__ < 7)
         f2( e1, e1.value(), e1.category() );
+#endif
 
         BOOST_TEST_EQ( e1, e2 );
     }
@@ -77,7 +85,9 @@ int main()
         boost::system::error_code e2( e1 );
 
         f1( e1, e1.value(), e1.category() );
+#if !(defined(__clang__) && __clang_major__ < 7)
         f2( e1, e1.value(), e1.category() );
+#endif
 
         BOOST_TEST_EQ( e1, e2 );
     }
