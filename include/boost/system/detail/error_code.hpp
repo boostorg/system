@@ -29,7 +29,7 @@
 # include <system_error>
 #endif
 
-#if defined(BOOST_GCC) && BOOST_GCC < 60000
+#if defined(BOOST_GCC) && BOOST_GCC < 70000
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
