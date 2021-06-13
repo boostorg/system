@@ -35,27 +35,15 @@ BOOST_STATIC_ASSERT( !ec3 );
 
 constexpr error_condition en1( 1, system_category() );
 
-#if __GNUC__ == 7 && __cplusplus == 201703L
-// `cat_ != 0` is not a constant expression
-#else
-
 BOOST_STATIC_ASSERT( en1.failed() );
 BOOST_STATIC_ASSERT( en1 );
 BOOST_STATIC_ASSERT( !!en1 );
 
-#endif
-
 constexpr error_condition en2( 2, generic_category() );
-
-#if __GNUC__ == 7 && __cplusplus == 201703L
-// `cat_ != 0` is not a constant expression
-#else
 
 BOOST_STATIC_ASSERT( en2.failed() );
 BOOST_STATIC_ASSERT( en2 );
 BOOST_STATIC_ASSERT( !!en2 );
-
-#endif
 
 constexpr error_condition en3;
 
