@@ -313,7 +313,7 @@ public:
     {
         if( flags_ != 1 )
         {
-            std::error_code e2( *this );
+            std::error_code e2 = *this;
             ::new( d2_ ) std::error_code( e2 );
             flags_ = 1;
         }
