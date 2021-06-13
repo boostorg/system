@@ -44,8 +44,14 @@ namespace system
 //  and error_code containing a pointer to an object of a type derived
 //  from error_category.
 
+std::size_t hash_value( error_code const & ec );
+
 class error_code
 {
+private:
+
+    friend std::size_t hash_value( error_code const & ec );
+
 private:
 
     struct data
@@ -352,6 +358,16 @@ public:
 
 inline std::size_t hash_value( error_code const & ec )
 {
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+
+    if( ec.flags_ == 1 )
+    {
+        std::error_code const& e2 = *reinterpret_cast<std::error_code const*>( ec.d2_ );
+        return std::hash<std::error_code>()( e2 );
+    }
+
+#endif
+
     error_category const & cat = ec.category();
 
     boost::ulong_long_type id_ = cat.id_;
