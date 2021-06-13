@@ -45,6 +45,7 @@ class error_condition
 private:
 
     int val_;
+    bool failed_;
     error_category const * cat_;
 
 public:
@@ -52,12 +53,12 @@ public:
     // constructors:
 
     BOOST_SYSTEM_CONSTEXPR error_condition() BOOST_NOEXCEPT:
-        val_( 0 ), cat_( 0 )
+        val_( 0 ), failed_( false ), cat_( 0 )
     {
     }
 
     BOOST_SYSTEM_CONSTEXPR error_condition( int val, const error_category & cat ) BOOST_NOEXCEPT:
-        val_( val ), cat_( &cat )
+        val_( val ), failed_( detail::failed_impl( val, cat ) ), cat_( &cat )
     {
     }
 
@@ -85,6 +86,7 @@ public:
     BOOST_SYSTEM_CONSTEXPR void assign( int val, const error_category & cat ) BOOST_NOEXCEPT
     {
         val_ = val;
+        failed_ = detail::failed_impl( val, cat );
         cat_ = &cat;
     }
 
@@ -99,6 +101,7 @@ public:
     BOOST_SYSTEM_CONSTEXPR void clear() BOOST_NOEXCEPT
     {
         val_ = 0;
+        failed_ = false;
         cat_ = 0;
     }
 
@@ -140,21 +143,14 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR bool failed() const BOOST_NOEXCEPT
     {
-        if( cat_ )
-        {
-            return detail::failed_impl( val_, *cat_ );
-        }
-        else
-        {
-            return val_ != 0;
-        }
+        return failed_;
     }
 
 #if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
 
     BOOST_SYSTEM_CONSTEXPR explicit operator bool() const BOOST_NOEXCEPT  // true if error
     {
-        return failed();
+        return failed_;
     }
 
 #else
@@ -164,12 +160,12 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR operator unspecified_bool_type() const BOOST_NOEXCEPT  // true if error
     {
-        return failed()? unspecified_bool_true: 0;
+        return failed_? unspecified_bool_true: 0;
     }
 
     BOOST_SYSTEM_CONSTEXPR bool operator!() const BOOST_NOEXCEPT  // true if no error
     {
-        return !failed();
+        return !failed_;
     }
 
 #endif
