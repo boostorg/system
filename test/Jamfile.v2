@@ -91,3 +91,5 @@ run cygwin_error_test.cpp ;
 run linux_error_test.cpp ;
 
 link errc_test3.cpp ;
+
+run snprintf_test.cpp ;

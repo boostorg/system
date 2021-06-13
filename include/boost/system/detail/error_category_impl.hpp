@@ -13,6 +13,7 @@
 #include <boost/system/detail/error_category.hpp>
 #include <boost/system/detail/error_condition.hpp>
 #include <boost/system/detail/error_code.hpp>
+#include <boost/system/detail/snprintf.hpp>
 #include <boost/config.hpp>
 #include <string>
 #include <cstring>
@@ -83,7 +84,8 @@ inline char const * error_category::message( int ev, char * buffer, std::size_t 
 #if !defined(BOOST_NO_EXCEPTIONS)
     catch( ... )
     {
-        return "Message text unavailable";
+        detail::snprintf( buffer, len, "No message text available for error %d", ev );
+        return buffer;
     }
 #endif
 }
