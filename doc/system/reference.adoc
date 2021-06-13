@@ -165,28 +165,15 @@ namespace boost {
 
     // non-member functions
 
-    constexpr bool operator==( const error_code & lhs,
-      const error_code & rhs ) noexcept;
     bool operator==( const error_code & code,
       const error_condition & condition ) noexcept;
     bool operator==( const error_condition & condition,
       const error_code & code ) noexcept;
-    constexpr bool operator==( const error_condition & lhs,
-      const error_condition & rhs ) noexcept;
 
-    constexpr bool operator!=( const error_code & lhs,
-      const error_code & rhs ) noexcept;
     bool operator!=( const error_code & code,
       const error_condition & condition ) noexcept;
     bool operator!=( const error_condition & condition,
       const error_code & code ) noexcept;
-    constexpr bool operator!=( const error_condition & lhs,
-      const error_condition & rhs ) noexcept;
-
-    constexpr bool operator<( const error_code & lhs,
-      const error_code & rhs ) noexcept;
-    constexpr bool operator<( const error_condition & lhs,
-      const error_condition & rhs ) noexcept;
 
     constexpr error_code make_error_code( errc::errc_t e ) noexcept;
     constexpr error_condition make_error_condition( errc::errc_t e ) noexcept;
@@ -251,9 +238,13 @@ namespace boost {
 
       virtual bool failed( int ev ) const noexcept;
 
-      constexpr bool operator==( const error_category & rhs ) const noexcept;
-      constexpr bool operator!=( const error_category & rhs ) const noexcept;
-      constexpr bool operator< ( const error_category & rhs ) const noexcept;
+      friend constexpr bool operator==( const error_category & lhs,
+        const error_category & rhs ) noexcept;
+      friend constexpr bool operator!=( const error_category & lhs,
+        const error_category & rhs ) noexcept;
+
+      friend constexpr bool operator< ( const error_category & lhs,
+        const error_category & rhs ) noexcept;
 
       operator std::error_category const & () const;
 
@@ -397,37 +388,42 @@ Returns: ::
 Remarks: ::
   All calls to this function with the same `ev` must return the same value.
 
-#### Nonvirtuals
+#### Comparisons
 
 ```
-constexpr bool operator==( const error_category & rhs ) const noexcept;
+friend constexpr bool operator==( const error_category & lhs,
+  const error_category & rhs ) noexcept;
 ```
 [none]
 * {blank}
 +
-Returns: :: `rhs.id_ == 0? this == &rhs: id_ == rhs.id_`.
-Remarks: :: Two category objects are considered equivalent when they have matching
-  nonzero identifiers, or are the same object.
+Returns: :: `rhs.id_ == 0? &lhs == &rhs: lhs.id_ == rhs.id_`.
+Remarks: :: Two category objects are considered equivalent when they have
+  matching nonzero identifiers, or are the same object.
 
 ```
-constexpr bool operator!=( const error_category & rhs ) const noexcept;
+friend constexpr bool operator!=( const error_category & lhs,
+  const error_category & rhs ) noexcept;
 ```
 [none]
 * {blank}
 +
-Returns: :: `!( *this == rhs )`.
+Returns: :: `!( lhs == rhs )`.
 
 ```
-constexpr bool operator< ( const error_category & rhs ) const noexcept;
+constexpr bool operator< ( const error_category & lhs,
+  const error_category & rhs ) const noexcept;
 ```
 [none]
 * {blank}
 +
 Returns: ::
-** If `id_ < rhs.id_`, `true`;
-** Otherwise, if `id_ > rhs.id_`, `false`;
+** If `lhs.id_ < rhs.id_`, `true`;
+** Otherwise, if `lhs.id_ > rhs.id_`, `false`;
 ** Otherwise, if `rhs.id_ != 0`, `false`;
-** Otherwise, `std::less<error_category const *>()( this, &rhs )`.
+** Otherwise, `std::less<error_category const *>()( &lhs, &rhs )`.
+
+#### Conversions
 
 ```
 operator std::error_category const & () const;
@@ -502,13 +498,19 @@ namespace boost {
       constexpr bool failed() const noexcept;
       constexpr explicit operator bool() const noexcept;
 
+      // comparisons:
+
+      friend constexpr bool operator==( const error_code & lhs,
+        const error_code & rhs ) noexcept;
+      friend constexpr bool operator!=( const error_code & lhs,
+        const error_code & rhs ) noexcept;
+
+      friend constexpr bool operator<( const error_code & lhs,
+        const error_code & rhs ) noexcept;
+
+      // conversions:
+
       operator std::error_code() const;
-
-    private: // exposition only
-
-      int val_;
-      const error_category * cat_;
-
     };
   }
 }
@@ -522,7 +524,7 @@ constexpr error_code() noexcept;
 [none]
 * {blank}
 +
-Ensures: :: `val_ == 0`; `*cat_ == system_category()`.
+Ensures: :: `value() == 0`; `category() == system_category()`.
 
 ```
 constexpr error_code( int val, const error_category & cat ) noexcept;
@@ -530,7 +532,7 @@ constexpr error_code( int val, const error_category & cat ) noexcept;
 [none]
 * {blank}
 +
-Ensures: :: `val_ == val`; `cat_ == &cat`.
+Ensures: :: `value() == val`; `category() == cat`.
 
 ```
 template <class ErrorCodeEnum>
@@ -550,7 +552,7 @@ constexpr void assign( int val, const error_category & cat ) noexcept;
 [none]
 * {blank}
 +
-Ensures: :: `val_ == val`; `cat_ == &cat`.
+Ensures: :: `value() == val`; `category() == cat`.
 
 ```
 template<typename ErrorCodeEnum>
@@ -569,7 +571,7 @@ constexpr void clear() noexcept;
 * {blank}
 +
 Ensures: ::
-  `val_ == 0`; `*cat_ == system_category()`.
+  `value() == 0`; `category() == system_category()`.
 
 #### Observers
 
@@ -579,7 +581,7 @@ constexpr int value() const noexcept;
 [none]
 * {blank}
 +
-Returns: :: `val_`.
+Returns: :: the error value.
 
 ```
 constexpr const error_category & category() const noexcept;
@@ -587,7 +589,7 @@ constexpr const error_category & category() const noexcept;
 [none]
 * {blank}
 +
-Returns: :: `*cat_`.
+Returns: :: the error category.
 
 ```
 error_condition default_error_condition() const noexcept;
@@ -595,7 +597,7 @@ error_condition default_error_condition() const noexcept;
 [none]
 * {blank}
 +
-Returns: :: `cat_\->default_error_condition( val_ )`.
+Returns: :: `category().default_error_condition( value() )`.
 
 ```
 std::string message() const;
@@ -603,7 +605,7 @@ std::string message() const;
 [none]
 * {blank}
 +
-Returns: :: `cat_\->message( val_ )`.
+Returns: :: `category().message( value() )`.
 
 ```
 char const * message( char * buffer, std::size_t len ) const noexcept;
@@ -611,7 +613,7 @@ char const * message( char * buffer, std::size_t len ) const noexcept;
 [none]
 * {blank}
 +
-Returns: :: `cat_\->message( val_, buffer, len )`.
+Returns: :: `category().message( value(), buffer, len )`.
 
 ```
 constexpr bool failed() const noexcept;
@@ -619,7 +621,7 @@ constexpr bool failed() const noexcept;
 [none]
 * {blank}
 +
-Returns: :: `cat_\->failed( val_ )`.
+Returns: :: `category().failed( value() )`.
 
 ```
 constexpr explicit operator bool() const noexcept;
@@ -627,7 +629,40 @@ constexpr explicit operator bool() const noexcept;
 [none]
 * {blank}
 +
-Returns: :: `failed()`.
+Returns: ::
+  `failed()`.
+
+#### Comparisons
+
+```
+friend constexpr bool operator==( const error_code & lhs,
+  const error_code & rhs ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `lhs.value() == rhs.value() && lhs.category() == rhs.category()`.
+
+```
+friend constexpr bool operator!=( const error_code & lhs,
+  const error_code & rhs ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `!( lhs == rhs )`.
+
+```
+friend constexpr bool operator<( const error_code & lhs,
+  const error_code & rhs ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `lhs.category() < rhs.category() || (lhs.category() == rhs.category() && lhs.value() < rhs.value())`.
+
+#### Conversions
 
 ```
 operator std::error_code() const;
@@ -636,7 +671,7 @@ operator std::error_code() const;
 * {blank}
 +
 Returns: ::
-  `std::error_code( val_, *cat_ )`.
+  `std::error_code( value(), category() )`.
 
 ### Class error_condition
 
@@ -675,13 +710,19 @@ namespace boost {
       constexpr bool failed() const noexcept;
       constexpr explicit operator bool() const noexcept;
 
+      // comparisons:
+
+      friend constexpr bool operator==( const error_condition & lhs,
+        const error_condition & rhs ) noexcept;
+      friend constexpr bool operator!=( const error_condition & lhs,
+        const error_condition & rhs ) noexcept;
+
+      friend constexpr bool operator<( const error_condition & lhs,
+        const error_condition & rhs ) noexcept;
+
+      // conversions:
+
       operator std::error_condition() const;
-
-    private: // exposition only
-
-      int val_;
-      const error_category * cat_;
-
     };
   }
 }
@@ -695,7 +736,7 @@ constexpr error_condition() noexcept;
 [none]
 * {blank}
 +
-Ensures: :: `val_ == 0`; `*cat_ == generic_category()`.
+Ensures: :: `value() == 0`; `category() == generic_category()`.
 
 ```
 constexpr error_condition( int val, const error_category & cat ) noexcept;
@@ -703,7 +744,7 @@ constexpr error_condition( int val, const error_category & cat ) noexcept;
 [none]
 * {blank}
 +
-Ensures: :: `val_ == val`; `cat_ == &cat`.
+Ensures: :: `value() == val`; `category() == cat`.
 
 ```
 template <class ErrorConditionEnum>
@@ -724,7 +765,7 @@ constexpr void assign( int val, const error_category & cat ) noexcept;
 [none]
 * {blank}
 +
-Ensures: :: `val_ == val`; `cat_ == &cat`.
+Ensures: :: `value() == val`; `category() == cat`.
 
 ```
 template <class ErrorConditionEnum>
@@ -743,7 +784,7 @@ constexpr void clear() noexcept;
 * {blank}
 +
 Ensures: ::
-  `val_ == 0`; `*cat_ == generic_category()`.
+  `value() == 0`; `category() == generic_category()`.
 
 #### Observers
 
@@ -753,7 +794,7 @@ constexpr int value() const noexcept;
 [none]
 * {blank}
 +
-Returns: :: `val_`.
+Returns: :: the error value.
 
 ```
 constexpr const error_category & category() const noexcept;
@@ -761,7 +802,7 @@ constexpr const error_category & category() const noexcept;
 [none]
 * {blank}
 +
-Returns: :: `*cat_`.
+Returns: :: the error category.
 
 ```
 std::string message() const;
@@ -769,7 +810,7 @@ std::string message() const;
 [none]
 * {blank}
 +
-Returns: :: `cat_\->message( val_ )`.
+Returns: :: `category().message( value() )`.
 
 ```
 char const * message( char * buffer, std::size_t len ) const noexcept;
@@ -777,7 +818,7 @@ char const * message( char * buffer, std::size_t len ) const noexcept;
 [none]
 * {blank}
 +
-Returns: :: `cat_\->message( val_, buffer, len )`.
+Returns: :: `category().message( value(), buffer, len )`.
 
 ```
 constexpr bool failed() const noexcept;
@@ -785,7 +826,7 @@ constexpr bool failed() const noexcept;
 [none]
 * {blank}
 +
-Returns: :: `cat_\->failed( val_ )`.
+Returns: :: `category().failed( value() )`.
 
 ```
 constexpr explicit operator bool() const noexcept;
@@ -793,7 +834,40 @@ constexpr explicit operator bool() const noexcept;
 [none]
 * {blank}
 +
-Returns: :: `failed()`.
+Returns: ::
+  `failed()`.
+
+#### Comparisons
+
+```
+friend constexpr bool operator==( const error_condition & lhs,
+  const error_condition & rhs ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `lhs.value() == rhs.value() && lhs.category() == rhs.category()`.
+
+```
+friend constexpr bool operator!=( const error_condition & lhs,
+  const error_condition & rhs ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `!( lhs == rhs )`.
+
+```
+friend constexpr bool operator<( const error_condition & lhs,
+  const error_condition & rhs ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `lhs.category() < rhs.category() || (lhs.category() == rhs.category() && lhs.value() < rhs.value())`.
+
+#### Conversions
 
 ```
 operator std::error_condition() const;
@@ -802,20 +876,9 @@ operator std::error_condition() const;
 * {blank}
 +
 Returns: ::
-  `std::error_condition( val_, *cat_ )`.
+  `std::error_condition( value(), category() )`.
 
 ### Nonmember functions
-
-```
-constexpr bool operator==( const error_code & lhs,
-  const error_code & rhs ) noexcept;
-constexpr bool operator==( const error_condition & lhs,
-  const error_condition & rhs ) noexcept;
-```
-[none]
-* {blank}
-+
-Returns: :: `lhs.value() == rhs.value() && lhs.category() == rhs.category()`.
 
 ```
 bool operator==( const error_code & code,
@@ -826,13 +889,9 @@ bool operator==( const error_condition & condition,
 [none]
 * {blank}
 +
-Returns: :: `code.category().equivalent( code.value(), condition ) || condition.category().equivalent( code, condition.value() )`.
+Returns: :: `code.category().equivalent(code.value(), condition) || condition.category().equivalent(code, condition.value())`.
 
 ```
-constexpr bool operator!=( const error_code & lhs,
-  const error_code & rhs ) noexcept;
-constexpr bool operator!=( const error_condition & lhs,
-  const error_condition & rhs ) noexcept;
 bool operator!=( const error_code & code,
   const error_condition & condition ) noexcept;
 bool operator!=( const error_condition & condition,
@@ -842,17 +901,6 @@ bool operator!=( const error_condition & condition,
 * {blank}
 +
 Returns: :: `!( lhs == rhs )`.
-
-```
-constexpr bool operator<( const error_code & lhs,
-  const error_code & rhs ) noexcept;
-constexpr bool operator<( const error_condition & lhs,
-  const error_condition & rhs ) noexcept;
-```
-[none]
-* {blank}
-+
-Returns: :: `lhs.category() < rhs.category() || ( lhs.category() == rhs.category() && lhs.value() < rhs.value() )`.
 
 ```
 constexpr error_code make_error_code( errc::errc_t e ) noexcept;
