@@ -48,31 +48,53 @@ the old names, but will provide them when the macro `BOOST_SYSTEM_ENABLE_DEPRECA
 |`native_ecat`|`system_category()`
 |===
 
-## <boost/system/error_code.hpp>
+## <boost/system/{zwsp}is_error_code_enum.hpp>
 
-### Synopsis
+### is_error_code_enum
 
 ```
 namespace boost {
   namespace system {
 
-    class error_category;
-
-    constexpr const error_category & system_category() noexcept;
-    constexpr const error_category & generic_category() noexcept;
-
-    class error_code;
-    class error_condition;
-
-    // "Concept" helpers
-
     template<class T>
       struct is_error_code_enum { static const bool value = false; };
+
+  } // namespace system
+} // namespace boost
+```
+
+Users may specialize `is_error_code_enum` for their error enumeration
+types to indicate that they should be eligible for automatic conversions
+to `error_code`. This conversion calls `make_error_code(e)`, which should
+be provided in the same namespace as the enumeration type.
+
+## <boost/system/{zwsp}is_error_condition_enum.hpp>
+
+### is_error_condition_enum
+
+```
+namespace boost {
+  namespace system {
 
     template<class T>
       struct is_error_condition_enum { static const bool value = false; };
 
-    // generic error conditions
+  } // namespace system
+} // namespace boost
+```
+
+Users may specialize `is_error_condition_enum` for their error enumeration
+types to indicate that they should be eligible for automatic conversions
+to `error_condition`. This conversion calls `make_error_condition(e)`, which
+should be provided in the same namespace as the enumeration type.
+
+## <boost/system/{zwsp}errc.hpp>
+
+### errc
+
+```
+namespace boost {
+  namespace system {
 
     namespace errc {
       enum errc_t
@@ -163,39 +185,80 @@ namespace boost {
     template<> struct is_error_condition_enum<errc::errc_t>
       { static const bool value = true; };
 
-    // non-member functions
-
-    bool operator==( const error_code & code,
-      const error_condition & condition ) noexcept;
-    bool operator==( const error_condition & condition,
-      const error_code & code ) noexcept;
-
-    bool operator!=( const error_code & code,
-      const error_condition & condition ) noexcept;
-    bool operator!=( const error_condition & condition,
-      const error_code & code ) noexcept;
-
     constexpr error_code make_error_code( errc::errc_t e ) noexcept;
     constexpr error_condition make_error_condition( errc::errc_t e ) noexcept;
-
-    template <class charT, class traits>
-      std::basic_ostream<charT, traits>&
-        operator<<( basic_ostream<charT, traits>& os, const error_code & ec );
-
-    std::size_t hash_value( const error_code & ec );
 
   } // namespace system
 } // namespace boost
 ```
 
-The value of each `errc_t` constant is the same as the value of the `<cerrno>`
-macro shown in the above synopsis.
+The predefined enumeration type `errc::errc_t` provides named constants
+corresponding to the values of the `<cerrno>` macros.
 
-Users may specialize `is_error_code_enum` and `is_error_condition_enum`
-templates to indicate that a type is eligible for class `error_code` and
-`error_condition` automatic conversions respectively.
+```
+constexpr error_condition make_error_condition( errc::errc_t e ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `error_condition( e, generic_category() )`.
 
-### Class error_category
+Since `errc::errc_t` provides a specialization of `is_error_condition_enum`
+and an overload of `make_error_condition`, it can be converted implicitly to
+an `error_condition`. This is typically useful when comparing `error_code`
+values returned from APIs to a portable condition, as in the below example:
+* {blank}
++
+```
+void api_function( boost::system::error_code& ec );
+
+void my_function()
+{
+    boost::system::error_code ec;
+    api_function( ec );
+
+    if( ec == boost::system::errc::no_such_file_or_directory )
+    {
+        // an entity wasn't found (ENOENT)
+        // handle this condition
+    }
+}
+```
+
+```
+constexpr error_code make_error_code( errc::errc_t e ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `error_code( e, generic_category() )`.
+
+In addition to `make_error_condition`, `errc::errc_t` provides an overload of
+`make_error_code`. This allows the creation of generic error codes, an
+operation typically useful when a function needs to signal a generic failure
+that does not come from an underlying API, such as for instance an out of
+memory condition:
+* {blank}
++
+```
+void my_api_function( boost::system::error_code& ec )
+{
+    void* p = std::malloc( 16 );
+
+    if( p == 0 )
+    {
+        // return ENOMEM
+        ec = make_error_code( boost::system::errc::out_of_memory );
+        return;
+    }
+
+    // use p
+}
+```
+
+## <boost/system/{zwsp}error_category.hpp>
+
+### error_category
 
 The class `error_category` defines the base class for types used
 to identify the source and encoding of a particular category of error code.
@@ -434,7 +497,19 @@ operator std::error_category const & () const;
 Returns: :: A reference to an `std::error_category` object corresponding
   to `*this`.
 
-### Predefined Categories
+## <boost/system/{zwsp}system_category.hpp>
+
+### system_category
+
+```
+namespace boost {
+  namespace system {
+
+    constexpr const error_category & system_category() noexcept;
+
+  } // namespace system
+} // namespace boost
+```
 
 ```
 constexpr const error_category & system_category() noexcept;
@@ -442,8 +517,22 @@ constexpr const error_category & system_category() noexcept;
 [none]
 * {blank}
 +
-Returns: :: A reference to an `error_category` object identifying errors
-  originating from the operating system.
+Returns: :: A reference to a predefined `error_category` object identifying
+  errors originating from the operating system.
+
+## <boost/system/{zwsp}generic_category.hpp>
+
+### generic_category
+
+```
+namespace boost {
+  namespace system {
+
+    constexpr const error_category & generic_category() noexcept;
+
+  } // namespace system
+} // namespace boost
+```
 
 ```
 constexpr const error_category & generic_category() noexcept;
@@ -451,10 +540,12 @@ constexpr const error_category & generic_category() noexcept;
 [none]
 * {blank}
 +
-Returns: :: A reference to an `error_category` object identifying portable
-  error conditions.
+Returns: :: A reference to a predefined `error_category` object identifying
+  portable error codes and conditions.
 
-### Class error_code
+## <boost/system/{zwsp}error_code.hpp>
+
+### error_code
 
 The class `error_code` describes an object used to hold error code
 values, such as those originating from the operating system or other
@@ -512,6 +603,25 @@ namespace boost {
 
       operator std::error_code() const;
     };
+
+    // non-member functions
+
+    bool operator==( const error_code & code,
+      const error_condition & condition ) noexcept;
+    bool operator==( const error_condition & condition,
+      const error_code & code ) noexcept;
+
+    bool operator!=( const error_code & code,
+      const error_condition & condition ) noexcept;
+    bool operator!=( const error_condition & condition,
+      const error_code & code ) noexcept;
+
+    template <class charT, class traits>
+      std::basic_ostream<charT, traits>&
+        operator<<( basic_ostream<charT, traits>& os, const error_code & ec );
+
+    std::size_t hash_value( const error_code & ec );
+
   }
 }
 ```
@@ -673,7 +783,53 @@ operator std::error_code() const;
 Returns: ::
   `std::error_code( value(), category() )`.
 
-### Class error_condition
+#### Nonmembers
+
+```
+bool operator==( const error_code & code,
+  const error_condition & condition ) noexcept;
+bool operator==( const error_condition & condition,
+  const error_code & code ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `code.category().equivalent(code.value(), condition) || condition.category().equivalent(code, condition.value())`.
+
+```
+bool operator!=( const error_code & code,
+  const error_condition & condition ) noexcept;
+bool operator!=( const error_condition & condition,
+  const error_code & code ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `!( lhs == rhs )`.
+
+```
+template <class charT, class traits>
+  std::basic_ostream<charT, traits>&
+    operator<<( basic_ostream<charT, traits>& os, const error_code & ec );
+```
+[none]
+* {blank}
++
+Effects: :: `os << ec.category().name() << ':' << ec.value()`.
+Returns: :: `os`.
+
+```
+std::size_t hash_value( const error_code & ec );
+```
+[none]
+* {blank}
++
+Returns: ::
+  A hash value representing `ec`.
+
+## <boost/system/{zwsp}error_condition.hpp>
+
+### error_condition
 
 ```
 namespace boost {
@@ -878,67 +1034,7 @@ operator std::error_condition() const;
 Returns: ::
   `std::error_condition( value(), category() )`.
 
-### Nonmember functions
-
-```
-bool operator==( const error_code & code,
-  const error_condition & condition ) noexcept;
-bool operator==( const error_condition & condition,
-  const error_code & code ) noexcept;
-```
-[none]
-* {blank}
-+
-Returns: :: `code.category().equivalent(code.value(), condition) || condition.category().equivalent(code, condition.value())`.
-
-```
-bool operator!=( const error_code & code,
-  const error_condition & condition ) noexcept;
-bool operator!=( const error_condition & condition,
-  const error_code & code ) noexcept;
-```
-[none]
-* {blank}
-+
-Returns: :: `!( lhs == rhs )`.
-
-```
-constexpr error_code make_error_code( errc::errc_t e ) noexcept;
-```
-[none]
-* {blank}
-+
-Returns: :: `error_code( e, generic_category() )`.
-
-```
-constexpr error_condition make_error_condition( errc::errc_t e ) noexcept;
-```
-[none]
-* {blank}
-+
-Returns: :: `error_condition( e, generic_category() )`.
-
-```
-template <class charT, class traits>
-  std::basic_ostream<charT, traits>&
-    operator<<( basic_ostream<charT, traits>& os, const error_code & ec );
-```
-[none]
-* {blank}
-+
-Effects: :: `os << ec.category().name() << ':' << ec.value()`.
-Returns: :: `os`.
-
-```
-std::size_t hash_value( const error_code & ec );
-```
-[none]
-* {blank}
-+
-Returns: ::
-  A hash value representing `ec`.
-
-## <boost/system/system_error.hpp>
+## <boost/system/{zwsp}system_error.hpp>
 
 ### Class system_error
 
@@ -1015,4 +1111,8 @@ const char * what() const noexcept;
 * {blank}
 +
 Returns: :: A null-terminated character string incorporating the arguments supplied
-  in the constructor, typically of the form `what_arg + ": " + code.message()`.
+  in the constructor, typically of the form `what_arg + ": " + code().message()`.
+
+## <boost/system.hpp>
+
+This convenience header includes all the headers previously described.
