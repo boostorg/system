@@ -44,34 +44,6 @@ namespace system
 //  and error_code containing a pointer to an object of a type derived
 //  from error_category.
 
-namespace detail
-{
-
-#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
-
-typedef std::error_code std_error_code;
-
-#else
-
-class std_error_code
-{
-private:
-
-    struct category_type;
-
-    int val_;
-    category_type const* cat_;
-
-public:
-
-    int value() const { return val_; }
-    category_type const& category() const { return *cat_; }
-};
-
-#endif
-
-} // namespace detail
-
 class error_code
 {
 private:
@@ -85,7 +57,9 @@ private:
     union
     {
         data d1_;
-        unsigned char d2_[ sizeof(detail::std_error_code) ];
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+        unsigned char d2_[ sizeof(std::error_code) ];
+#endif
     };
 
     // 0: default constructed, d1_ value initialized
@@ -156,8 +130,14 @@ public:
         }
         else
         {
-            detail::std_error_code const& ec = *reinterpret_cast<detail::std_error_code const*>( d2_ );
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+
+            std::error_code const& ec = *reinterpret_cast<std::error_code const*>( d2_ );
             return ec.value() + static_cast<unsigned>( reinterpret_cast<boost::uintptr_t>( &ec.category() ) % 1073741789 /* 2^30-35, prime*/ );
+#else
+
+            return -1;
+#endif
         }
     }
 
@@ -189,7 +169,7 @@ public:
 
         if( flags_ == 1 )
         {
-            detail::std_error_code const& ec = *reinterpret_cast<detail::std_error_code const*>( d2_ );
+            std::error_code const& ec = *reinterpret_cast<std::error_code const*>( d2_ );
             return ec.message();
         }
 
@@ -207,7 +187,7 @@ public:
             try
 #endif
             {
-                detail::std_error_code const& ec = *reinterpret_cast<detail::std_error_code const*>( d2_ );
+                std::error_code const& ec = *reinterpret_cast<std::error_code const*>( d2_ );
                 detail::snprintf( buffer, len, "%s", ec.message().c_str() );
                 return buffer;
             }
@@ -224,16 +204,16 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR bool failed() const BOOST_NOEXCEPT
     {
-        if( flags_ == 0 )
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+
+        if( flags_ == 1 )
         {
-            return false;
-        }
-        else if( flags_ == 1 )
-        {
-            detail::std_error_code const& ec = *reinterpret_cast<detail::std_error_code const*>( d2_ );
+            std::error_code const& ec = *reinterpret_cast<std::error_code const*>( d2_ );
             return ec.value() != 0;
         }
         else
+
+#endif
         {
             return (flags_ & 1) != 0;
         }
@@ -270,12 +250,38 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR inline friend bool operator==( const error_code & lhs, const error_code & rhs ) BOOST_NOEXCEPT
     {
-        return lhs.value() == rhs.value() && lhs.category() == rhs.category();
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+
+        if( lhs.flags_ == 1 && rhs.flags_ == 1 )
+        {
+            std::error_code const& e1 = *reinterpret_cast<std::error_code const*>( lhs.d2_ );
+            std::error_code const& e2 = *reinterpret_cast<std::error_code const*>( rhs.d2_ );
+
+            return e1 == e2;
+        }
+        else
+#endif
+        {
+            return lhs.value() == rhs.value() && lhs.category() == rhs.category();
+        }
     }
 
     BOOST_SYSTEM_CONSTEXPR inline friend bool operator<( const error_code & lhs, const error_code & rhs ) BOOST_NOEXCEPT
     {
-        return lhs.category() < rhs.category() || (lhs.category() == rhs.category() && lhs.value() < rhs.value());
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+
+        if( lhs.flags_ == 1 && rhs.flags_ == 1 )
+        {
+            std::error_code const& e1 = *reinterpret_cast<std::error_code const*>( lhs.d2_ );
+            std::error_code const& e2 = *reinterpret_cast<std::error_code const*>( rhs.d2_ );
+
+            return e1 < e2;
+        }
+        else
+#endif
+        {
+            return lhs.category() < rhs.category() || (lhs.category() == rhs.category() && lhs.value() < rhs.value());
+        }
     }
 
     BOOST_SYSTEM_CONSTEXPR inline friend bool operator!=( const error_code & lhs, const error_code & rhs ) BOOST_NOEXCEPT
@@ -331,7 +337,7 @@ public:
 
         if( ec.flags_ == 1 )
         {
-            detail::std_error_code const& e2 = *reinterpret_cast<detail::std_error_code const*>( ec.d2_ );
+            std::error_code const& e2 = *reinterpret_cast<std::error_code const*>( ec.d2_ );
             os << "std:" << e2.category().name() << ':' << e2.value();
         }
         else
