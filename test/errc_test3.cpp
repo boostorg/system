@@ -13,11 +13,11 @@ int main()
     make_error_code( boost::system::errc::success ).failed();
     make_error_code( boost::system::errc::success ).clear();
 
-	make_error_condition( boost::system::errc::success ).value();
-	make_error_condition( boost::system::errc::success ).category();
-	make_error_condition( boost::system::errc::success ).message();
-	make_error_condition( boost::system::errc::success ).failed();
-	make_error_condition( boost::system::errc::success ).clear();
+    make_error_condition( boost::system::errc::success ).value();
+    make_error_condition( boost::system::errc::success ).category();
+    make_error_condition( boost::system::errc::success ).message();
+    make_error_condition( boost::system::errc::success ).failed();
+    make_error_condition( boost::system::errc::success ).clear();
 
     make_error_code( boost::system::errc::no_such_file_or_directory ).value();
     make_error_code( boost::system::errc::no_such_file_or_directory ).category();
@@ -26,9 +26,9 @@ int main()
     make_error_code( boost::system::errc::no_such_file_or_directory ).failed();
     make_error_code( boost::system::errc::no_such_file_or_directory ).clear();
 
-	make_error_condition( boost::system::errc::no_such_file_or_directory ).value();
-	make_error_condition( boost::system::errc::no_such_file_or_directory ).category();
-	make_error_condition( boost::system::errc::no_such_file_or_directory ).message();
-	make_error_condition( boost::system::errc::no_such_file_or_directory ).failed();
-	make_error_condition( boost::system::errc::no_such_file_or_directory ).clear();
+    make_error_condition( boost::system::errc::no_such_file_or_directory ).value();
+    make_error_condition( boost::system::errc::no_such_file_or_directory ).category();
+    make_error_condition( boost::system::errc::no_such_file_or_directory ).message();
+    make_error_condition( boost::system::errc::no_such_file_or_directory ).failed();
+    make_error_condition( boost::system::errc::no_such_file_or_directory ).clear();
 }
