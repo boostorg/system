@@ -302,6 +302,28 @@ public:
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
+    inline friend bool operator==( std::error_code const & lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    {
+        return lhs == static_cast< std::error_code >( rhs );
+    }
+
+    inline friend bool operator==( error_code const & lhs, std::error_code const & rhs ) BOOST_NOEXCEPT
+    {
+        return static_cast< std::error_code >( lhs ) == rhs;
+    }
+
+    inline friend bool operator!=( std::error_code const & lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    {
+        return !( lhs == rhs );
+    }
+
+    inline friend bool operator!=( error_code const & lhs, std::error_code const & rhs ) BOOST_NOEXCEPT
+    {
+        return !( lhs == rhs );
+    }
+
+    // conversions
+
     operator std::error_code () const
     {
         if( flags_ == 1 )
