@@ -390,6 +390,32 @@ public:
         return !( lhs == rhs );
     }
 
+    //
+
+    template<class E, class N1 = void, class N2 = typename detail::enable_if<std::is_error_code_enum<E>::value>::type>
+    inline friend bool operator==( error_code const & lhs, E rhs ) BOOST_NOEXCEPT
+    {
+        return lhs == make_error_code( rhs );
+    }
+
+    template<class E, class N1 = void, class N2 = typename detail::enable_if<std::is_error_code_enum<E>::value>::type>
+    inline friend bool operator==( E lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    {
+        return make_error_code( lhs ) == rhs;
+    }
+
+    template<class E, class N1 = void, class N2 = typename detail::enable_if<std::is_error_code_enum<E>::value>::type>
+    inline friend bool operator!=( error_code const & lhs, E rhs ) BOOST_NOEXCEPT
+    {
+        return !( lhs == rhs );
+    }
+
+    template<class E, class N1 = void, class N2 = typename detail::enable_if<std::is_error_code_enum<E>::value>::type>
+    inline friend bool operator!=( E lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    {
+        return !( lhs == rhs );
+    }
+
 #if defined(BOOST_SYSTEM_CLANG_6)
 
     inline friend bool operator==( error_code const & lhs, std::error_condition const & rhs ) BOOST_NOEXCEPT
