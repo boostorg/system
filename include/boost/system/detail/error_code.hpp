@@ -364,6 +364,30 @@ public:
         return !( lhs == rhs );
     }
 
+#if defined(BOOST_SYSTEM_CLANG_6)
+
+    inline friend bool operator==( error_code const & lhs, std::error_condition const & rhs ) BOOST_NOEXCEPT
+    {
+        return static_cast< std::error_code >( lhs ) == rhs;
+    }
+
+    inline friend bool operator==( std::error_condition const & lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    {
+        return lhs == static_cast< std::error_code >( rhs );
+    }
+
+    inline friend bool operator!=( error_code const & lhs, std::error_condition const & rhs ) BOOST_NOEXCEPT
+    {
+        return !( lhs == rhs );
+    }
+
+    inline friend bool operator!=( std::error_condition const & lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    {
+        return !( lhs == rhs );
+    }
+
+#endif
+
     // conversions
 
     operator std::error_code () const
