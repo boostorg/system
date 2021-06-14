@@ -198,6 +198,26 @@ public:
         return std::error_condition( value(), category() );
     }
 
+    inline friend bool operator==( std::error_code const & lhs, error_condition const & rhs ) BOOST_NOEXCEPT
+    {
+        return lhs == static_cast< std::error_condition >( rhs );
+    }
+
+    inline friend bool operator==( error_condition const & lhs, std::error_code const & rhs ) BOOST_NOEXCEPT
+    {
+        return static_cast< std::error_condition >( lhs ) == rhs;
+    }
+
+    inline friend bool operator!=( std::error_code const & lhs, error_condition const & rhs ) BOOST_NOEXCEPT
+    {
+        return !( lhs == rhs );
+    }
+
+    inline friend bool operator!=( error_condition const & lhs, std::error_code const & rhs ) BOOST_NOEXCEPT
+    {
+        return !( lhs == rhs );
+    }
+
 #endif
 };
 
