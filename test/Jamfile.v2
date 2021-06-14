@@ -105,3 +105,4 @@ run std_interop_test5.cpp
   ;
 
 run std_interop_test6.cpp ;
+run std_interop_test7.cpp ;
