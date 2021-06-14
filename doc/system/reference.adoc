@@ -567,6 +567,8 @@ namespace boost {
       template <class ErrorCodeEnum>
         constexpr error_code( ErrorCodeEnum e ) noexcept;
 
+      error_code( std::error_code const& ec ) noexcept;
+
       // modifiers:
 
       constexpr void assign( int val, const error_category & cat ) noexcept;
@@ -593,32 +595,47 @@ namespace boost {
 
       friend constexpr bool operator==( const error_code & lhs,
         const error_code & rhs ) noexcept;
+
       friend constexpr bool operator!=( const error_code & lhs,
         const error_code & rhs ) noexcept;
 
       friend constexpr bool operator<( const error_code & lhs,
         const error_code & rhs ) noexcept;
 
+      friend bool operator==( const error_code & code,
+        const error_condition & condition ) noexcept;
+      friend bool operator==( const error_condition & condition,
+        const error_code & code ) noexcept;
+
+      friend bool operator!=( const error_code & code,
+        const error_condition & condition ) noexcept;
+      friend bool operator!=( const error_condition & condition,
+        const error_code & code ) noexcept;
+
+      friend bool operator==( const error_code & lhs,
+        const std::error_code & rhs ) noexcept;
+      friend bool operator==( const std::error_code & lhs,
+        const error_code & rhs ) noexcept;
+
+      friend bool operator!=( const error_code & lhs,
+        const std::error_code & rhs ) noexcept;
+      friend bool operator!=( const std::error_code & lhs,
+        const error_code & rhs ) noexcept;
+
       // conversions:
 
       operator std::error_code() const;
+      operator std::error_code();
+      template<class T> operator T& (); // only when T=std::error_code
+
+      // stream insertion:
+
+      template <class charT, class traits>
+        std::basic_ostream<charT, traits>&
+          operator<<( basic_ostream<charT, traits>& os, const error_code & ec );
     };
 
     // non-member functions
-
-    bool operator==( const error_code & code,
-      const error_condition & condition ) noexcept;
-    bool operator==( const error_condition & condition,
-      const error_code & code ) noexcept;
-
-    bool operator!=( const error_code & code,
-      const error_condition & condition ) noexcept;
-    bool operator!=( const error_condition & condition,
-      const error_code & code ) noexcept;
-
-    template <class charT, class traits>
-      std::basic_ostream<charT, traits>&
-        operator<<( basic_ostream<charT, traits>& os, const error_code & ec );
 
     std::size_t hash_value( const error_code & ec );
 
@@ -653,6 +670,15 @@ template <class ErrorCodeEnum>
 +
 Ensures: :: `*this == make_error_code( e )`.
 Remarks: :: This constructor is only enabled when `is_error_code_enum<ErrorCodeEnum>::value` is `true`.
+
+```
+error_code( std::error_code const & ec ) noexcept;
+```
+[none]
+* {blank}
++
+Effects: :: Construct an `error_code` that wraps `ec`.
+Remarks: :: `value()` and `category()` are unspecified.
 
 #### Modifiers
 
@@ -715,7 +741,8 @@ std::string message() const;
 [none]
 * {blank}
 +
-Returns: :: `category().message( value() )`.
+Returns: :: If `*this` wraps a `std::error_code` object `ec`, `ec.message()`.
+  Otherwise, `category().message( value() )`.
 
 ```
 char const * message( char * buffer, std::size_t len ) const noexcept;
@@ -723,7 +750,9 @@ char const * message( char * buffer, std::size_t len ) const noexcept;
 [none]
 * {blank}
 +
-Returns: :: `category().message( value(), buffer, len )`.
+Effects: :: If `*this` wraps a `std::error_code` object `ec`, copies the
+  string returned from `ec.message()` into `buffer` and returns `buffer`.
+  Otherwise, returns `category().message( value(), buffer, len )`.
 
 ```
 constexpr bool failed() const noexcept;
@@ -731,7 +760,8 @@ constexpr bool failed() const noexcept;
 [none]
 * {blank}
 +
-Returns: :: `category().failed( value() )`.
+Returns: :: If `*this` wraps a `std::error_code` object `ec`, `ec.value() != 0`.
+  Otherwise, `category().failed( value() )`.
 
 ```
 constexpr explicit operator bool() const noexcept;
@@ -751,7 +781,8 @@ friend constexpr bool operator==( const error_code & lhs,
 [none]
 * {blank}
 +
-Returns: :: `lhs.value() == rhs.value() && lhs.category() == rhs.category()`.
+Returns: :: If both `lhs` and `rhs` wrap `std::error_code` objects `e1` and `e2`, `e1 == e2`.
+  Otherwise, `lhs.value() == rhs.value() && lhs.category() == rhs.category()`.
 
 ```
 friend constexpr bool operator!=( const error_code & lhs,
@@ -769,43 +800,96 @@ friend constexpr bool operator<( const error_code & lhs,
 [none]
 * {blank}
 +
+Returns: :: If both `lhs` and `rhs` wrap `std::error_code` objects `e1` and `e2`, `e1 < e2`.
+  Otherwise, `lhs.category() < rhs.category() || (lhs.category() == rhs.category() && lhs.value() < rhs.value())`.
+
+```
+friend bool operator==( const error_code & code,
+  const error_condition & condition ) noexcept;
+```
+```
+friend bool operator==( const error_condition & condition,
+  const error_code & code ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: If `code` wraps a `std::error_code` object `ec`, `ec == static_cast<std::error_condition>( condition )`.
+  Otherwise, `code.category().equivalent( code.value(), condition ) || condition.category().equivalent( code, condition.value() )`.
+
+```
+friend constexpr bool operator!=( const error_code & lhs,
+  const error_condition & rhs ) noexcept;
+```
+```
+friend constexpr bool operator!=( const error_condition & lhs,
+  const error_code & rhs ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `!( lhs == rhs )`.
+
+```
+friend bool operator==( const error_code & lhs,
+  const std::error_code & rhs ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `static_cast<std::error_code>(lhs) == rhs`.
+
+```
+friend bool operator==( const std::error_code & lhs,
+  const error_code & rhs ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `lhs == static_cast<std::error_code>(rhs)`.
+
+```
+friend bool operator!=( const error_code & lhs,
+  const std::error_code & rhs ) noexcept;
+```
+```
+friend bool operator!=( const std::error_code & lhs,
+  const error_code & rhs ) noexcept;
+```
+[none]
+* {blank}
++
 Returns: ::
-  `lhs.category() < rhs.category() || (lhs.category() == rhs.category() && lhs.value() < rhs.value())`.
+  `!( lhs == rhs )`.
 
 #### Conversions
 
 ```
 operator std::error_code() const;
 ```
-[none]
-* {blank}
-+
-Returns: ::
-  `std::error_code( value(), category() )`.
-
-#### Nonmembers
-
 ```
-bool operator==( const error_code & code,
-  const error_condition & condition ) noexcept;
-bool operator==( const error_condition & condition,
-  const error_code & code ) noexcept;
+operator std::error_code();
 ```
 [none]
 * {blank}
 +
-Returns: :: `code.category().equivalent(code.value(), condition) || condition.category().equivalent(code, condition.value())`.
+Returns: :: If `*this` wraps a `std::error_code` object `ec`, `ec`.
+  Otherwise, `std::error_code( value(), category() )`.
 
 ```
-bool operator!=( const error_code & code,
-  const error_condition & condition ) noexcept;
-bool operator!=( const error_condition & condition,
-  const error_code & code ) noexcept;
+template<class T> operator T&();
 ```
 [none]
 * {blank}
 +
-Returns: :: `!( lhs == rhs )`.
+Effects: :: If `*this` wraps a `std::error_code` object `ec`,
+  returns a reference to `ec`.
+  Otherwise, makes `*this` wrap `std::error_code( *this )`,
+  then returns a reference to it.
+Remarks: ::
+  This operator is only enabled when `T` is `std::error_code`.
+
+#### Stream Insertion
 
 ```
 template <class charT, class traits>
@@ -815,8 +899,12 @@ template <class charT, class traits>
 [none]
 * {blank}
 +
-Effects: :: `os << ec.category().name() << ':' << ec.value()`.
-Returns: :: `os`.
+Effects: :: If `ec` wraps a `std::error_code` object `e2`, `os << "std:" << e2`.
+  Otherwise, `os << ec.category().name() << ':' << ec.value()`.
+Returns: ::
+  `os`.
+
+#### Nonmembers
 
 ```
 std::size_t hash_value( const error_code & ec );
@@ -824,8 +912,8 @@ std::size_t hash_value( const error_code & ec );
 [none]
 * {blank}
 +
-Returns: ::
-  A hash value representing `ec`.
+Returns: :: If `ec` wraps a `std::error_code` object `e2`, `std::hash<std::error_code>()(e2)`.
+  Otherwise, a hash value representing `ec`.
 
 ## <boost/system/{zwsp}error_condition.hpp>
 
@@ -870,15 +958,32 @@ namespace boost {
 
       friend constexpr bool operator==( const error_condition & lhs,
         const error_condition & rhs ) noexcept;
+
       friend constexpr bool operator!=( const error_condition & lhs,
         const error_condition & rhs ) noexcept;
 
       friend constexpr bool operator<( const error_condition & lhs,
         const error_condition & rhs ) noexcept;
 
+      friend bool operator==( const std::error_code & code,
+        const error_condition & condition ) noexcept;
+      friend bool operator==( const error_condition & condition,
+        const std::error_code & code ) noexcept;
+
+      friend bool operator!=( const std::error_code & code,
+        const error_condition & condition ) noexcept;
+      friend bool operator!=( const error_condition & condition,
+        const std::error_code & code ) noexcept;
+
       // conversions:
 
       operator std::error_condition() const;
+
+      // stream insertion:
+
+      template <class charT, class traits>
+        std::basic_ostream<charT, traits>&
+          operator<<( basic_ostream<charT, traits>& os, const error_condition & en );
     };
   }
 }
@@ -1023,6 +1128,33 @@ friend constexpr bool operator<( const error_condition & lhs,
 Returns: ::
   `lhs.category() < rhs.category() || (lhs.category() == rhs.category() && lhs.value() < rhs.value())`.
 
+```
+friend bool operator==( const std::error_code & code,
+  const error_condition & condition ) noexcept;
+```
+```
+friend bool operator==( const error_condition & condition,
+  const std::error_code & code ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `code == static_cast<std::error_condition>( rhs )`.
+
+```
+friend constexpr bool operator!=( const std::error_code & lhs,
+  const error_condition & rhs ) noexcept;
+```
+```
+friend constexpr bool operator!=( const error_condition & lhs,
+  const std::error_code & rhs ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `!( lhs == rhs )`.
+
 #### Conversions
 
 ```
@@ -1033,6 +1165,20 @@ operator std::error_condition() const;
 +
 Returns: ::
   `std::error_condition( value(), category() )`.
+
+#### Stream Insertion
+
+```
+template <class charT, class traits>
+  std::basic_ostream<charT, traits>&
+    operator<<( basic_ostream<charT, traits>& os, const error_condition & en );
+```
+[none]
+* {blank}
++
+Effects: :: `os << "cond:" << en.category().name() << ':' << en.value()`.
+Returns: ::
+  `os`.
 
 ## <boost/system/{zwsp}system_error.hpp>
 
