@@ -219,6 +219,17 @@ public:
     }
 
 #endif
+
+    template<class Ch, class Tr>
+        inline friend std::basic_ostream<Ch, Tr>&
+        operator<< (std::basic_ostream<Ch, Tr>& os, error_condition const & en)
+    {
+        {
+            os << "cond:" << en.category().name() << ':' << en.value();
+        }
+
+        return os;
+    }
 };
 
 } // namespace system
