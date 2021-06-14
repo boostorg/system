@@ -98,3 +98,4 @@ run std_interop_test2.cpp ;
 run std_interop_test3.cpp ;
 run std_interop_test4.cpp ;
 run std_interop_test5.cpp ;
+run std_interop_test6.cpp ;
