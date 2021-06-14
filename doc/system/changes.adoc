@@ -27,6 +27,11 @@ http://www.boost.org/LICENSE_1_0.txt
   an `error_condition` from the generic category, instead of from the system
   category. This happens on POSIX when the input `error_code` is from
   the system category and does not correspond to any `errc_t` value.
+* The interoperability of `error_code` and `std::error_code` has been
+  improved substantially. It is now possible to construct
+  `boost::system::error_code` from `std::error_code`, and it's possible
+  to pass `boost::system::error_code` to functions taking `std::error_code&`.
+* A stream insertion operator for `error_condition` has been added.
 
 ## Changes in Boost 1.76
 
