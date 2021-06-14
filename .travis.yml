@@ -66,13 +66,23 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      dist: bionic
-      compiler: g++-10
-      env: UBSAN=1 TOOLSET=gcc COMPILER=g++-10 CXXSTD=03,11,14,17,20 UBSAN_OPTIONS=print_stacktrace=1 LINKFLAGS=-fuse-ld=gold
+      compiler: g++-4.8
+      env: TOOLSET=gcc COMPILER=g++-4.8 CXXSTD=03,11
       addons:
         apt:
           packages:
-            - g++-10
+            - g++-4.8
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      dist: bionic
+      compiler: g++-11
+      env: UBSAN=1 TOOLSET=gcc COMPILER=g++-11 CXXSTD=03,11,14,17,20 UBSAN_OPTIONS=print_stacktrace=1 LINKFLAGS=-fuse-ld=gold
+      addons:
+        apt:
+          packages:
+            - g++-11
           sources:
             - sourceline: "ppa:ubuntu-toolchain-r/test"
 
@@ -95,15 +105,15 @@ matrix:
             - clang-3.4
 
     - os: linux
-      compiler: clang++-11
-      env: UBSAN=1 TOOLSET=clang COMPILER=clang++-11 CXXSTD=03,11,14,17,20 UBSAN_OPTIONS=print_stacktrace=1
+      compiler: clang++-12
+      env: UBSAN=1 TOOLSET=clang COMPILER=clang++-12 CXXSTD=03,11,14,17,20 UBSAN_OPTIONS=print_stacktrace=1
       addons:
         apt:
           packages:
-            - clang-11
+            - clang-12
           sources:
             - ubuntu-toolchain-r-test
-            - sourceline: 'deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-11 main'
+            - sourceline: 'deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-12 main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
 
     - os: linux
