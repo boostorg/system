@@ -76,6 +76,10 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
+      dist: trusty
+      env: TOOLSET=gcc COMPILER=g++- CXXSTD=03,11
+
+    - os: linux
       dist: bionic
       compiler: g++-11
       env: UBSAN=1 TOOLSET=gcc COMPILER=g++-11 CXXSTD=03,11,14,17,20 UBSAN_OPTIONS=print_stacktrace=1 LINKFLAGS=-fuse-ld=gold
