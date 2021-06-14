@@ -77,7 +77,8 @@ matrix:
 
     - os: linux
       dist: trusty
-      env: TOOLSET=gcc COMPILER=g++- CXXSTD=03,11
+      compiler: g++
+      env: TOOLSET=gcc COMPILER=g++ CXXSTD=03,11
 
     - os: linux
       dist: bionic
