@@ -5,6 +5,7 @@
 #include <boost/system/error_code.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/config/pragma_message.hpp>
+#include <boost/config.hpp>
 #include <cerrno>
 
 #if !defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
@@ -21,8 +22,33 @@ enum my_errc
     my_enoent = ENOENT
 };
 
+#if defined(BOOST_GCC) && BOOST_GCC < 70000
+
+// g++ 6 and earlier do not allow specializations outside the namespace
+
+namespace boost
+{
+namespace system
+{
+
+template<> struct is_error_code_enum<my_errc>: std::true_type {};
+
+} // namespace system
+} // namespace boost
+
+namespace std
+{
+
+template<> struct is_error_code_enum<my_errc>: std::true_type {};
+
+} // namespace std
+
+#else
+
 template<> struct boost::system::is_error_code_enum<my_errc>: std::true_type {};
 template<> struct std::is_error_code_enum<my_errc>: std::true_type {};
+
+#endif
 
 boost::system::error_code make_error_code( my_errc e )
 {
