@@ -300,6 +300,48 @@ public:
         return !( lhs == rhs );
     }
 
+    inline friend bool operator==( const error_code & code, const error_condition & condition ) BOOST_NOEXCEPT
+    {
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+
+        if( code.flags_ == 1 )
+        {
+            return static_cast<std::error_code>( code ) == static_cast<std::error_condition>( condition );
+        }
+        else
+
+#endif
+        {
+            return code.category().equivalent( code.value(), condition ) || condition.category().equivalent( code, condition.value() );
+        }
+    }
+
+    inline friend bool operator==( const error_condition & condition, const error_code & code ) BOOST_NOEXCEPT
+    {
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+
+        if( code.flags_ == 1 )
+        {
+            return static_cast<std::error_code>( code ) == static_cast<std::error_condition>( condition );
+        }
+        else
+
+#endif
+        {
+            return code.category().equivalent( code.value(), condition ) || condition.category().equivalent( code, condition.value() );
+        }
+    }
+
+    inline friend bool operator!=( const error_code & lhs, const error_condition & rhs ) BOOST_NOEXCEPT
+    {
+        return !( lhs == rhs );
+    }
+
+    inline friend bool operator!=( const error_condition & lhs, const error_code & rhs ) BOOST_NOEXCEPT
+    {
+        return !( lhs == rhs );
+    }
+
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
     inline friend bool operator==( std::error_code const & lhs, error_code const & rhs ) BOOST_NOEXCEPT
