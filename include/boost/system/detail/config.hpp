@@ -56,4 +56,10 @@
 # define BOOST_SYSTEM_DEPRECATED(msg)
 #endif
 
+// BOOST_SYSTEM_CLANG_6
+
+#if defined(__clang__) && (__clang_major__ < 7 || (defined(__APPLE__) && __clang_major__ < 11))
+# define BOOST_SYSTEM_CLANG_6
+#endif
+
 #endif // BOOST_SYSTEM_DETAIL_CONFIG_HPP_INCLUDED

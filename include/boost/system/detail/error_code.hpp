@@ -402,7 +402,7 @@ public:
         return *reinterpret_cast<std::error_code*>( d2_ );
     }
 
-#if defined(__clang__) && __clang_major__ < 7
+#if defined(BOOST_SYSTEM_CLANG_6)
 
     template<class T,
       class E = typename std::enable_if<std::is_same<T, std::error_code>::value>::type>

@@ -37,7 +37,7 @@ int main()
         boost::system::error_code e2( e1 );
 
         f1( e1, e1.value(), e1.category() );
-#if !(defined(__clang__) && __clang_major__ < 7)
+#if !defined(BOOST_SYSTEM_CLANG_6)
         f2( e1, e1.value(), e1.category() );
 #endif
 
@@ -49,7 +49,7 @@ int main()
         boost::system::error_code e2( e1 );
 
         f1( e1, e1.value(), e1.category() );
-#if !(defined(__clang__) && __clang_major__ < 7)
+#if !defined(BOOST_SYSTEM_CLANG_6)
         f2( e1, e1.value(), e1.category() );
 #endif
 
@@ -61,7 +61,7 @@ int main()
         boost::system::error_code e2( e1 );
 
         f1( e1, e1.value(), e1.category() );
-#if !(defined(__clang__) && __clang_major__ < 7)
+#if !defined(BOOST_SYSTEM_CLANG_6)
         f2( e1, e1.value(), e1.category() );
 #endif
 
@@ -73,7 +73,7 @@ int main()
         boost::system::error_code e2( e1 );
 
         f1( e1, e1.value(), e1.category() );
-#if !(defined(__clang__) && __clang_major__ < 7)
+#if !defined(BOOST_SYSTEM_CLANG_6)
         f2( e1, e1.value(), e1.category() );
 #endif
 
@@ -85,7 +85,7 @@ int main()
         boost::system::error_code e2( e1 );
 
         f1( e1, e1.value(), e1.category() );
-#if !(defined(__clang__) && __clang_major__ < 7)
+#if !defined(BOOST_SYSTEM_CLANG_6)
         f2( e1, e1.value(), e1.category() );
 #endif
 
