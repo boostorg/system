@@ -23,6 +23,7 @@ int main()
         std::error_condition en = e1.default_error_condition();
 
         BOOST_TEST( e1 == en );
+        BOOST_TEST_NOT( e1 != en );
 
         boost::system::error_code e2( e1 );
 
@@ -30,10 +31,12 @@ int main()
         BOOST_TEST_NOT( e2 != e1 );
 
         BOOST_TEST( e2 == en );
+        BOOST_TEST_NOT( e2 != en );
 
         std::error_code e3( e2 );
 
         BOOST_TEST( e3 == en );
+        BOOST_TEST_NOT( e3 != en );
     }
 
     {
@@ -41,6 +44,7 @@ int main()
         std::error_condition en = e1.default_error_condition();
 
         BOOST_TEST( e1 == en );
+        BOOST_TEST_NOT( e1 != en );
 
         boost::system::error_code e2( e1 );
 
@@ -48,10 +52,12 @@ int main()
         BOOST_TEST_NOT( e2 != e1 );
 
         BOOST_TEST( e2 == en );
+        BOOST_TEST_NOT( e2 != en );
 
         std::error_code e3( e2 );
 
         BOOST_TEST( e3 == en );
+        BOOST_TEST_NOT( e3 != en );
     }
 
     {
@@ -59,6 +65,7 @@ int main()
         std::error_condition en = e1.default_error_condition();
 
         BOOST_TEST( e1 == en );
+        BOOST_TEST_NOT( e1 != en );
 
         boost::system::error_code e2( e1 );
 
@@ -66,10 +73,12 @@ int main()
         BOOST_TEST_NOT( e2 != e1 );
 
         BOOST_TEST( e2 == en );
+        BOOST_TEST_NOT( e2 != en );
 
         std::error_code e3( e2 );
 
         BOOST_TEST( e3 == en );
+        BOOST_TEST_NOT( e3 != en );
     }
 
     {
@@ -77,6 +86,7 @@ int main()
         std::error_condition en = e1.default_error_condition();
 
         BOOST_TEST( e1 == en );
+        BOOST_TEST_NOT( e1 != en );
 
         boost::system::error_code e2( e1 );
 
@@ -84,10 +94,12 @@ int main()
         BOOST_TEST_NOT( e2 != e1 );
 
         BOOST_TEST( e2 == en );
+        BOOST_TEST_NOT( e2 != en );
 
         std::error_code e3( e2 );
 
         BOOST_TEST( e3 == en );
+        BOOST_TEST_NOT( e3 != en );
     }
 
     return boost::report_errors();
