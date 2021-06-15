@@ -21,12 +21,18 @@ int main()
     {
         boost::system::error_code e1 = make_error_code( boost::system::errc::bad_address );
 
+        BOOST_TEST( e1 == boost::system::errc::bad_address );
+        BOOST_TEST_NOT( e1 != boost::system::errc::bad_address );
+
         BOOST_TEST( e1 == std::errc::bad_address );
         BOOST_TEST_NOT( e1 != std::errc::bad_address );
     }
 
     {
         boost::system::error_code e1 = make_error_code( std::errc::bad_address );
+
+        BOOST_TEST( e1 == boost::system::errc::bad_address );
+        BOOST_TEST_NOT( e1 != boost::system::errc::bad_address );
 
         BOOST_TEST( e1 == std::errc::bad_address );
         BOOST_TEST_NOT( e1 != std::errc::bad_address );
