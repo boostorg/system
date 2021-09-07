@@ -59,6 +59,7 @@ inline int system_category_condition_win32( int ev ) BOOST_NOEXCEPT
     case ERROR_ACCESS_DENIED_: return permission_denied;
     case ERROR_ALREADY_EXISTS_: return file_exists;
     case ERROR_BAD_UNIT_: return no_such_device;
+    case ERROR_BROKEN_PIPE_: return broken_pipe;
     case ERROR_BUFFER_OVERFLOW_: return filename_too_long;
     case ERROR_BUSY_: return device_or_resource_busy;
     case ERROR_BUSY_DRIVE_: return device_or_resource_busy;
