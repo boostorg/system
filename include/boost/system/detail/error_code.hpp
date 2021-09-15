@@ -230,18 +230,20 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR bool failed() const BOOST_NOEXCEPT
     {
-#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
-
-        if( lc_flags_ == 1 )
+        if( lc_flags_ & 1 )
         {
-            std::error_code const& ec = *reinterpret_cast<std::error_code const*>( d2_ );
-            return ec.value() != 0;
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+            if( lc_flags_ == 1 )
+            {
+                std::error_code const& ec = *reinterpret_cast<std::error_code const*>( d2_ );
+                return ec.value() != 0;
+            }
+#endif
+            return true;
         }
         else
-
-#endif
         {
-            return (lc_flags_ & 1) != 0;
+            return false;
         }
     }
 
