@@ -48,6 +48,8 @@ private:
         if( ec.has_location() )
         {
             r += " [";
+            r += ec.to_string();
+            r += " at ";
 
             boost::source_location loc = ec.location();
 
@@ -62,12 +64,9 @@ private:
                 r += to_string( loc.column() );
             }
 
-            r += ": in function '";
+            r += " in function '";
             r += loc.function_name();
-            r += "\': ";
-
-            r += ec.to_string();
-            r += "]";
+            r += "\']";
         }
 
         return r;
