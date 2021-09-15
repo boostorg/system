@@ -3,7 +3,7 @@
 
 //  Copyright Beman Dawes 2006, 2007
 //  Copyright Christoper Kohlhoff 2007
-//  Copyright Peter Dimov 2017, 2018
+//  Copyright Peter Dimov 2017-2021
 //
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -45,7 +45,6 @@ class error_condition
 private:
 
     int val_;
-    bool failed_;
     error_category const * cat_;
 
 public:
@@ -53,17 +52,17 @@ public:
     // constructors:
 
     BOOST_SYSTEM_CONSTEXPR error_condition() BOOST_NOEXCEPT:
-        val_( 0 ), failed_( false ), cat_( 0 )
+        val_( 0 ), cat_( 0 )
     {
     }
 
     BOOST_SYSTEM_CONSTEXPR error_condition( int val, const error_category & cat ) BOOST_NOEXCEPT:
-        val_( val ), failed_( detail::failed_impl( val, cat ) ), cat_( &cat )
+        val_( val ), cat_( &cat )
     {
     }
 
     BOOST_SYSTEM_CONSTEXPR explicit error_condition( boost::system::detail::generic_value_tag vt ) BOOST_NOEXCEPT:
-        val_( vt.value ), failed_( vt.value != 0 ), cat_( 0 )
+        val_( vt.value ), cat_( 0 )
     {
     }
 
@@ -77,7 +76,7 @@ public:
 
     template<class ErrorConditionEnum> BOOST_SYSTEM_CONSTEXPR error_condition( ErrorConditionEnum e,
       typename detail::enable_if<boost::system::detail::is_same<ErrorConditionEnum, errc::errc_t>::value>::type* = 0) BOOST_NOEXCEPT:
-        val_( e ), failed_( e != 0 ), cat_( 0 )
+        val_( e ), cat_( 0 )
     {
     }
 
@@ -86,7 +85,6 @@ public:
     BOOST_SYSTEM_CONSTEXPR void assign( int val, const error_category & cat ) BOOST_NOEXCEPT
     {
         val_ = val;
-        failed_ = detail::failed_impl( val, cat );
         cat_ = &cat;
     }
 
@@ -101,7 +99,6 @@ public:
     BOOST_SYSTEM_CONSTEXPR void clear() BOOST_NOEXCEPT
     {
         val_ = 0;
-        failed_ = false;
         cat_ = 0;
     }
 
@@ -143,14 +140,21 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR bool failed() const BOOST_NOEXCEPT
     {
-        return failed_;
+        if( cat_ )
+        {
+            return detail::failed_impl( val_, *cat_ );
+        }
+        else
+        {
+            return val_ != 0;
+        }
     }
 
 #if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
 
     BOOST_SYSTEM_CONSTEXPR explicit operator bool() const BOOST_NOEXCEPT  // true if error
     {
-        return failed_;
+        return failed();
     }
 
 #else
@@ -160,12 +164,12 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR operator unspecified_bool_type() const BOOST_NOEXCEPT  // true if error
     {
-        return failed_? unspecified_bool_true: 0;
+        return failed()? unspecified_bool_true: 0;
     }
 
     BOOST_SYSTEM_CONSTEXPR bool operator!() const BOOST_NOEXCEPT  // true if no error
     {
-        return !failed_;
+        return !failed();
     }
 
 #endif
