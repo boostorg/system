@@ -43,8 +43,12 @@ private:
             r += ": ";
         }
 
+        r += ec.message();
+
         if( ec.has_location() )
         {
+            r += " [";
+
             boost::source_location loc = ec.location();
 
             r += loc.file_name();
@@ -63,10 +67,8 @@ private:
             r += "\': ";
 
             r += ec.to_string();
-            r += ": ";
+            r += "]";
         }
-
-        r += ec.message();
 
         return r;
     }
