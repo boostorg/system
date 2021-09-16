@@ -120,7 +120,7 @@ int main()
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> r( ec );
 
@@ -130,13 +130,13 @@ int main()
         BOOST_TEST_NOT( r );
         BOOST_TEST( !r );
 
-        BOOST_TEST_THROWS( r.value(), std::system_error );
+        BOOST_TEST_THROWS( r.value(), system_error );
 
         BOOST_TEST_EQ( r.operator->(), static_cast<int*>(0) );
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> const r( ec );
 
@@ -146,13 +146,13 @@ int main()
         BOOST_TEST_NOT( r );
         BOOST_TEST( !r );
 
-        BOOST_TEST_THROWS( r.value(), std::system_error );
+        BOOST_TEST_THROWS( r.value(), system_error );
 
         BOOST_TEST_EQ( r.operator->(), static_cast<int*>(0) );
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         BOOST_TEST( !result<int>( ec ).has_value() );
         BOOST_TEST( result<int>( ec ).has_error() );
@@ -160,7 +160,7 @@ int main()
         BOOST_TEST_NOT( result<int>( ec ) );
         BOOST_TEST( !result<int>( ec ) );
 
-        BOOST_TEST_THROWS( result<int>( ec ).value(), std::system_error );
+        BOOST_TEST_THROWS( result<int>( ec ).value(), system_error );
 
         BOOST_TEST_EQ( result<int>( ec ).operator->(), static_cast<int*>(0) );
     }

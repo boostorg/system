@@ -151,7 +151,7 @@ int main()
     BOOST_TEST_EQ( X::instances, 0 );
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> r( ec );
         result<int> r2( std::move( r ) );
@@ -163,7 +163,7 @@ int main()
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> r2( result<int>{ ec } );
 

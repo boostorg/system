@@ -5,11 +5,14 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
+#include <boost/system/errc.hpp>
+#include <boost/system/system_error.hpp>
+#include <boost/system/detail/error_code.hpp>
+#include <boost/system/detail/error_category_impl.hpp>
 #include <boost/variant2/variant.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/assert.hpp>
 #include <boost/config.hpp>
-#include <system_error>
 #include <type_traits>
 #include <utility>
 #include <iosfwd>
@@ -21,16 +24,12 @@ namespace boost
 namespace system
 {
 
-class error_code;
-
 // throw_exception_from_error_code
 
-BOOST_NORETURN inline void throw_exception_from_error_code( std::error_code const & e )
+BOOST_NORETURN inline void throw_exception_from_error_code( error_code const & e )
 {
-    boost::throw_exception( std::system_error( e ) );
+    boost::throw_exception( system_error( e ) );
 }
-
-BOOST_NORETURN inline void throw_exception_from_error_code( error_code const & e );
 
 // in_place_*
 

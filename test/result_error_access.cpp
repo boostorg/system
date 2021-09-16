@@ -27,7 +27,7 @@ int main()
         BOOST_TEST( r.has_value() );
         BOOST_TEST( !r.has_error() );
 
-        BOOST_TEST_EQ( r.error(), std::error_code() );
+        BOOST_TEST_EQ( r.error(), error_code() );
     }
 
     {
@@ -36,14 +36,14 @@ int main()
         BOOST_TEST( r.has_value() );
         BOOST_TEST( !r.has_error() );
 
-        BOOST_TEST_EQ( r.error(), std::error_code() );
+        BOOST_TEST_EQ( r.error(), error_code() );
     }
 
     {
         BOOST_TEST( result<int>().has_value() );
         BOOST_TEST( !result<int>().has_error() );
 
-        BOOST_TEST_EQ( result<int>().error(), std::error_code() );
+        BOOST_TEST_EQ( result<int>().error(), error_code() );
     }
 
     {
@@ -52,7 +52,7 @@ int main()
         BOOST_TEST( r.has_value() );
         BOOST_TEST( !r.has_error() );
 
-        BOOST_TEST_EQ( r.error(), std::error_code() );
+        BOOST_TEST_EQ( r.error(), error_code() );
     }
 
     {
@@ -61,18 +61,18 @@ int main()
         BOOST_TEST( r.has_value() );
         BOOST_TEST( !r.has_error() );
 
-        BOOST_TEST_EQ( r.error(), std::error_code() );
+        BOOST_TEST_EQ( r.error(), error_code() );
     }
 
     {
         BOOST_TEST( result<int>( 1 ).has_value() );
         BOOST_TEST( !result<int>( 1 ).has_error() );
 
-        BOOST_TEST_EQ( result<int>( 1 ).error(), std::error_code() );
+        BOOST_TEST_EQ( result<int>( 1 ).error(), error_code() );
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> r( ec );
 
@@ -83,7 +83,7 @@ int main()
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> const r( ec );
 
@@ -94,7 +94,7 @@ int main()
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         BOOST_TEST( !result<int>( ec ).has_value() );
         BOOST_TEST( result<int>( ec ).has_error() );

@@ -5,7 +5,6 @@
 #include <boost/system/result.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/core/lightweight_test_trait.hpp>
-#include <system_error>
 #include <string>
 #include <cerrno>
 
@@ -36,7 +35,7 @@ int X::instances = 0;
 int main()
 {
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> r( ec );
 
@@ -47,7 +46,7 @@ int main()
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> r = ec;
 
@@ -58,16 +57,16 @@ int main()
     }
 
     {
-        result<int> r( EINVAL, std::generic_category() );
+        result<int> r( EINVAL, generic_category() );
 
         BOOST_TEST( !r.has_value() );
         BOOST_TEST( r.has_error() );
 
-        BOOST_TEST_EQ( r.error(), std::error_code( EINVAL, std::generic_category() ) );
+        BOOST_TEST_EQ( r.error(), std::error_code( EINVAL, generic_category() ) );
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<std::error_code> r( in_place_error, ec );
 
@@ -78,12 +77,12 @@ int main()
     }
 
     {
-        result<std::error_code> r( in_place_error, EINVAL, std::generic_category() );
+        result<std::error_code> r( in_place_error, EINVAL, generic_category() );
 
         BOOST_TEST( !r.has_value() );
         BOOST_TEST( r.has_error() );
 
-        BOOST_TEST_EQ( r.error(), std::error_code( EINVAL, std::generic_category() ) );
+        BOOST_TEST_EQ( r.error(), std::error_code( EINVAL, generic_category() ) );
     }
 
     BOOST_TEST_EQ( X::instances, 0 );

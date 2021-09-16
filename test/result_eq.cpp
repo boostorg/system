@@ -4,7 +4,6 @@
 
 #include <boost/system/result.hpp>
 #include <boost/core/lightweight_test.hpp>
-#include <system_error>
 #include <iosfwd>
 #include <cerrno>
 
@@ -95,8 +94,8 @@ int main()
     }
 
     {
-        result<int> r1( 1, std::generic_category() );
-        result<int> r2( 2, std::generic_category() );
+        result<int> r1( 1, generic_category() );
+        result<int> r2( 2, generic_category() );
 
         BOOST_TEST_EQ( r1, r1 );
         BOOST_TEST_NE( r1, r2 );
@@ -104,7 +103,7 @@ int main()
 
     {
         result<int> r1( 1 );
-        result<int> r2( 2, std::generic_category() );
+        result<int> r2( 2, generic_category() );
 
         BOOST_TEST_EQ( r1, r1 );
         BOOST_TEST_NE( r1, r2 );

@@ -5,7 +5,6 @@
 #include <boost/system/result.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/core/lightweight_test_trait.hpp>
-#include <system_error>
 #include <iosfwd>
 #include <cerrno>
 
@@ -91,7 +90,7 @@ int main()
 
     {
         result<int> r;
-        result<int> r2( ENOENT, std::generic_category() );
+        result<int> r2( ENOENT, generic_category() );
 
         r2 = r;
 
@@ -118,7 +117,7 @@ int main()
 
     {
         result<int> const r;
-        result<int> r2( ENOENT, std::generic_category() );
+        result<int> r2( ENOENT, generic_category() );
 
         r2 = r;
 
@@ -159,7 +158,7 @@ int main()
 
     {
         result<X> r;
-        result<X> r2( ENOENT, std::generic_category() );
+        result<X> r2( ENOENT, generic_category() );
 
         BOOST_TEST_EQ( X::instances, 1 );
 
@@ -204,7 +203,7 @@ int main()
 
     {
         result<X> const r;
-        result<X> r2( ENOENT, std::generic_category() );
+        result<X> r2( ENOENT, generic_category() );
 
         BOOST_TEST_EQ( X::instances, 1 );
 
@@ -239,7 +238,7 @@ int main()
 
     {
         result<int> r( 0 );
-        result<int> r2( ENOENT, std::generic_category() );
+        result<int> r2( ENOENT, generic_category() );
 
         r2 = r;
 
@@ -266,7 +265,7 @@ int main()
 
     {
         result<int> const r( 0 );
-        result<int> r2( ENOENT, std::generic_category() );
+        result<int> r2( ENOENT, generic_category() );
 
         r2 = r;
 
@@ -307,7 +306,7 @@ int main()
 
     {
         result<X> r( 1 );
-        result<X> r2( ENOENT, std::generic_category() );
+        result<X> r2( ENOENT, generic_category() );
 
         BOOST_TEST_EQ( X::instances, 1 );
 
@@ -352,7 +351,7 @@ int main()
 
     {
         result<X> const r( 1 );
-        result<X> r2( ENOENT, std::generic_category() );
+        result<X> r2( ENOENT, generic_category() );
 
         BOOST_TEST_EQ( X::instances, 1 );
 
@@ -368,7 +367,7 @@ int main()
     // error lhs
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> r( ec );
         result<int> r2;
@@ -379,7 +378,7 @@ int main()
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> r( ec );
         result<int> r2( 1 );
@@ -390,10 +389,10 @@ int main()
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> r( ec );
-        result<int> r2( ENOENT, std::generic_category() );
+        result<int> r2( ENOENT, generic_category() );
 
         r2 = r;
 
@@ -401,7 +400,7 @@ int main()
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> const r( ec );
         result<int> r2;
@@ -412,7 +411,7 @@ int main()
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> const r( ec );
         result<int> r2( 1 );
@@ -423,10 +422,10 @@ int main()
     }
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<int> const r( ec );
-        result<int> r2( ENOENT, std::generic_category() );
+        result<int> r2( ENOENT, generic_category() );
 
         r2 = r;
 
@@ -436,7 +435,7 @@ int main()
     BOOST_TEST_EQ( X::instances, 0 );
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<X> r( ec );
         result<X> r2;
@@ -453,7 +452,7 @@ int main()
     BOOST_TEST_EQ( X::instances, 0 );
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<X> r( ec );
         result<X> r2( 1 );
@@ -470,10 +469,10 @@ int main()
     BOOST_TEST_EQ( X::instances, 0 );
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<X> r( ec );
-        result<X> r2( ENOENT, std::generic_category() );
+        result<X> r2( ENOENT, generic_category() );
 
         BOOST_TEST_EQ( X::instances, 0 );
 
@@ -487,7 +486,7 @@ int main()
     BOOST_TEST_EQ( X::instances, 0 );
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<X> const r( ec );
         result<X> r2;
@@ -504,7 +503,7 @@ int main()
     BOOST_TEST_EQ( X::instances, 0 );
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<X> const r( ec );
         result<X> r2( 1 );
@@ -521,10 +520,10 @@ int main()
     BOOST_TEST_EQ( X::instances, 0 );
 
     {
-        auto ec = make_error_code( std::errc::invalid_argument );
+        auto ec = make_error_code( errc::invalid_argument );
 
         result<X> const r( ec );
-        result<X> r2( ENOENT, std::generic_category() );
+        result<X> r2( ENOENT, generic_category() );
 
         BOOST_TEST_EQ( X::instances, 0 );
 
