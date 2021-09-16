@@ -1,5 +1,5 @@
-#ifndef BOOST_RESULT_RESULT_HPP_INCLUDED
-#define BOOST_RESULT_RESULT_HPP_INCLUDED
+#ifndef BOOST_SYSTEM_RESULT_HPP_INCLUDED
+#define BOOST_SYSTEM_RESULT_HPP_INCLUDED
 
 // Copyright 2017, 2021 Peter Dimov.
 // Distributed under the Boost Software License, Version 1.0.
@@ -18,15 +18,19 @@
 
 namespace boost
 {
-namespace result
+namespace system
 {
+
+class error_code;
 
 // throw_exception_from_error_code
 
-BOOST_NORETURN void throw_exception_from_error_code( std::error_code const & e )
+BOOST_NORETURN inline void throw_exception_from_error_code( std::error_code const & e )
 {
     boost::throw_exception( std::system_error( e ) );
 }
+
+BOOST_NORETURN inline void throw_exception_from_error_code( error_code const & e );
 
 // in_place_*
 
@@ -38,7 +42,7 @@ constexpr in_place_error_t in_place_error{};
 
 // result
 
-template<class T, class E = std::error_code> class result
+template<class T, class E = error_code> class result
 {
 private:
 
@@ -335,7 +339,7 @@ template<class Ch, class Tr, class T, class E> std::basic_ostream<Ch, Tr>& opera
     return os;
 }
 
-} // namespace result
+} // namespace system
 } // namespace boost
 
-#endif // #ifndef BOOST_RESULT_RESULT_HPP_INCLUDED
+#endif // #ifndef BOOST_SYSTEM_RESULT_HPP_INCLUDED

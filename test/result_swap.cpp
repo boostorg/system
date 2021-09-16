@@ -2,13 +2,13 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include <boost/result/result.hpp>
+#include <boost/system/result.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <system_error>
 #include <iosfwd>
 #include <cerrno>
 
-using namespace boost::result;
+using namespace boost::system;
 
 struct X
 {
