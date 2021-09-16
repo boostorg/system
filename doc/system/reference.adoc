@@ -721,7 +721,7 @@ constexpr void assign( int val, const error_category & cat ) noexcept;
 [none]
 * {blank}
 +
-Ensures: :: `value() == val`; `category() == cat`; `!has_location()`.
+Effects: :: `*this = error_code( val, cat );`.
 
 ```
 void assign( int val, const error_category & cat,
@@ -730,8 +730,7 @@ void assign( int val, const error_category & cat,
 [none]
 * {blank}
 +
-Requires: :: `loc` points to a valid `boost::source_location` object with static storage duration.
-Ensures: :: `value() == val`; `category() == cat`; `has_location()`; `&location() == loc`.
+Effects: :: `*this = error_code( val, cat, loc );`.
 
 ```
 template<typename ErrorCodeEnum>
@@ -749,8 +748,8 @@ constexpr void clear() noexcept;
 [none]
 * {blank}
 +
-Ensures: ::
-  `value() == 0`; `category() == system_category()`.
+Effects: ::
+  `*this = error_code();`.
 
 #### Observers
 
