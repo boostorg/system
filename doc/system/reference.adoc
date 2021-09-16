@@ -567,11 +567,17 @@ namespace boost {
       template <class ErrorCodeEnum>
         constexpr error_code( ErrorCodeEnum e ) noexcept;
 
+      error_code( int val, const error_category & cat,
+        boost::source_location const * loc ) noexcept;
+
       error_code( std::error_code const& ec ) noexcept;
 
       // modifiers:
 
       constexpr void assign( int val, const error_category & cat ) noexcept;
+
+      void assign( int val, const error_category & cat,
+        boost::source_location const * loc ) noexcept;
 
       template<typename ErrorCodeEnum>
         constexpr error_code & operator=( ErrorCodeEnum e ) noexcept;
@@ -590,6 +596,9 @@ namespace boost {
 
       constexpr bool failed() const noexcept;
       constexpr explicit operator bool() const noexcept;
+
+      bool has_location() const noexcept;
+      boost::source_location const & location() const noexcept;
 
       // comparisons:
 
@@ -638,6 +647,10 @@ namespace boost {
       operator std::error_code();
       template<class T> operator T& (); // only when T=std::error_code
 
+      // to_string
+
+      std::string to_string() const;
+
       // stream insertion:
 
       template <class charT, class traits>
@@ -661,7 +674,7 @@ constexpr error_code() noexcept;
 [none]
 * {blank}
 +
-Ensures: :: `value() == 0`; `category() == system_category()`.
+Ensures: :: `value() == 0`; `category() == system_category()`; `!has_location()`.
 
 ```
 constexpr error_code( int val, const error_category & cat ) noexcept;
@@ -669,7 +682,7 @@ constexpr error_code( int val, const error_category & cat ) noexcept;
 [none]
 * {blank}
 +
-Ensures: :: `value() == val`; `category() == cat`.
+Ensures: :: `value() == val`; `category() == cat`; `!has_location()`.
 
 ```
 template <class ErrorCodeEnum>
@@ -682,13 +695,23 @@ Ensures: :: `*this == make_error_code( e )`.
 Remarks: :: This constructor is only enabled when `is_error_code_enum<ErrorCodeEnum>::value` is `true`.
 
 ```
+error_code( int val, const error_category & cat,
+  boost::source_location const * loc ) noexcept;
+```
+[none]
+* {blank}
++
+Requires: :: `loc` points to a valid `boost::source_location` object with static storage duration.
+Ensures: :: `value() == val`; `category() == cat`; `has_location()`; `&location() == loc`.
+
+```
 error_code( std::error_code const & ec ) noexcept;
 ```
 [none]
 * {blank}
 +
 Effects: :: Construct an `error_code` that wraps `ec`.
-Remarks: :: `value()` and `category()` are unspecified.
+Remarks: :: `value()` and `category()` are unspecified. `has_location()` is `false`.
 
 #### Modifiers
 
@@ -698,7 +721,17 @@ constexpr void assign( int val, const error_category & cat ) noexcept;
 [none]
 * {blank}
 +
-Ensures: :: `value() == val`; `category() == cat`.
+Ensures: :: `value() == val`; `category() == cat`; `!has_location()`.
+
+```
+void assign( int val, const error_category & cat,
+  boost::source_location const * loc ) noexcept;
+```
+[none]
+* {blank}
++
+Requires: :: `loc` points to a valid `boost::source_location` object with static storage duration.
+Ensures: :: `value() == val`; `category() == cat`; `has_location()`; `&location() == loc`.
 
 ```
 template<typename ErrorCodeEnum>
@@ -781,6 +814,24 @@ constexpr explicit operator bool() const noexcept;
 +
 Returns: ::
   `failed()`.
+
+```
+bool has_location() const noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `true` if `*this` has been constructed with a pointer to a source
+  location, `false` otherwise.
+
+```
+boost::source_location const & location() const noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `*loc` if `*this` has been constructed with a pointer to a source
+  location `loc`, a reference to a default-constructed `boost::source_location` otherwise.
 
 #### Comparisons
 
@@ -941,6 +992,19 @@ Effects: :: If `*this` wraps a `std::error_code` object `ec`,
 Remarks: ::
   This operator is only enabled when `T` is `std::error_code`.
 
+#### to_string
+
+```
+std::string to_string() const;
+```
+[none]
+* {blank}
++
+Returns: :: If `*this` wraps a `std::error_code` object `e2`, a string that
+  is the concatenation of `"std:"`, `e2.category().name()`, `':'`, and the
+  string representation of `e2.value()`. Otherwise, the concatenation of
+  `category().name()`, `':'`, and the string representation of `value()`.
+
 #### Stream Insertion
 
 ```
@@ -951,10 +1015,8 @@ template <class charT, class traits>
 [none]
 * {blank}
 +
-Effects: :: If `ec` wraps a `std::error_code` object `e2`, `os << "std:" << e2`.
-  Otherwise, `os << ec.category().name() << ':' << ec.value()`.
-Returns: ::
-  `os`.
+Effects: :: `os << to_string()`.
+Returns: :: `os`.
 
 #### Nonmembers
 
