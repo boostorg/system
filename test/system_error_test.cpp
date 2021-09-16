@@ -51,6 +51,7 @@ namespace
           << ex.what() << "\"\n";
     }
 # endif
+    (void)str;
   }
 
   const boost::uint_least32_t uvalue = 2u;
