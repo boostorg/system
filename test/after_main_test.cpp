@@ -27,4 +27,6 @@ static error_code e2( ENOENT, generic_category() );
 
 int main()
 {
+    (void)e1;
+    (void)e2;
 }
