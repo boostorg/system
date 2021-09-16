@@ -564,11 +564,11 @@ namespace boost {
       constexpr error_code() noexcept;
       constexpr error_code( int val, const error_category & cat ) noexcept;
 
-      template <class ErrorCodeEnum>
-        constexpr error_code( ErrorCodeEnum e ) noexcept;
-
       error_code( int val, const error_category & cat,
         boost::source_location const * loc ) noexcept;
+
+      template <class ErrorCodeEnum>
+        constexpr error_code( ErrorCodeEnum e ) noexcept;
 
       error_code( std::error_code const& ec ) noexcept;
 
@@ -685,16 +685,6 @@ constexpr error_code( int val, const error_category & cat ) noexcept;
 Ensures: :: `value() == val`; `category() == cat`; `!has_location()`.
 
 ```
-template <class ErrorCodeEnum>
-  constexpr error_code( ErrorCodeEnum e ) noexcept;
-```
-[none]
-* {blank}
-+
-Ensures: :: `*this == make_error_code( e )`.
-Remarks: :: This constructor is only enabled when `is_error_code_enum<ErrorCodeEnum>::value` is `true`.
-
-```
 error_code( int val, const error_category & cat,
   boost::source_location const * loc ) noexcept;
 ```
@@ -703,6 +693,16 @@ error_code( int val, const error_category & cat,
 +
 Requires: :: `loc` points to a valid `boost::source_location` object with static storage duration.
 Ensures: :: `value() == val`; `category() == cat`; `has_location()`; `&location() == loc`.
+
+```
+template <class ErrorCodeEnum>
+  constexpr error_code( ErrorCodeEnum e ) noexcept;
+```
+[none]
+* {blank}
++
+Ensures: :: `*this == make_error_code( e )`.
+Remarks: :: This constructor is only enabled when `is_error_code_enum<ErrorCodeEnum>::value` is `true`.
 
 ```
 error_code( std::error_code const & ec ) noexcept;

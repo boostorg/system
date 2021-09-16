@@ -98,17 +98,18 @@ public:
         d1_.cat_ = &cat;
     }
 
-    template<class ErrorCodeEnum> BOOST_SYSTEM_CONSTEXPR error_code( ErrorCodeEnum e,
-        typename detail::enable_if<is_error_code_enum<ErrorCodeEnum>::value>::type* = 0 ) BOOST_NOEXCEPT
-    {
-        *this = make_error_code( e );
-    }
-
     error_code( int val, const error_category & cat, source_location const * loc ) BOOST_NOEXCEPT:
         d1_(), lc_flags_( ( loc? reinterpret_cast<boost::uintptr_t>( loc ): 2 ) | +detail::failed_impl( val, cat ) )
     {
         d1_.val_ = val;
         d1_.cat_ = &cat;
+    }
+
+    template<class ErrorCodeEnum> BOOST_SYSTEM_CONSTEXPR error_code( ErrorCodeEnum e,
+        typename detail::enable_if<is_error_code_enum<ErrorCodeEnum>::value>::type* = 0 ) BOOST_NOEXCEPT:
+        d1_(), lc_flags_( 0 )
+    {
+        *this = make_error_code( e );
     }
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
