@@ -6,7 +6,8 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include <boost/system/error_code.hpp>
+#include <boost/system/detail/error_code.hpp>
+#include <boost/system/detail/error_category_impl.hpp>
 #include <boost/system/detail/snprintf.hpp>
 #include <string>
 #include <stdexcept>
