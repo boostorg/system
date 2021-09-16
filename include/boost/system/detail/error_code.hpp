@@ -105,7 +105,7 @@ public:
     }
 
     error_code( int val, const error_category & cat, source_location const * loc ) BOOST_NOEXCEPT:
-        d1_(), lc_flags_( reinterpret_cast<boost::uintptr_t>( loc ) | +detail::failed_impl( val, cat ) )
+        d1_(), lc_flags_( ( loc? reinterpret_cast<boost::uintptr_t>( loc ): 2 ) | +detail::failed_impl( val, cat ) )
     {
         d1_.val_ = val;
         d1_.cat_ = &cat;
