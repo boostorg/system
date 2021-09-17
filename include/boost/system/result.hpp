@@ -176,11 +176,11 @@ public:
     {
         if( has_value() )
         {
-            return *variant2::get_if<0>( &v_ );
+            return variant2::unsafe_get<0>( v_ );
         }
         else
         {
-            throw_exception_from_error_code( *variant2::get_if<1>( &v_ ) );
+            throw_exception_from_error_code( variant2::unsafe_get<1>( v_ ) );
         }
     }
 
@@ -190,11 +190,11 @@ public:
     {
         if( has_value() )
         {
-            return *variant2::get_if<0>( &v_ );
+            return variant2::unsafe_get<0>( v_ );
         }
         else
         {
-            throw_exception_from_error_code( *variant2::get_if<1>( &v_ ) );
+            throw_exception_from_error_code( variant2::unsafe_get<1>( v_ ) );
         }
     }
 
@@ -202,11 +202,11 @@ public:
     {
         if( has_value() )
         {
-            return *variant2::get_if<0>( &v_ );
+            return variant2::unsafe_get<0>( v_ );
         }
         else
         {
-            throw_exception_from_error_code( *variant2::get_if<1>( &v_ ) );
+            throw_exception_from_error_code( variant2::unsafe_get<1>( v_ ) );
         }
     }
 
@@ -288,11 +288,10 @@ public:
 
     // error access
 
-    BOOST_CXX14_CONSTEXPR E error() const
+    constexpr E error() const
         noexcept( std::is_nothrow_default_constructible<E>::value && std::is_nothrow_copy_constructible<E>::value )
     {
-        E const * p = variant2::get_if<1>( &v_ );
-        return p? *p: E();
+        return has_error()? variant2::unsafe_get<1>( v_ ): E();
     }
 
     // swap
