@@ -196,17 +196,8 @@ jobs:
       matrix:
         include:
           - os: ubuntu-18.04
-            shared: OFF
-          - os: ubuntu-18.04
-            shared: ON
           - os: ubuntu-20.04
-            shared: OFF
-          - os: ubuntu-20.04
-            shared: ON
           - os: macos-10.15
-            shared: OFF
-          - os: macos-10.15
-            shared: ON
 
     runs-on: ${{matrix.os}}
 
@@ -241,7 +232,7 @@ jobs:
         run: |
           cd ../boost-root/libs/$LIBRARY/test/cmake_subdir_test
           mkdir __build__ && cd __build__
-          cmake -DBUILD_SHARED_LIBS=${{matrix.shared}} ..
+          cmake ..
           cmake --build .
           ctest --output-on-failure --no-tests=error
 
@@ -251,17 +242,8 @@ jobs:
       matrix:
         include:
           - os: ubuntu-18.04
-            shared: OFF
-          - os: ubuntu-18.04
-            shared: ON
           - os: ubuntu-20.04
-            shared: OFF
-          - os: ubuntu-20.04
-            shared: ON
           - os: macos-10.15
-            shared: OFF
-          - os: macos-10.15
-            shared: ON
 
     runs-on: ${{matrix.os}}
 
@@ -296,7 +278,7 @@ jobs:
         run: |
           cd ../boost-root
           mkdir __build__ && cd __build__
-          cmake -DBOOST_INCLUDE_LIBRARIES=$LIBRARY -DCMAKE_INSTALL_PREFIX=~/.local -DBUILD_SHARED_LIBS=${{matrix.shared}} ..
+          cmake -DBOOST_INCLUDE_LIBRARIES=$LIBRARY -DCMAKE_INSTALL_PREFIX=~/.local ..
 
       - name: Install
         run: |
@@ -316,17 +298,8 @@ jobs:
       matrix:
         include:
           - os: ubuntu-18.04
-            shared: OFF
-          - os: ubuntu-18.04
-            shared: ON
           - os: ubuntu-20.04
-            shared: OFF
-          - os: ubuntu-20.04
-            shared: ON
           - os: macos-10.15
-            shared: OFF
-          - os: macos-10.15
-            shared: ON
 
     runs-on: ${{matrix.os}}
 
@@ -361,7 +334,7 @@ jobs:
         run: |
           cd ../boost-root
           mkdir __build__ && cd __build__
-          cmake -DBOOST_INCLUDE_LIBRARIES=$LIBRARY -DBUILD_TESTING=ON -DBUILD_SHARED_LIBS=${{matrix.shared}} ..
+          cmake -DBOOST_INCLUDE_LIBRARIES=$LIBRARY -DBUILD_TESTING=ON ..
 
       - name: Build tests
         run: |
