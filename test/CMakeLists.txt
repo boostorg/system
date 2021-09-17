@@ -98,3 +98,21 @@ boost_test(TYPE run SOURCES std_interop_test6.cpp)
 boost_test(TYPE run SOURCES std_interop_test7.cpp)
 boost_test(TYPE run SOURCES std_interop_test8.cpp)
 boost_test(TYPE run SOURCES std_interop_test9.cpp)
+
+boost_test(TYPE run SOURCES ec_location_test.cpp)
+
+# result
+
+set(BOOST_TEST_COMPILE_FEATURES cxx_std_11)
+
+boost_test(TYPE run SOURCES result_default_construct.cpp)
+boost_test(TYPE run SOURCES result_value_construct.cpp)
+boost_test(TYPE run SOURCES result_error_construct.cpp)
+boost_test(TYPE run SOURCES result_copy_construct.cpp)
+boost_test(TYPE run SOURCES result_move_construct.cpp)
+boost_test(TYPE run SOURCES result_copy_assign.cpp)
+boost_test(TYPE run SOURCES result_move_assign.cpp)
+boost_test(TYPE run SOURCES result_value_access.cpp)
+boost_test(TYPE run SOURCES result_error_access.cpp)
+boost_test(TYPE run SOURCES result_swap.cpp)
+boost_test(TYPE run SOURCES result_eq.cpp)
