@@ -207,5 +207,43 @@ int main()
 
     BOOST_TEST_EQ( X::instances, 0 );
 
+    {
+        result<void> r;
+        result<void> r2( std::move( r ) );
+
+        BOOST_TEST( r2.has_value() );
+        BOOST_TEST( !r2.has_error() );
+    }
+
+    {
+        result<void> r2( result<void>{} );
+
+        BOOST_TEST( r2.has_value() );
+        BOOST_TEST( !r2.has_error() );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> r( ec );
+        result<void> r2( std::move( r ) );
+
+        BOOST_TEST( !r2.has_value() );
+        BOOST_TEST( r2.has_error() );
+
+        BOOST_TEST_EQ( r2.error(), ec );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> r2( result<void>{ ec } );
+
+        BOOST_TEST( !r2.has_value() );
+        BOOST_TEST( r2.has_error() );
+
+        BOOST_TEST_EQ( r2.error(), ec );
+    }
+
     return boost::report_errors();
 }
