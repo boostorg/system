@@ -214,5 +214,50 @@ int main()
     BOOST_TEST_EQ( X::instances, 0 );
     BOOST_TEST_EQ( Y::instances, 0 );
 
+    {
+        result<void> r1, r1c( r1 );
+        result<void> r2, r2c( r2 );
+
+        r1.swap( r2 );
+
+        BOOST_TEST_EQ( r1, r2c );
+        BOOST_TEST_EQ( r2, r1c );
+
+        swap( r1, r2 );
+
+        BOOST_TEST_EQ( r1, r1c );
+        BOOST_TEST_EQ( r2, r2c );
+    }
+
+    {
+        result<void> r1( 1, generic_category() ), r1c( r1 );
+        result<void> r2( 2, generic_category() ), r2c( r2 );
+
+        r1.swap( r2 );
+
+        BOOST_TEST_EQ( r1, r2c );
+        BOOST_TEST_EQ( r2, r1c );
+
+        swap( r1, r2 );
+
+        BOOST_TEST_EQ( r1, r1c );
+        BOOST_TEST_EQ( r2, r2c );
+    }
+
+    {
+        result<void> r1, r1c( r1 );
+        result<void> r2( 2, generic_category() ), r2c( r2 );
+
+        r1.swap( r2 );
+
+        BOOST_TEST_EQ( r1, r2c );
+        BOOST_TEST_EQ( r2, r1c );
+
+        swap( r1, r2 );
+
+        BOOST_TEST_EQ( r1, r1c );
+        BOOST_TEST_EQ( r2, r2c );
+    }
+
     return boost::report_errors();
 }
