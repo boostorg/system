@@ -1403,6 +1403,7 @@ constexpr in_place_error_t in_place_error{};
 // result
 
 template<class T, class E = error_code> class result;
+template<class E> class result<void, E>;
 
 } // namespace system
 } // namespace boost
@@ -1700,6 +1701,249 @@ template<class Ch, class Tr, class T, class E>
 +
 Effects: ::
   - If `*this` holds a value `t`, `os << "value:" << t;`.
+  - If `*this` holds an error `e`, `os << "error:" << e;`.
+Returns: ::
+  `os`.
+
+### result<void, E>
+
+```
+namespace boost {
+namespace system {
+
+template<class E> class result<void, E>
+{
+public:
+
+    // constructors
+
+    constexpr result() noexcept;
+
+    template<class... A>
+      constexpr result( A&&... a );
+
+    constexpr result( in_place_value_t ) noexcept;
+
+    template<class... A>
+      constexpr result( in_place_error_t, A&&... a );
+
+    // queries
+
+    constexpr bool has_value() const noexcept;
+    constexpr bool has_error() const noexcept;
+    constexpr explicit operator bool() const noexcept;
+
+    // checked value access
+
+    constexpr void value() const;
+
+    // unchecked value access
+
+    constexpr void* operator->() noexcept;
+    constexpr void const* operator->() const noexcept;
+
+    constexpr void operator*() const noexcept;
+
+    // error access
+
+    constexpr E error() const;
+
+    // swap
+
+    constexpr void swap( result& r );
+    friend constexpr void swap( result & r1, result & r2 );
+
+    // equality
+
+    friend constexpr bool operator==( result const & r1, result const & r2 );
+    friend constexpr bool operator!=( result const & r1, result const & r2 );
+};
+
+// stream insertion
+
+template<class Ch, class Tr, class E>
+  std::basic_ostream<Ch, Tr>&
+    operator<<( std::basic_ostream<Ch, Tr>& os, result<void, E> const & r );
+
+} // namespace system
+} // namespace boost
+```
+
+#### Constructors
+
+```
+constexpr result() noexcept;
+```
+[none]
+* {blank}
++
+Ensures: ::
+  `*this` holds an unspecified value.
+
+```
+template<class... A>
+  constexpr result( A&&... a );
+```
+[none]
+* {blank}
++
+Effects: ::
+  - If `std::is_constructible<E, A...>::value`,
+    ensures that `*this` holds the error `E( std::forward<A>(a)... )`.
+  - Otherwise, this constructor does not participate in overload resolution.
+Remarks: ::
+  This constructor is only enabled when `sizeof...(T) > 0`.
+
+```
+template<class... A>
+  constexpr result( in_place_value_t ) noexcept;
+```
+[none]
+* {blank}
++
+Ensures: ::
+  `*this` holds an unspecified value.
+
+```
+template<class... A>
+  constexpr result( in_place_error_t, A&&... a );
+```
+[none]
+* {blank}
++
+Ensures: ::
+  `*this` holds the error `E( std::forward<A>(a)... )`.
+Remarks: ::
+  This constructor is only enabled when `std::is_constructible<E, A...>::value` is `true`.
+
+#### Queries
+
+```
+constexpr bool has_value() const noexcept;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `true` when `*this` holds a value, `false` otherwise.
+
+```
+constexpr bool has_error() const noexcept;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `!has_value()`.
+
+```
+constexpr explicit operator bool() const noexcept;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `has_value()`.
+
+#### Checked Value Access
+
+```
+constexpr void value() const;
+```
+[none]
+* {blank}
++
+Effects: ::
+  If `*this` doesn't hold a value, calls `throw_exception_from_error`,
+  passing it a reference to the held error.
+
+#### Unchecked Value Access
+
+```
+constexpr void* operator->() noexcept;
+constexpr void const* operator->() const noexcept;
+```
+[none]
+* {blank}
++
+Returns: ::
+  If `*this` holds a value, a pointer to it. Otherwise, `nullptr`.
+
+```
+constexpr void operator*() const noexcept;
+```
+[none]
+* {blank}
++
+Requires: :: `*this` holds a value.
+Effects: ::
+  none.
+
+#### Error Access
+
+```
+constexpr E error() const;
+```
+[none]
+* {blank}
++
+Effects: ::
+  If `*this` holds an error, returns it. Otherwise, returns `E()`.
+
+#### swap
+
+```
+constexpr void swap( result& r );
+```
+[none]
+* {blank}
++
+Effects: ::
+  Exchanges the contents of `*this` and `r`.
+
+```
+friend constexpr void swap( result & r1, result & r2 );
+```
+[none]
+* {blank}
++
+Effects: ::
+  Exchanges the contents of `r1` and `r2`.
+
+#### Equality
+
+```
+friend constexpr bool operator==( result const & r1, result const & r2 );
+```
+[none]
+* {blank}
++
+Effects: ::
+  - If `r1` and `r2` hold values, returns `true`.
+  - If `r1` holds an error `e1` and `r2` holds an error `e2`, returns `e1 == e2`.
+  - Otherwise, returns `false`.
+
+```
+friend constexpr bool operator!=( result const & r1, result const & r2 );
+```
+[none]
+* {blank}
++
+Returns: ::
+  `!( r1 == r2 )`.
+
+#### Stream Insertion
+
+```
+template<class Ch, class Tr, class E>
+  std::basic_ostream<Ch, Tr>&
+    operator<<( std::basic_ostream<Ch, Tr>& os, result<void, E> const & r );
+```
+[none]
+* {blank}
++
+Effects: ::
+  - If `*this` holds a value, `os << "value:void";`.
   - If `*this` holds an error `e`, `os << "error:" << e;`.
 Returns: ::
   `os`.
