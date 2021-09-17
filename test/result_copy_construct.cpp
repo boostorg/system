@@ -145,5 +145,37 @@ int main()
 
     BOOST_TEST_EQ( X::instances, 0 );
 
+    {
+        result<void> r;
+        result<void> r2( r );
+
+        BOOST_TEST_EQ( r, r2 );
+    }
+
+    {
+        result<void> const r;
+        result<void> r2( r );
+
+        BOOST_TEST_EQ( r, r2 );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> r( ec );
+        result<void> r2( r );
+
+        BOOST_TEST_EQ( r, r2 );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> const r( ec );
+        result<void> r2( r );
+
+        BOOST_TEST_EQ( r, r2 );
+    }
+
     return boost::report_errors();
 }

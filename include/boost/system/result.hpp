@@ -487,6 +487,20 @@ public:
     }
 };
 
+template<class Ch, class Tr, class E> std::basic_ostream<Ch, Tr>& operator<<( std::basic_ostream<Ch, Tr>& os, result<void, E> const & r )
+{
+    if( r.has_value() )
+    {
+        os << "value:void";
+    }
+    else
+    {
+        os << "error:" << r.error();
+    }
+
+    return os;
+}
+
 } // namespace system
 } // namespace boost
 
