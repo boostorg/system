@@ -255,5 +255,91 @@ int main()
         BOOST_TEST_EQ( (result<X, Y>( ec ).operator->()), static_cast<X*>(0) );
     }
 
+    {
+        result<void> r;
+
+        BOOST_TEST( r.has_value() );
+        BOOST_TEST( !r.has_error() );
+
+        BOOST_TEST( r );
+        BOOST_TEST_NOT( !r );
+
+        BOOST_TEST_NO_THROW( r.value() );
+
+        BOOST_TEST( r.operator->() != 0 );
+    }
+
+    {
+        result<void> const r;
+
+        BOOST_TEST( r.has_value() );
+        BOOST_TEST( !r.has_error() );
+
+        BOOST_TEST( r );
+        BOOST_TEST_NOT( !r );
+
+        BOOST_TEST_NO_THROW( r.value() );
+
+        BOOST_TEST( r.operator->() != 0 );
+    }
+
+    {
+        BOOST_TEST( result<void>().has_value() );
+        BOOST_TEST( !result<void>().has_error() );
+
+        BOOST_TEST( result<void>() );
+        BOOST_TEST_NOT( !result<void>() );
+
+        BOOST_TEST_NO_THROW( result<void>().value() );
+
+        BOOST_TEST( result<void>().operator->() != 0 );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> r( ec );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_NOT( r );
+        BOOST_TEST( !r );
+
+        BOOST_TEST_THROWS( r.value(), system_error );
+
+        BOOST_TEST_EQ( r.operator->(), static_cast<void*>(0) );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> const r( ec );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_NOT( r );
+        BOOST_TEST( !r );
+
+        BOOST_TEST_THROWS( r.value(), system_error );
+
+        BOOST_TEST_EQ( r.operator->(), static_cast<void*>(0) );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        BOOST_TEST( !result<void>( ec ).has_value() );
+        BOOST_TEST( result<void>( ec ).has_error() );
+
+        BOOST_TEST_NOT( result<void>( ec ) );
+        BOOST_TEST( !result<void>( ec ) );
+
+        BOOST_TEST_THROWS( result<void>( ec ).value(), system_error );
+
+        BOOST_TEST_EQ( result<void>( ec ).operator->(), static_cast<void*>(0) );
+    }
+
     return boost::report_errors();
 }
