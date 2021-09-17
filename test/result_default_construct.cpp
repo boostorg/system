@@ -30,5 +30,12 @@ int main()
         BOOST_TEST( !r.has_error() );
     }
 
+    {
+        result<void> r;
+
+        BOOST_TEST( r.has_value() );
+        BOOST_TEST( !r.has_error() );
+    }
+
     return boost::report_errors();
 }

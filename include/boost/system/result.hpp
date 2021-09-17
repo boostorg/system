@@ -337,6 +337,156 @@ template<class Ch, class Tr, class T, class E> std::basic_ostream<Ch, Tr>& opera
     return os;
 }
 
+// result<void>
+
+template<class E> class result<void, E>
+{
+private:
+
+    variant2::variant<variant2::monostate, E> v_;
+
+public:
+
+    // constructors
+
+    // default
+    constexpr result() noexcept
+        : v_( in_place_value )
+    {
+    }
+
+    // explicit, error
+    template<class A, class En = typename std::enable_if<
+        std::is_constructible<E, A>::value &&
+        !std::is_convertible<A, E>::value
+        >::type>
+    explicit constexpr result( A&& a )
+        noexcept( std::is_nothrow_constructible<E, A>::value )
+        : v_( in_place_error, std::forward<A>(a) )
+    {
+    }
+
+    // implicit, error
+    template<class A, class En2 = void, class En = typename std::enable_if<
+        std::is_convertible<A, E>::value
+        >::type>
+    constexpr result( A&& a )
+        noexcept( std::is_nothrow_constructible<E, A>::value )
+        : v_( in_place_error, std::forward<A>(a) )
+    {
+    }
+
+    // more than one arg, error
+    template<class... A, class En2 = void, class En3 = void, class En = typename std::enable_if<
+        std::is_constructible<E, A...>::value &&
+        sizeof...(A) >= 2
+        >::type>
+    constexpr result( A&&... a )
+        noexcept( std::is_nothrow_constructible<E, A...>::value )
+        : v_( in_place_error, std::forward<A>(a)... )
+    {
+    }
+
+    // tagged, value
+    constexpr result( in_place_value_t ) noexcept
+        : v_( in_place_value )
+    {
+    }
+
+    // tagged, error
+    template<class... A, class En = typename std::enable_if<
+        std::is_constructible<E, A...>::value
+        >::type>
+    constexpr result( in_place_error_t, A&&... a )
+        noexcept( std::is_nothrow_constructible<E, A...>::value )
+        : v_( in_place_error, std::forward<A>(a)... )
+    {
+    }
+
+    // queries
+
+    constexpr bool has_value() const noexcept
+    {
+        return v_.index() == 0;
+    }
+
+    constexpr bool has_error() const noexcept
+    {
+        return v_.index() != 0;
+    }
+
+    constexpr explicit operator bool() const noexcept
+    {
+        return v_.index() == 0;
+    }
+
+    // checked value access
+
+    BOOST_CXX14_CONSTEXPR void value() const
+    {
+        if( has_value() )
+        {
+        }
+        else
+        {
+            throw_exception_from_error( variant2::unsafe_get<1>( v_ ) );
+        }
+    }
+
+    // unchecked value access
+
+    BOOST_CXX14_CONSTEXPR void* operator->() noexcept
+    {
+        return variant2::get_if<0>( &v_ );
+    }
+
+    BOOST_CXX14_CONSTEXPR void const* operator->() const noexcept
+    {
+        return variant2::get_if<0>( &v_ );
+    }
+
+    BOOST_CXX14_CONSTEXPR void operator*() const noexcept
+    {
+        BOOST_ASSERT( has_value() );
+    }
+
+    // error access
+
+    constexpr E error() const
+        noexcept( std::is_nothrow_default_constructible<E>::value && std::is_nothrow_copy_constructible<E>::value )
+    {
+        return has_error()? variant2::unsafe_get<1>( v_ ): E();
+    }
+
+    // swap
+
+    BOOST_CXX14_CONSTEXPR void swap( result& r )
+        noexcept( noexcept( v_.swap( r.v_ ) ) )
+    {
+        v_.swap( r.v_ );
+    }
+
+    friend BOOST_CXX14_CONSTEXPR void swap( result & r1, result & r2 )
+        noexcept( noexcept( r1.swap( r2 ) ) )
+    {
+        r1.swap( r2 );
+    }
+
+    // equality
+
+    friend constexpr bool operator==( result const & r1, result const & r2 )
+        noexcept( noexcept( r1.v_ == r2.v_ ) )
+    {
+        return r1.v_ == r2.v_;
+    }
+
+    friend constexpr bool operator!=( result const & r1, result const & r2 )
+        noexcept( noexcept( !( r1 == r2 ) ) )
+    {
+        return !( r1 == r2 );
+    }
+};
+
 } // namespace system
 } // namespace boost
 
