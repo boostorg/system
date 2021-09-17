@@ -928,7 +928,7 @@ Returns: ::
 
 ```
 template<class E>
-friend constexpr bool operator==( const error_code & lhs, E rhs ) noexcept;
+  friend constexpr bool operator==( const error_code & lhs, E rhs ) noexcept;
 ```
 [none]
 * {blank}
@@ -941,7 +941,7 @@ Effects: ::
 
 ```
 template<class E>
-friend constexpr bool operator==( E lhs, const error_code & rhs ) noexcept;
+  friend constexpr bool operator==( E lhs, const error_code & rhs ) noexcept;
 ```
 [none]
 * {blank}
@@ -954,11 +954,11 @@ Effects: ::
 
 ```
 template<class E>
-friend constexpr bool operator!=( const error_code & lhs, E rhs ) noexcept;
+  friend constexpr bool operator!=( const error_code & lhs, E rhs ) noexcept;
 ```
 ```
 template<class E>
-friend constexpr bool operator!=( E lhs, const error_code & rhs ) noexcept;
+  friend constexpr bool operator!=( E lhs, const error_code & rhs ) noexcept;
 ```
 [none]
 * {blank}
