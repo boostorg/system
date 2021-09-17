@@ -1377,24 +1377,61 @@ Returns: :: A null-terminated character string incorporating the arguments suppl
 This header defines the class template `result<T, E>`. Unlike the rest of the library,
 it requires {cpp}11.
 
-### result<T, E>
-
-`result<T, E>` stores either a value of type `T`, or an error of type `E`. `E` defaults
-to `error_code`. In a typical use, functions that can fail return `result<T>`.
+### Synopsis
 
 ```
-namespace boost
-{
-namespace system
-{
+namespace boost {
+namespace system {
+
+// throw_exception_from_error_code
 
 BOOST_NORETURN inline void throw_exception_from_error_code( error_code const & e );
+
+// in_place_*
 
 using in_place_value_t = /*unspecified*/;
 constexpr in_place_value_t in_place_value{};
 
 using in_place_error_t = /*unspecified*/;
 constexpr in_place_error_t in_place_error{};
+
+// result
+
+template<class T, class E = error_code> class result;
+
+} // namespace system
+} // namespace boost
+```
+
+### throw_exception_from_error
+
+The function `throw_exception_from_error` is called by `result<T, E>::value()` when
+the result holds an error. Its purpose is to throw an exception that represents the
+error held in the result.
+
+An implementation for the common and default case where `E` is `error_code` is
+already provided. It throws `system_error(e)`.
+
+If `result<T, E>` is used with other error types, the user is expected to provide
+an appropriate overload of `throw_exception_from_error_code` in the namespace of `E`.
+
+```
+BOOST_NORETURN inline void throw_exception_from_error_code( error_code const & e );
+```
+[none]
+* {blank}
++
+Effects: ::
+  `boost::throw_exception( system_error( e ) )`.
+
+### result<T, E>
+
+`result<T, E>` stores either a value of type `T`, or an error of type `E`. `E` defaults
+to `error_code`. In a typical use, functions that can fail return `result<T>`.
+
+```
+namespace boost {
+namespace system {
 
 template<class T, class E = error_code> class result
 {
