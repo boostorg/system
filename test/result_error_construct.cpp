@@ -150,5 +150,36 @@ int main()
         BOOST_TEST_TRAIT_FALSE((std::is_convertible<int, result<int, X>>));
     }
 
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> r( ec );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_EQ( r.error(), ec );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> r = ec;
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_EQ( r.error(), ec );
+    }
+
+    {
+        result<void> r( EINVAL, generic_category() );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_EQ( r.error(), std::error_code( EINVAL, generic_category() ) );
+    }
+
     return boost::report_errors();
 }
