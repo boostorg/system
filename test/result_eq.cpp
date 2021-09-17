@@ -133,5 +133,21 @@ int main()
         BOOST_TEST_NE( r1, r2 );
     }
 
+    {
+        result<void> r1;
+        result<void> r2;
+
+        BOOST_TEST_EQ( r1, r1 );
+        BOOST_TEST_EQ( r1, r2 );
+    }
+
+    {
+        result<void> r1( 1, generic_category() );
+        result<void> r2( 2, generic_category() );
+
+        BOOST_TEST_EQ( r1, r1 );
+        BOOST_TEST_NE( r1, r2 );
+    }
+
     return boost::report_errors();
 }
