@@ -152,5 +152,61 @@ int main()
         BOOST_TEST_EQ( (result<std::string, X>( "s" ).error().v_), 0 );
     }
 
+    {
+        result<void> r;
+
+        BOOST_TEST( r.has_value() );
+        BOOST_TEST( !r.has_error() );
+
+        BOOST_TEST_EQ( r.error(), error_code() );
+    }
+
+    {
+        result<void> const r;
+
+        BOOST_TEST( r.has_value() );
+        BOOST_TEST( !r.has_error() );
+
+        BOOST_TEST_EQ( r.error(), error_code() );
+    }
+
+    {
+        BOOST_TEST( result<void>().has_value() );
+        BOOST_TEST( !result<void>().has_error() );
+
+        BOOST_TEST_EQ( result<void>().error(), error_code() );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> r( ec );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_EQ( r.error(), ec );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> const r( ec );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_EQ( r.error(), ec );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        BOOST_TEST( !result<void>( ec ).has_value() );
+        BOOST_TEST( result<void>( ec ).has_error() );
+
+        BOOST_TEST_EQ( result<void>( ec ).error(), ec );
+    }
+
     return boost::report_errors();
 }
