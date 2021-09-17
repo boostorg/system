@@ -1383,9 +1383,9 @@ it requires {cpp}11.
 namespace boost {
 namespace system {
 
-// throw_exception_from_error_code
+// throw_exception_from_error
 
-BOOST_NORETURN inline void throw_exception_from_error_code( error_code const & e );
+BOOST_NORETURN inline void throw_exception_from_error( error_code const & e );
 
 // in_place_*
 
@@ -1413,10 +1413,10 @@ An implementation for the common and default case where `E` is `error_code` is
 already provided. It throws `system_error(e)`.
 
 If `result<T, E>` is used with other error types, the user is expected to provide
-an appropriate overload of `throw_exception_from_error_code` in the namespace of `E`.
+an appropriate overload of `throw_exception_from_error` in the namespace of `E`.
 
 ```
-BOOST_NORETURN inline void throw_exception_from_error_code( error_code const & e );
+BOOST_NORETURN inline void throw_exception_from_error( error_code const & e );
 ```
 [none]
 * {blank}
