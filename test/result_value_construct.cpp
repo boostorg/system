@@ -121,5 +121,12 @@ int main()
         BOOST_TEST_TRAIT_FALSE((std::is_convertible<int, result<X>>));
     }
 
+    {
+        result<void> r( in_place_value );
+
+        BOOST_TEST( r.has_value() );
+        BOOST_TEST( !r.has_error() );
+    }
+
     return boost::report_errors();
 }
