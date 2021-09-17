@@ -101,6 +101,17 @@ int main()
     }
 
     {
+        result<int> r2;
+
+        r2 = result<int>();
+
+        BOOST_TEST( r2.has_value() );
+        BOOST_TEST( !r2.has_error() );
+
+        BOOST_TEST_EQ( r2.value(), 0 );
+    }
+
+    {
         result<int> r;
         result<int> r2( 1 );
 
@@ -113,10 +124,32 @@ int main()
     }
 
     {
+        result<int> r2( 1 );
+
+        r2 = result<int>();
+
+        BOOST_TEST( r2.has_value() );
+        BOOST_TEST( !r2.has_error() );
+
+        BOOST_TEST_EQ( r2.value(), 0 );
+    }
+
+    {
         result<int> r;
         result<int> r2( ENOENT, generic_category() );
 
         r2 = std::move( r );
+
+        BOOST_TEST( r2.has_value() );
+        BOOST_TEST( !r2.has_error() );
+
+        BOOST_TEST_EQ( r2.value(), 0 );
+    }
+
+    {
+        result<int> r2( ENOENT, generic_category() );
+
+        r2 = result<int>();
 
         BOOST_TEST( r2.has_value() );
         BOOST_TEST( !r2.has_error() );
@@ -305,6 +338,19 @@ int main()
     {
         auto ec = make_error_code( errc::invalid_argument );
 
+        result<int> r2;
+
+        r2 = result<int>( ec );
+
+        BOOST_TEST( !r2.has_value() );
+        BOOST_TEST( r2.has_error() );
+
+        BOOST_TEST_EQ( r2.error(), ec );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
         result<int> r( ec );
         result<int> r2( 1 );
 
@@ -319,10 +365,36 @@ int main()
     {
         auto ec = make_error_code( errc::invalid_argument );
 
+        result<int> r2( 1 );
+
+        r2 = result<int>( ec );
+
+        BOOST_TEST( !r2.has_value() );
+        BOOST_TEST( r2.has_error() );
+
+        BOOST_TEST_EQ( r2.error(), ec );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
         result<int> r( ec );
         result<int> r2( ENOENT, generic_category() );
 
         r2 = std::move( r );
+
+        BOOST_TEST( !r2.has_value() );
+        BOOST_TEST( r2.has_error() );
+
+        BOOST_TEST_EQ( r2.error(), ec );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<int> r2( ENOENT, generic_category() );
+
+        r2 = result<int>( ec );
 
         BOOST_TEST( !r2.has_value() );
         BOOST_TEST( r2.has_error() );
@@ -435,6 +507,98 @@ int main()
     }
 
     BOOST_TEST_EQ( Y::instances, 0 );
+
+    {
+        result<void> r;
+        result<void> r2;
+
+        r2 = std::move( r );
+
+        BOOST_TEST( r2.has_value() );
+        BOOST_TEST( !r2.has_error() );
+    }
+
+    {
+        result<void> r2;
+
+        r2 = result<void>();
+
+        BOOST_TEST( r2.has_value() );
+        BOOST_TEST( !r2.has_error() );
+    }
+
+    {
+        result<void> r;
+        result<void> r2( ENOENT, generic_category() );
+
+        r2 = std::move( r );
+
+        BOOST_TEST( r2.has_value() );
+        BOOST_TEST( !r2.has_error() );
+    }
+
+    {
+        result<void> r2( ENOENT, generic_category() );
+
+        r2 = result<void>();
+
+        BOOST_TEST( r2.has_value() );
+        BOOST_TEST( !r2.has_error() );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> r( ec );
+        result<void> r2;
+
+        r2 = std::move( r );
+
+        BOOST_TEST( !r2.has_value() );
+        BOOST_TEST( r2.has_error() );
+
+        BOOST_TEST_EQ( r2.error(), ec );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> r2;
+
+        r2 = result<void>( ec );
+
+        BOOST_TEST( !r2.has_value() );
+        BOOST_TEST( r2.has_error() );
+
+        BOOST_TEST_EQ( r2.error(), ec );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> r( ec );
+        result<void> r2( ENOENT, generic_category() );
+
+        r2 = std::move( r );
+
+        BOOST_TEST( !r2.has_value() );
+        BOOST_TEST( r2.has_error() );
+
+        BOOST_TEST_EQ( r2.error(), ec );
+    }
+
+    {
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<void> r2( ENOENT, generic_category() );
+
+        r2 = result<void>( ec );
+
+        BOOST_TEST( !r2.has_value() );
+        BOOST_TEST( r2.has_error() );
+
+        BOOST_TEST_EQ( r2.error(), ec );
+    }
 
     return boost::report_errors();
 }
