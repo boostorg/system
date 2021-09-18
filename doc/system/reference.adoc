@@ -725,7 +725,7 @@ constexpr void assign( int val, const error_category & cat ) noexcept;
 [none]
 * {blank}
 +
-Effects: :: `*this = error_code( val, cat );`.
+Effects: :: `*this = error_code( val, cat )`.
 
 ```
 void assign( int val, const error_category & cat,
@@ -734,7 +734,7 @@ void assign( int val, const error_category & cat,
 [none]
 * {blank}
 +
-Effects: :: `*this = error_code( val, cat, loc );`.
+Effects: :: `*this = error_code( val, cat, loc )`.
 
 ```
 template<typename ErrorCodeEnum>
@@ -753,7 +753,7 @@ constexpr void clear() noexcept;
 * {blank}
 +
 Effects: ::
-  `*this = error_code();`.
+  `*this = error_code()`.
 
 #### Observers
 
@@ -1700,8 +1700,8 @@ template<class Ch, class Tr, class T, class E>
 * {blank}
 +
 Effects: ::
-  - If `*this` holds a value `t`, `os << "value:" << t;`.
-  - If `*this` holds an error `e`, `os << "error:" << e;`.
+  - If `*this` holds a value `t`, `os << "value:" << t`.
+  - If `*this` holds an error `e`, `os << "error:" << e`.
 Returns: ::
   `os`.
 
@@ -1943,8 +1943,8 @@ template<class Ch, class Tr, class E>
 * {blank}
 +
 Effects: ::
-  - If `*this` holds a value, `os << "value:void";`.
-  - If `*this` holds an error `e`, `os << "error:" << e;`.
+  - If `*this` holds a value, `os << "value:void"`.
+  - If `*this` holds an error `e`, `os << "error:" << e`.
 Returns: ::
   `os`.
 
