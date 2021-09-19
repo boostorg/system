@@ -124,6 +124,7 @@ run std_interop_test9.cpp ;
 run ec_location_test.cpp ;
 
 run error_condition_test3.cpp ;
+run error_code_test2.cpp ;
 
 # result
 
