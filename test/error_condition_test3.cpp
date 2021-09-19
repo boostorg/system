@@ -68,7 +68,7 @@ int main()
         BOOST_TEST_NOT( !en2 );
 
         BOOST_TEST_NE( en, en2 );
-        BOOST_TEST( en != en2 );
+        BOOST_TEST_NOT( en == en2 );
 
         BOOST_TEST_EQ( en2.to_string(), std::string( "cond:generic:5" ) );
     }
@@ -85,7 +85,7 @@ int main()
         BOOST_TEST_NOT( !en2 );
 
         BOOST_TEST_NE( en, en2 );
-        BOOST_TEST( en != en2 );
+        BOOST_TEST_NOT( en == en2 );
 
         BOOST_TEST_EQ( en2.to_string(), std::string( "cond:system:5" ) );
     }

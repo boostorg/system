@@ -68,7 +68,7 @@ int main()
         BOOST_TEST_NOT( !ec2 );
 
         BOOST_TEST_NE( ec, ec2 );
-        BOOST_TEST( ec != ec2 );
+        BOOST_TEST_NOT( ec == ec2 );
 
         BOOST_TEST_EQ( ec2.to_string(), std::string( "generic:5" ) );
     }
@@ -85,7 +85,7 @@ int main()
         BOOST_TEST_NOT( !ec2 );
 
         BOOST_TEST_NE( ec, ec2 );
-        BOOST_TEST( ec != ec2 );
+        BOOST_TEST_NOT( ec == ec2 );
 
         BOOST_TEST_EQ( ec2.to_string(), std::string( "system:5" ) );
     }
