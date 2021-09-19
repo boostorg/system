@@ -44,7 +44,8 @@ static void test_generic_category()
 
     int ev = ENOENT;
 
-    BOOST_TEST_EQ( bt.message( ev ), st.message( ev ) );
+    // Under MSVC, it's "no such file or directory" instead of "No such file or directory"
+    BOOST_TEST_EQ( bt.message( ev ).substr( 1 ), st.message( ev ).substr( 1 ) );
 
     {
         boost::system::error_code bc( ev, bt );

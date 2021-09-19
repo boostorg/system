@@ -102,16 +102,15 @@ inline char const * error_category::message( int ev, char * buffer, std::size_t 
 
 inline boost::system::error_category::operator std::error_category const & () const
 {
+    if( id_ == boost::system::detail::generic_category_id )
+    {
+        return std::generic_category();
+    }
+
     if( id_ == boost::system::detail::system_category_id )
     {
         static const boost::system::detail::std_category system_instance( this, 0x1F4D7 );
         return system_instance;
-    }
-
-    if( id_ == boost::system::detail::generic_category_id )
-    {
-        static const boost::system::detail::std_category generic_instance( this, 0x1F4D3 );
-        return generic_instance;
     }
 
     boost::system::detail::std_category* p = ps_.load( std::memory_order_acquire );
