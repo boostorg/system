@@ -47,6 +47,13 @@ private:
     int val_;
     error_category const * cat_;
 
+private:
+
+    boost::ulong_long_type cat_id() const BOOST_NOEXCEPT
+    {
+        return cat_? cat_->id_: detail::generic_category_id;
+    }
+
 public:
 
     // constructors:
@@ -180,7 +187,22 @@ public:
 
     BOOST_SYSTEM_CONSTEXPR inline friend bool operator==( const error_condition & lhs, const error_condition & rhs ) BOOST_NOEXCEPT
     {
-        return lhs.val_ == rhs.val_ && lhs.category() == rhs.category();
+        if( lhs.val_ != rhs.val_ )
+        {
+            return false;
+        }
+        else if( lhs.cat_ == 0 )
+        {
+            return rhs.cat_id() == detail::generic_category_id;
+        }
+        else if( rhs.cat_ == 0 )
+        {
+            return lhs.cat_id() == detail::generic_category_id;
+        }
+        else
+        {
+            return *lhs.cat_ == *rhs.cat_;
+        }
     }
 
     BOOST_SYSTEM_CONSTEXPR inline friend bool operator<( const error_condition & lhs, const error_condition & rhs ) BOOST_NOEXCEPT

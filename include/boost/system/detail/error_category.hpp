@@ -54,6 +54,7 @@ private:
 
     friend std::size_t hash_value( error_code const & ec );
     friend BOOST_SYSTEM_CONSTEXPR bool detail::failed_impl( int ev, error_category const & cat );
+    friend class error_condition;
 
 #if !defined(BOOST_NO_CXX11_DELETED_FUNCTIONS)
 public:
