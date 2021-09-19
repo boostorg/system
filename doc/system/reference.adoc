@@ -1096,6 +1096,10 @@ public:
 
     operator std::error_condition() const;
 
+    // to_string
+
+    std::string to_string() const;
+
     // stream insertion
 
     template <class charT, class traits>
@@ -1284,6 +1288,17 @@ operator std::error_condition() const;
 Returns: ::
   `std::error_condition( value(), category() )`.
 
+#### to_string
+
+```
+std::string to_string() const;
+```
+[none]
+* {blank}
++
+Returns: :: The concatenation of `"cond:"`, `category().name()`, `':'`,
+  and the string representation of `value()`.
+
 #### Stream Insertion
 
 ```
@@ -1294,7 +1309,7 @@ template <class charT, class traits>
 [none]
 * {blank}
 +
-Effects: :: `os << "cond:" << en.category().name() << ':' << en.value()`.
+Effects: :: `os << en.to_string()`.
 Returns: ::
   `os`.
 
