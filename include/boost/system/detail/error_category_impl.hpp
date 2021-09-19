@@ -104,7 +104,16 @@ inline boost::system::error_category::operator std::error_category const & () co
 {
     if( id_ == boost::system::detail::generic_category_id )
     {
+#if defined(BOOST_GCC) && BOOST_GCC < 50000
+
+        static const boost::system::detail::std_category generic_instance( this, 0x1F4D3 );
+        return generic_instance;
+
+#else
+
         return std::generic_category();
+
+#endif
     }
 
     if( id_ == boost::system::detail::system_category_id )
