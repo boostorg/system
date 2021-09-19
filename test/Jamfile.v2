@@ -123,6 +123,8 @@ run std_interop_test9.cpp ;
 
 run ec_location_test.cpp ;
 
+run error_condition_test3.cpp ;
+
 # result
 
 import ../../config/checks/config : requires ;
