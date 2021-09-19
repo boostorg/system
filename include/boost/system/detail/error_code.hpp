@@ -285,6 +285,30 @@ public:
 
     // relationals:
 
+private:
+
+    // private equality for use in error_category::equivalent
+
+    friend class error_category;
+
+    BOOST_SYSTEM_CONSTEXPR bool equals( int val, error_category const& cat ) const BOOST_NOEXCEPT
+    {
+        if( lc_flags_ == 0 )
+        {
+            return val == 0 && cat.id_ == detail::system_category_id;
+        }
+        else if( lc_flags_ == 1 )
+        {
+            return cat.id_ == detail::interop_category_id && val == value();
+        }
+        else
+        {
+            return val == d1_.val_ && cat == *d1_.cat_;
+        }
+    }
+
+public:
+
     //  the more symmetrical non-member syntax allows enum
     //  conversions work for both rhs and lhs.
 

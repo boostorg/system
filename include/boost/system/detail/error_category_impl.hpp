@@ -38,7 +38,7 @@ inline bool error_category::equivalent( int code, const error_condition & condit
 
 inline bool error_category::equivalent( const error_code & code, int condition ) const BOOST_NOEXCEPT
 {
-    return *this == code.category() && code.value() == condition;
+    return code.equals( condition, *this );
 }
 
 inline char const * error_category::message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT
