@@ -15,6 +15,7 @@
 #include <boost/system/detail/enable_if.hpp>
 #include <boost/system/detail/is_same.hpp>
 #include <boost/system/detail/errc.hpp>
+#include <boost/system/detail/append_int.hpp>
 #include <boost/system/is_error_condition_enum.hpp>
 #include <boost/system/detail/config.hpp>
 #include <boost/config.hpp>
@@ -246,14 +247,21 @@ public:
 
 #endif
 
+    std::string to_string() const
+    {
+        std::string r( "cond:" );
+
+        r += category().name();
+        detail::append_int( r, value() );
+
+        return r;
+    }
+
     template<class Ch, class Tr>
         inline friend std::basic_ostream<Ch, Tr>&
         operator<< (std::basic_ostream<Ch, Tr>& os, error_condition const & en)
     {
-        {
-            os << "cond:" << en.category().name() << ':' << en.value();
-        }
-
+        os << en.to_string();
         return os;
     }
 };

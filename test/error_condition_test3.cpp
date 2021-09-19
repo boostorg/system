@@ -22,6 +22,8 @@ int main()
     BOOST_TEST( !en.failed() );
     BOOST_TEST( !en );
 
+    BOOST_TEST_EQ( en.to_string(), std::string( "cond:generic:0" ) );
+
     {
         sys::error_condition en2( en );
 
@@ -34,6 +36,8 @@ int main()
 
         BOOST_TEST_EQ( en, en2 );
         BOOST_TEST_NOT( en != en2 );
+
+        BOOST_TEST_EQ( en2.to_string(), std::string( "cond:generic:0" ) );
     }
 
     {
@@ -48,6 +52,8 @@ int main()
 
         BOOST_TEST_EQ( en, en2 );
         BOOST_TEST_NOT( en != en2 );
+
+        BOOST_TEST_EQ( en2.to_string(), std::string( "cond:generic:0" ) );
     }
 
     {
@@ -63,6 +69,8 @@ int main()
 
         BOOST_TEST_NE( en, en2 );
         BOOST_TEST( en != en2 );
+
+        BOOST_TEST_EQ( en2.to_string(), std::string( "cond:generic:5" ) );
     }
 
     {
@@ -78,6 +86,8 @@ int main()
 
         BOOST_TEST_NE( en, en2 );
         BOOST_TEST( en != en2 );
+
+        BOOST_TEST_EQ( en2.to_string(), std::string( "cond:system:5" ) );
     }
 
     return boost::report_errors();

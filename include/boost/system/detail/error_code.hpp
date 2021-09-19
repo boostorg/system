@@ -18,6 +18,7 @@
 #include <boost/system/detail/interop_category.hpp>
 #include <boost/system/detail/enable_if.hpp>
 #include <boost/system/detail/is_same.hpp>
+#include <boost/system/detail/append_int.hpp>
 #include <boost/system/detail/snprintf.hpp>
 #include <boost/system/detail/config.hpp>
 #include <boost/assert/source_location.hpp>
@@ -549,18 +550,18 @@ public:
         {
             std::error_code const& e2 = *reinterpret_cast<std::error_code const*>( d2_ );
 
-            char buffer[ 32 ];
-            detail::snprintf( buffer, sizeof( buffer ), "%d", e2.value() );
+            std::string r( "std:" );
+            r += e2.category().name();
+            detail::append_int( r, e2.value() );
 
-            return std::string( "std:" ) + e2.category().name() + ":" + buffer;
+            return r;
         }
         else
 #endif
         {
-            char buffer[ 32 ];
-            detail::snprintf( buffer, sizeof( buffer ), "%d", value() );
-
-            return std::string( category().name() ) + ":" + buffer;
+            std::string r = category().name();
+            detail::append_int( r, value() );
+            return r;
         }
     }
 
