@@ -130,7 +130,7 @@ public:
         }
         else
         {
-            return generic_category().message( value() );
+            return detail::generic_error_category_message( value() );
         }
     }
 
@@ -142,7 +142,7 @@ public:
         }
         else
         {
-            return generic_category().message( value(), buffer, len );
+            return detail::generic_error_category_message( value(), buffer, len );
         }
     }
 
@@ -251,7 +251,15 @@ public:
     {
         std::string r( "cond:" );
 
-        r += category().name();
+        if( cat_ )
+        {
+            r += cat_->name();
+        }
+        else
+        {
+            r += "generic";
+        }
+
         detail::append_int( r, value() );
 
         return r;
