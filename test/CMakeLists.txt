@@ -103,6 +103,7 @@ boost_test(TYPE run SOURCES ec_location_test.cpp)
 
 boost_test(TYPE run SOURCES error_condition_test3.cpp)
 boost_test(TYPE run SOURCES error_code_test2.cpp)
+boost_test(TYPE run SOURCES system_error_test2.cpp)
 
 # result
 
