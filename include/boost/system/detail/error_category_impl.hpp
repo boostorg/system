@@ -102,11 +102,11 @@ namespace boost
 {
 namespace system
 {
-namespace detail
-{
 
-inline std::error_category const & get_generic_std_category()
+inline error_category::operator std::error_category const & () const
 {
+    if( id_ == detail::generic_category_id )
+    {
 #if defined(BOOST_GCC) && BOOST_GCC < 50000
 
     static const boost::system::detail::std_category generic_instance( this, 0x1F4D3 );
@@ -117,11 +117,13 @@ inline std::error_category const & get_generic_std_category()
     return std::generic_category();
 
 #endif
-}
+    }
 
-inline std::error_category const & get_system_std_category()
-{
-#if 0
+    if( id_ == detail::system_category_id )
+    {
+#if defined(__CYGWIN__)
+
+    // Under Cygwin, std::system_category() is POSIX
 
     static const boost::system::detail::std_category system_instance( this, 0x1F4D7 );
     return system_instance;
@@ -131,20 +133,6 @@ inline std::error_category const & get_system_std_category()
     return std::system_category();
 
 #endif
-}
-
-} // namespace detail
-
-inline error_category::operator std::error_category const & () const
-{
-    if( id_ == detail::generic_category_id )
-    {
-        return detail::get_generic_std_category();
-    }
-
-    if( id_ == detail::system_category_id )
-    {
-        return detail::get_system_std_category();
     }
 
     detail::std_category* p = ps_.load( std::memory_order_acquire );
