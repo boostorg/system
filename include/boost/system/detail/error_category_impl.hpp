@@ -20,7 +20,6 @@
 
 namespace boost
 {
-
 namespace system
 {
 
@@ -91,7 +90,6 @@ inline char const * error_category::message( int ev, char * buffer, std::size_t 
 }
 
 } // namespace system
-
 } // namespace boost
 
 // interoperability with std::error_code, std::error_condition
@@ -100,44 +98,63 @@ inline char const * error_category::message( int ev, char * buffer, std::size_t 
 
 #include <boost/system/detail/std_category.hpp>
 
-inline boost::system::error_category::operator std::error_category const & () const
+namespace boost
 {
-    if( id_ == boost::system::detail::generic_category_id )
-    {
+namespace system
+{
+namespace detail
+{
+
+inline std::error_category const & get_generic_std_category()
+{
 #if defined(BOOST_GCC) && BOOST_GCC < 50000
 
-        static const boost::system::detail::std_category generic_instance( this, 0x1F4D3 );
-        return generic_instance;
+    static const boost::system::detail::std_category generic_instance( this, 0x1F4D3 );
+    return generic_instance;
 
 #else
 
-        return std::generic_category();
+    return std::generic_category();
 
 #endif
-    }
+}
 
-    if( id_ == boost::system::detail::system_category_id )
-    {
+inline std::error_category const & get_system_std_category()
+{
 #if 0
 
-        static const boost::system::detail::std_category system_instance( this, 0x1F4D7 );
-        return system_instance;
+    static const boost::system::detail::std_category system_instance( this, 0x1F4D7 );
+    return system_instance;
 
 #else
 
-        return std::system_category();
+    return std::system_category();
 
 #endif
+}
+
+} // namespace detail
+
+inline error_category::operator std::error_category const & () const
+{
+    if( id_ == detail::generic_category_id )
+    {
+        return detail::get_generic_std_category();
     }
 
-    boost::system::detail::std_category* p = ps_.load( std::memory_order_acquire );
+    if( id_ == detail::system_category_id )
+    {
+        return detail::get_system_std_category();
+    }
+
+    detail::std_category* p = ps_.load( std::memory_order_acquire );
 
     if( p != 0 )
     {
         return *p;
     }
 
-    boost::system::detail::std_category* q = new detail::std_category( this, 0 );
+    detail::std_category* q = new detail::std_category( this, 0 );
 
     if( ps_.compare_exchange_strong( p, q, std::memory_order_release, std::memory_order_acquire ) )
     {
@@ -149,6 +166,9 @@ inline boost::system::error_category::operator std::error_category const & () co
         return *p;
     }
 }
+
+} // namespace system
+} // namespace boost
 
 #endif // #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
