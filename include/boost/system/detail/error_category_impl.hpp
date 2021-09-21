@@ -118,8 +118,16 @@ inline boost::system::error_category::operator std::error_category const & () co
 
     if( id_ == boost::system::detail::system_category_id )
     {
+#if 0
+
         static const boost::system::detail::std_category system_instance( this, 0x1F4D7 );
         return system_instance;
+
+#else
+
+        return std::system_category();
+
+#endif
     }
 
     boost::system::detail::std_category* p = ps_.load( std::memory_order_acquire );
