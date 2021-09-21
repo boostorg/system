@@ -121,9 +121,9 @@ inline error_category::operator std::error_category const & () const
 
     if( id_ == detail::system_category_id )
     {
-#if defined(__CYGWIN__) || (defined(_MSC_VER) && _MSC_VER == 1800)
+#if defined(__CYGWIN__) || defined(__MINGW32__) || (defined(_MSC_VER) && _MSC_VER == 1800) || (defined(BOOST_GCC) && BOOST_GCC < 50000)
 
-    // Under Cygwin, std::system_category() is POSIX
+    // Under Cygwin (and MinGW!), std::system_category() is POSIX
     // Under VS2013, std::system_category() isn't quite right
 
     static const boost::system::detail::std_category system_instance( this, 0x1F4D7 );
