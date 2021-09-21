@@ -30,6 +30,11 @@ int main()
         BOOST_TEST_EQ( e2, e1 );
         BOOST_TEST_NOT( e2 != e1 );
 
+#if defined(_LIBCPP_VERSION)
+
+        // Under MS STL and libstdc++, std::error_code() does not compare
+        // equal to std::error_condition(). Go figure.
+
         BOOST_TEST_EQ( e2, en );
         BOOST_TEST_NOT( e2 != en );
 
@@ -37,6 +42,8 @@ int main()
 
         BOOST_TEST_EQ( e3, en );
         BOOST_TEST_NOT( e3 != en );
+
+#endif
     }
 
     {
@@ -51,6 +58,8 @@ int main()
         BOOST_TEST_EQ( e2, e1 );
         BOOST_TEST_NOT( e2 != e1 );
 
+#if defined(_LIBCPP_VERSION)
+
         BOOST_TEST_EQ( e2, en );
         BOOST_TEST_NOT( e2 != en );
 
@@ -58,6 +67,8 @@ int main()
 
         BOOST_TEST_EQ( e3, en );
         BOOST_TEST_NOT( e3 != en );
+
+#endif
     }
 
     {
