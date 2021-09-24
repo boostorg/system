@@ -504,8 +504,16 @@ public:
         }
         else if( lc_flags_ == 0 )
         {
-            //return std::error_code();
+// This condition must be the same as the one in error_category_impl.hpp
+#if defined(__CYGWIN__) || defined(__MINGW32__) || (defined(_MSC_VER) && _MSC_VER == 1800) || (defined(BOOST_GCC) && BOOST_GCC < 50000)
+
             return std::error_code( 0, boost::system::system_category() );
+
+#else
+
+            return std::error_code();
+
+#endif
         }
         else
         {

@@ -107,6 +107,7 @@ inline error_category::operator std::error_category const & () const
 {
     if( id_ == detail::generic_category_id )
     {
+// This condition must be the same as the one in error_condition.hpp
 #if defined(BOOST_GCC) && BOOST_GCC < 50000
 
     static const boost::system::detail::std_category generic_instance( this, 0x1F4D3 );
@@ -121,6 +122,7 @@ inline error_category::operator std::error_category const & () const
 
     if( id_ == detail::system_category_id )
     {
+// This condition must be the same as the one in error_code.hpp
 #if defined(__CYGWIN__) || defined(__MINGW32__) || (defined(_MSC_VER) && _MSC_VER == 1800) || (defined(BOOST_GCC) && BOOST_GCC < 50000)
 
     // Under Cygwin (and MinGW!), std::system_category() is POSIX
