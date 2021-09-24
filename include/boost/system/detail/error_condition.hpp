@@ -222,7 +222,23 @@ public:
 
     operator std::error_condition () const
     {
+// This condition must be the same as the one in error_category_impl.hpp
+#if defined(BOOST_GCC) && BOOST_GCC < 50000
+
         return std::error_condition( value(), category() );
+
+#else
+
+        if( cat_ )
+        {
+            return std::error_condition( val_, *cat_ );
+        }
+        else
+        {
+            return std::error_condition( val_, std::generic_category() );
+        }
+
+#endif
     }
 
     inline friend bool operator==( std::error_code const & lhs, error_condition const & rhs ) BOOST_NOEXCEPT
