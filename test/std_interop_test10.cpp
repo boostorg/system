@@ -31,6 +31,15 @@ int main()
     }
 
     {
+        boost::system::error_code e1;
+
+        std::error_code e2( e1 );
+        std::error_code e3( e1.value(), e1.category() );
+
+        BOOST_TEST_EQ( e2, e3 );
+    }
+
+    {
         boost::system::error_condition e1;
         boost::system::error_condition e2( 0, boost::system::generic_category() );
 
@@ -40,6 +49,15 @@ int main()
         std::error_condition e4( e2 );
 
         BOOST_TEST( e3 == e4 );
+    }
+
+    {
+        boost::system::error_condition e1;
+
+        std::error_condition e2( e1 );
+        std::error_condition e3( e1.value(), e1.category() );
+
+        BOOST_TEST( e2 == e3 );
     }
 
     return boost::report_errors();
