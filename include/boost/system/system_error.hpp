@@ -8,7 +8,6 @@
 
 #include <boost/system/errc.hpp>
 #include <boost/system/detail/error_code.hpp>
-#include <boost/system/detail/snprintf.hpp>
 #include <string>
 #include <stdexcept>
 #include <cassert>
@@ -25,14 +24,6 @@ private:
     error_code code_;
 
 private:
-
-    static std::string to_string( int v )
-    {
-        char buffer[ 32 ];
-        detail::snprintf( buffer, sizeof( buffer ), "%d", v );
-
-        return buffer;
-    }
 
     static std::string build_message( char const * prefix, error_code const & ec )
     {
@@ -51,23 +42,8 @@ private:
             r += " [";
             r += ec.to_string();
             r += " at ";
-
-            boost::source_location loc = ec.location();
-
-            r += loc.file_name();
-
-            r += ':';
-            r += to_string( loc.line() );
-
-            if( loc.column() != 0 )
-            {
-                r += ':';
-                r += to_string( loc.column() );
-            }
-
-            r += " in function '";
-            r += loc.function_name();
-            r += "\']";
+            r += ec.location().to_string();
+            r += "]";
         }
 
         return r;
