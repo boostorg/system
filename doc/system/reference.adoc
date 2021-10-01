@@ -571,8 +571,12 @@ public:
     error_code( int val, const error_category & cat,
       boost::source_location const * loc ) noexcept;
 
-    template <class ErrorCodeEnum>
+    template<class ErrorCodeEnum>
       constexpr error_code( ErrorCodeEnum e ) noexcept;
+
+    template<class ErrorCodeEnum>
+      error_code( ErrorCodeEnum e, boost::source_location const * loc )
+        noexcept;
 
     error_code( std::error_code const& ec ) noexcept;
 
@@ -583,8 +587,12 @@ public:
     void assign( int val, const error_category & cat,
       boost::source_location const * loc ) noexcept;
 
-    template<typename ErrorCodeEnum>
+    template<class ErrorCodeEnum>
       constexpr error_code & operator=( ErrorCodeEnum e ) noexcept;
+
+    template<class ErrorCodeEnum>
+      void assign( ErrorCodeEnum e,
+        boost::source_location const * loc ) noexcept;
 
     constexpr void clear() noexcept;
 
@@ -657,7 +665,7 @@ public:
 
     // stream insertion
 
-    template <class charT, class traits>
+    template<class charT, class traits>
       friend std::basic_ostream<charT, traits>&
         operator<<( basic_ostream<charT, traits>& os, const error_code & ec );
 };
@@ -699,7 +707,7 @@ Requires: :: `loc` points to a valid `boost::source_location` object with static
 Ensures: :: `value() == val`; `category() == cat`; `has_location()`; `&location() == loc`.
 
 ```
-template <class ErrorCodeEnum>
+template<class ErrorCodeEnum>
   constexpr error_code( ErrorCodeEnum e ) noexcept;
 ```
 [none]
@@ -707,6 +715,19 @@ template <class ErrorCodeEnum>
 +
 Ensures: :: `*this == make_error_code( e )`.
 Remarks: :: This constructor is only enabled when `is_error_code_enum<ErrorCodeEnum>::value` is `true`.
+
+```
+template<class ErrorCodeEnum>
+  error_code( ErrorCodeEnum e, boost::source_location const * loc ) noexcept;
+```
+[none]
+* {blank}
++
+Requires: :: `loc` points to a valid `boost::source_location` object with static storage duration.
+Ensures: :: `*this == make_error_code( e )`.
+Remarks: :: This constructor is only enabled when `is_error_code_enum<ErrorCodeEnum>::value` is `true`.
+  When `make_error_code( e )` is not a default-constructed `error_code` and doesn't wrap a
+  `std::error_code`, `has_location()` is `true` and `&location()` is `loc`.
 
 ```
 error_code( std::error_code const & ec ) noexcept;
@@ -737,7 +758,7 @@ void assign( int val, const error_category & cat,
 Effects: :: `*this = error_code( val, cat, loc )`.
 
 ```
-template<typename ErrorCodeEnum>
+template<class ErrorCodeEnum>
   constexpr error_code & operator=( ErrorCodeEnum e ) noexcept;
 ```
 [none]
@@ -745,6 +766,18 @@ template<typename ErrorCodeEnum>
 +
 Ensures: :: `*this == make_error_code( e )`.
 Remarks: :: This operator is only enabled when `is_error_code_enum<ErrorCodeEnum>::value` is `true`.
+
+```
+template<class ErrorCodeEnum>
+  void assign( ErrorCodeEnum e,
+    boost::source_location const * loc ) noexcept;
+```
+[none]
+* {blank}
++
+Requires: :: `loc` points to a valid `boost::source_location` object with static storage duration.
+Effects: :: `*this = error_code( e, loc )`.
+Remarks: :: This function is only enabled when `is_error_code_enum<ErrorCodeEnum>::value` is `true`.
 
 ```
 constexpr void clear() noexcept;
