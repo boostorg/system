@@ -128,6 +128,8 @@ run error_code_test2.cpp ;
 run system_error_test2.cpp ;
 run std_interop_test10.cpp ;
 
+run ec_location_test2.cpp ;
+
 # result
 
 import ../../config/checks/config : requires ;
