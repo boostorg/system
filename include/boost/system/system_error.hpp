@@ -35,17 +35,7 @@ private:
             r += ": ";
         }
 
-        r += ec.message();
-
-        if( ec.has_location() )
-        {
-            r += " [";
-            r += ec.to_string();
-            r += " at ";
-            r += ec.location().to_string();
-            r += "]";
-        }
-
+        r += ec.what();
         return r;
     }
 

@@ -130,6 +130,7 @@ run std_interop_test10.cpp ;
 
 run ec_location_test2.cpp ;
 run ec_what_test.cpp ;
+run system_error_test3.cpp ;
 
 # result
 
