@@ -62,35 +62,10 @@ public:
     {
     }
 
-    // explicit, value
-    template<class A, class En = typename std::enable_if<
-        std::is_constructible<T, A>::value &&
-        !std::is_convertible<A, T>::value &&
-        !std::is_constructible<E, A>::value
-        >::type>
-    explicit constexpr result( A&& a )
-        noexcept( std::is_nothrow_constructible<T, A>::value )
-        : v_( in_place_value, std::forward<A>(a) )
-    {
-    }
-
-    // explicit, error
-    template<class A, class En2 = void, class En = typename std::enable_if<
-        std::is_constructible<E, A>::value &&
-        !std::is_convertible<A, E>::value &&
-        !std::is_constructible<T, A>::value
-        >::type>
-    explicit constexpr result( A&& a )
-        noexcept( std::is_nothrow_constructible<E, A>::value )
-        : v_( in_place_error, std::forward<A>(a) )
-    {
-    }
-
     // implicit, value
-    template<class A, class En2 = void, class En3 = void, class En = typename std::enable_if<
+    template<class A = T, typename std::enable_if<
         std::is_convertible<A, T>::value &&
-        !std::is_constructible<E, A>::value
-        >::type>
+        !std::is_constructible<E, A>::value, int>::type = 0>
     constexpr result( A&& a )
         noexcept( std::is_nothrow_constructible<T, A>::value )
         : v_( in_place_value, std::forward<A>(a) )
@@ -98,35 +73,32 @@ public:
     }
 
     // implicit, error
-    template<class A, class En2 = void, class En3 = void, class En4 = void, class En = typename std::enable_if<
+    template<class A = E, class = void, typename std::enable_if<
         std::is_convertible<A, E>::value &&
-        !std::is_constructible<T, A>::value
-        >::type>
+        !std::is_constructible<T, A>::value, int>::type = 0>
     constexpr result( A&& a )
         noexcept( std::is_nothrow_constructible<E, A>::value )
         : v_( in_place_error, std::forward<A>(a) )
     {
     }
 
-    // more than one arg, value
+    // explicit, value
     template<class... A, class En = typename std::enable_if<
         std::is_constructible<T, A...>::value &&
-        !std::is_constructible<E, A...>::value &&
-        sizeof...(A) >= 2
+        !std::is_constructible<E, A...>::value
         >::type>
-    constexpr result( A&&... a )
+    explicit constexpr result( A&&... a )
         noexcept( std::is_nothrow_constructible<T, A...>::value )
         : v_( in_place_value, std::forward<A>(a)... )
     {
     }
 
-    // more than one arg, error
+    // explicit, error
     template<class... A, class En2 = void, class En = typename std::enable_if<
         !std::is_constructible<T, A...>::value &&
-        std::is_constructible<E, A...>::value &&
-        sizeof...(A) >= 2
+        std::is_constructible<E, A...>::value
         >::type>
-    constexpr result( A&&... a )
+    explicit constexpr result( A&&... a )
         noexcept( std::is_nothrow_constructible<E, A...>::value )
         : v_( in_place_error, std::forward<A>(a)... )
     {

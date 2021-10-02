@@ -150,3 +150,5 @@ run result_error_access.cpp : : : $(CPP11) ;
 run result_swap.cpp : : : $(CPP11) <toolset>gcc-10:<cxxflags>"-Wno-maybe-uninitialized" ;
 run result_eq.cpp : : : $(CPP11) ;
 run result_range_for.cpp : : : $(CPP11) ;
+run result_value_construct2.cpp : : : $(CPP11) ;
+run result_error_construct2.cpp : : : $(CPP11) ;
