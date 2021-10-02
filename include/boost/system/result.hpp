@@ -210,12 +210,31 @@ public:
         }
     }
 
-    BOOST_CXX14_CONSTEXPR T&& value() &&
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<std::is_move_constructible<U>::value, T>::type
+        value() &&
     {
         return std::move( value() );
     }
 
-    BOOST_CXX14_CONSTEXPR T const&& value() const&&
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<!std::is_move_constructible<U>::value, T&&>::type
+        value() &&
+    {
+        return std::move( value() );
+    }
+
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<std::is_move_constructible<U>::value, T>::type
+        value() const && = delete;
+
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<!std::is_move_constructible<U>::value, T const&&>::type
+        value() const &&
     {
         return std::move( value() );
     }
@@ -274,12 +293,31 @@ public:
         return *p;
     }
 
-    BOOST_CXX14_CONSTEXPR T&& operator*() && noexcept
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<std::is_move_constructible<U>::value, T>::type
+        operator*() && noexcept(std::is_nothrow_move_constructible<T>::value)
     {
         return std::move(**this);
     }
 
-    BOOST_CXX14_CONSTEXPR T const&& operator*() const && noexcept
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<!std::is_move_constructible<U>::value, T&&>::type
+        operator*() && noexcept
+    {
+        return std::move(**this);
+    }
+
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<std::is_move_constructible<U>::value, T>::type
+        operator*() const && noexcept = delete;
+
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<!std::is_move_constructible<U>::value, T const&&>::type
+        operator*() const && noexcept
     {
         return std::move(**this);
     }
