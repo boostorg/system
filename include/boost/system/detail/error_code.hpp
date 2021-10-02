@@ -602,6 +602,23 @@ public:
     {
         return os << ec.to_string();
     }
+
+    std::string what() const
+    {
+        std::string r = message();
+
+        r += " [";
+        r += to_string();
+
+        if( has_location() )
+        {
+            r += " at ";
+            r += location().to_string();
+        }
+
+        r += "]";
+        return r;
+    }
 };
 
 inline std::size_t hash_value( error_code const & ec )

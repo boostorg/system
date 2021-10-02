@@ -107,6 +107,7 @@ boost_test(TYPE run SOURCES system_error_test2.cpp)
 boost_test(TYPE run SOURCES std_interop_test10.cpp)
 
 boost_test(TYPE run SOURCES ec_location_test2.cpp)
+boost_test(TYPE run SOURCES ec_what_test.cpp)
 
 # result
 
