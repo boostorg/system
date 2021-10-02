@@ -11,7 +11,7 @@ https://www.boost.org/LICENSE_1_0.txt
 ## Changes in Boost 1.78
 
 * Added support for source locations to `error_code`.
-* Added `error_code::to_string`, `error_condition::to_string`.
+* Added `error_code::to_string`, `error_condition::to_string`, `error_code::what`.
 * `system_error::what()` now contains the source location, if present.
 * Added `result<T, E = error_code>`, a class holding either a value or an
   error, defined in `<boost/system/result.hpp>`.

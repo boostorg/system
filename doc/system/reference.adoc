@@ -668,6 +668,10 @@ public:
     template<class charT, class traits>
       friend std::basic_ostream<charT, traits>&
         operator<<( basic_ostream<charT, traits>& os, const error_code & ec );
+
+    // what
+
+    std::string what() const;
 };
 
 // non-member functions
@@ -1053,6 +1057,18 @@ template <class charT, class traits>
 +
 Effects: :: `os << to_string()`.
 Returns: :: `os`.
+
+#### what
+
+```
+std::string what() const;
+```
+[none]
+* {blank}
++
+Returns: :: A string representation of `*this`, suitable for logging and
+  diagnostic output. Typically incorporates `message()`, `to_string()`, and
+  `location().to_string()` (if available.)
 
 #### Nonmembers
 
