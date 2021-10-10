@@ -107,8 +107,12 @@ public:
     }
 
     template<class ErrorCodeEnum> BOOST_SYSTEM_CONSTEXPR error_code( ErrorCodeEnum e,
-        typename detail::enable_if<is_error_code_enum<ErrorCodeEnum>::value>::type* = 0 ) BOOST_NOEXCEPT:
-        d1_(), lc_flags_( 0 )
+        typename detail::enable_if<
+            is_error_code_enum<ErrorCodeEnum>::value
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+            || std::is_error_code_enum<ErrorCodeEnum>::value
+#endif
+        >::type* = 0 ) BOOST_NOEXCEPT: d1_(), lc_flags_( 0 )
     {
         *this = make_error_code( e );
     }

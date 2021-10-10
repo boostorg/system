@@ -132,6 +132,8 @@ run ec_location_test2.cpp ;
 run ec_what_test.cpp ;
 run system_error_test3.cpp ;
 
+run std_interop_test11.cpp ;
+
 # result
 
 import ../../config/checks/config : requires ;
