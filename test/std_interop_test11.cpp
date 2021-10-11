@@ -6,11 +6,16 @@
 #include <boost/core/lightweight_test.hpp>
 #include <boost/config/pragma_message.hpp>
 #include <boost/config.hpp>
-#include <cerrno>
+#include <ios>
 
 #if !defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
-BOOST_PRAGMA_MESSAGE( "BOOST_SYSTEM_HAS_SYSTEM_ERROR not defined, test will be skipped" )
+BOOST_PRAGMA_MESSAGE( "Skipping test, BOOST_SYSTEM_HAS_SYSTEM_ERROR not defined" )
+int main() {}
+
+#elif defined(BOOST_LIBSTDCXX_VERSION) && BOOST_LIBSTDCXX_VERSION < 50000
+
+BOOST_PRAGMA_MESSAGE( "Skipping test, BOOST_LIBSTDCXX_VERSION < 50000" )
 int main() {}
 
 #else
