@@ -13,6 +13,8 @@ Beman Dawes, Christopher Kohlhoff, Peter Dimov
 :toclevels: 4
 :idprefix:
 :docinfo: private-footer
+:source-highlighter: rouge
+:source-language: c++
 
 :leveloffset: +1
 
