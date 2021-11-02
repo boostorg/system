@@ -1,0 +1,612 @@
+////
+Copyright 2021 Peter Dimov
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+[#usage]
+# Usage Examples
+:idprefix: usage_
+
+All of the following examples assume that these lines
+```
+#include <boost/system.hpp>
+namespace sys = boost::system;
+```
+are in effect.
+
+## Returning Errors from OS APIs under POSIX
+
+Let's suppose that we're implementing a portable `file` wrapper
+over the OS file APIs. Its general outline is shown below:
+
+```
+class file
+{
+private:
+
+    int fd_;
+
+public:
+
+    // ...
+
+    std::size_t read( void * buffer, std::size_t size, sys::error_code& ec );
+    std::size_t write( void const * buffer, std::size_t size, sys::error_code& ec );
+};
+```
+
+Since we're implementing the POSIX version of `file`, its
+data member is a POSIX file descriptor `int fd_;`, although other
+implementations will differ.
+
+Our `read` and `write` functions return the number of bytes transferred, and signal
+errors via the output parameter `ec`, of type `boost::system::error_code`.
+
+An implementation of `file::read` might look like this:
+
+```
+std::size_t file::read( void * buffer, std::size_t size, sys::error_code& ec )
+{
+    ssize_t r = ::read( fd_, buffer, size );
+
+    if( r < 0 )
+    {
+        ec.assign( errno, sys::system_category() );
+        return 0;
+    }
+
+    ec = {}; // ec.clear(); under C++03
+    return r;
+}
+```
+
+We first call the POSIX API `read`; if it returns an error, we store the `errno`
+value in `ec`, using the system category, and return 0 as bytes transferred.
+Otherwise, we clear `ec` to signal success, and return the result of `::read`.
+
+NOTE: Clearing `ec` on successful returns is an important step; do not omit it.
+
+Under POSIX, the system category corresponds to POSIX `errno` values, which is
+why we use it.
+
+In principle, since the generic category _also_ corresponds to `errno` values
+under all platforms, we could have used it here; however, by convention under
+POSIX, if the `errno` value comes from the OS (the "system"), we use the system
+category for it. That's because the system category values may be a
+platform-specific superset of the generic (platform-independent) values.
+
+The implementation of `file::write` is basically the same. We show it here for
+completeness:
+
+```
+std::size_t file::write( void const * buffer, std::size_t size, sys::error_code& ec )
+{
+    ssize_t r = ::write( fd_, buffer, size );
+
+    if( r < 0 )
+    {
+        ec.assign( errno, sys::system_category() );
+        return 0;
+    }
+
+    ec = {}; // ec.clear(); under C++03
+    return r;
+}
+```
+
+## Returning Errors from OS APIs under Windows
+
+Under Windows, our `file` object will store a `HANDLE` instead of an `int`:
+
+```
+class file
+{
+private:
+
+    HANDLE fh_;
+
+public:
+
+    // as before
+};
+```
+
+and the implementation of `file::read` will look like this:
+
+```
+std::size_t file::read( void * buffer, std::size_t size, sys::error_code& ec )
+{
+    DWORD r = 0;
+
+    if( ::ReadFile( fh_, buffer, size, &r, 0 ) )
+    {
+        // success
+        ec = {}; // ec.clear(); under C++03
+    }
+    else
+    {
+        // failure
+        ec.assign( ::GetLastError(), sys::system_category() );
+    }
+
+    // In both cases, r is bytes transferred
+    return r;
+}
+```
+
+Here, the system category corresponds to the values defined in the system
+header `<winerror.h>` and returned by `GetLastError()`. Since we use the
+Win32 API `ReadFile` to implement `file::read`, and it returns the error
+code via `GetLastError()`, we again store that value in `ec` as belonging
+to the system category.
+
+The implementation of `file::write` is, again, the same.
+
+```
+std::size_t file::write( void const * buffer, std::size_t size, sys::error_code& ec )
+{
+    DWORD r = 0;
+
+    if( ::WriteFile( fh_, buffer, size, &r, 0 ) )
+    {
+        ec = {}; // ec.clear(); under C++03
+    }
+    else
+    {
+        ec.assign( ::GetLastError(), sys::system_category() );
+    }
+
+    return r;
+}
+```
+
+## Returning Specific Errors under POSIX
+
+Our implementation of `file::read` has a problem; it accepts `std::size_t`
+values for `size`, but the behavior of `::read` is unspecified when the
+requested value does not fit in `ssize_t`. To avoid reliance on unspecified
+behavior, let's add a check for this condition and return an error:
+
+```
+std::size_t file::read( void * buffer, std::size_t size, sys::error_code& ec )
+{
+    if( size > SSIZE_MAX )
+    {
+        ec.assign( EINVAL, sys::generic_category() );
+        return 0;
+    }
+
+    ssize_t r = ::read( fd_, buffer, size );
+
+    if( r < 0 )
+    {
+        ec.assign( errno, sys::system_category() );
+        return 0;
+    }
+
+    ec = {}; // ec.clear(); under C++03
+    return r;
+}
+```
+
+In this case, since we're returning the fixed `errno` value `EINVAL`, which
+is part of the portable subset defined by the generic category, we mark the
+error value in `ec` as belonging to the generic category.
+
+It's possible to use system as well, as `EINVAL` is also a system category
+value under POSIX; however, using the generic category for values belonging
+to the portable `errno` subset is slightly preferrable.
+
+Our implementation of `file::write` needs to uindergo a similar treatment.
+There, however, we'll apply another change. When there's no space left on
+the disk, `::write` returns a number of bytes written that is lower than
+what we requested with `size`, but our function signals no error. We'll make
+it return `ENOSPC` in this case.
+
+```
+std::size_t file::write( void const * buffer, std::size_t size, sys::error_code& ec )
+{
+    if( size > SSIZE_MAX )
+    {
+        ec.assign( EINVAL, sys::generic_category() );
+        return 0;
+    }
+
+    ssize_t r = ::write( fd_, buffer, size );
+
+    if( r < 0 )
+    {
+        ec.assign( errno, sys::system_category() );
+        return 0;
+    }
+
+    if( r < size )
+    {
+        ec.assign( ENOSPC, sys::system_category() );
+    }
+    else
+    {
+        ec = {}; // ec.clear(); under C++03
+    }
+
+    return r;
+}
+```
+
+We've used the system category to make it appear that the `ENOSPC` value
+has come from the `::write` API, mostly to illustrate that this is also a
+possible approach. Using a generic value would have worked just as well.
+
+## Returning Specific Errors under Windows
+
+Not much to say; the situation under Windows is exactly the same. The only
+difference is that we _must_ use the generic category for returning `errno`
+values. The system category does not work; the integer values in the system
+category are entirely different from those in the generic category.
+
+```
+std::size_t file::read( void * buffer, std::size_t size, sys::error_code& ec )
+{
+    DWORD r = 0;
+
+    if( size > MAXDWORD )
+    {
+        ec.assign( EINVAL, sys::generic_category() );
+    }
+    else if( ::ReadFile( fh_, buffer, size, &r, 0 ) )
+    {
+        ec = {}; // ec.clear(); under C++03
+    }
+    else
+    {
+        ec.assign( ::GetLastError(), sys::system_category() );
+    }
+
+    return r;
+}
+
+std::size_t file::write( void const * buffer, std::size_t size, sys::error_code& ec )
+{
+    DWORD r = 0;
+
+    if( size > MAXDWORD )
+    {
+        ec.assign( EINVAL, sys::generic_category() );
+    }
+    else if( ::WriteFile( fh_, buffer, size, &r, 0 ) )
+    {
+        if( r < size )
+        {
+            ec.assign( ENOSPC, sys::generic_category() );
+        }
+        else
+        {
+            ec = {}; // ec.clear(); under C++03
+        }
+    }
+    else
+    {
+        ec.assign( ::GetLastError(), sys::system_category() );
+    }
+
+    return r;
+}
+```
+
+## Attaching a Source Location to Error Codes
+
+Unlike the standard `<system_error>`, Boost.System allows source locations
+(file:line:function) to be stored in `error_code`, so that functions handling
+the error can display or log the source code location where the error occurred.
+To take advantage of this functionality, our POSIX `file::read` function needs
+to be augmented as follows:
+
+```
+std::size_t file::read( void * buffer, std::size_t size, sys::error_code& ec )
+{
+    if( size > SSIZE_MAX )
+    {
+        static constexpr boost::source_location loc = BOOST_CURRENT_LOCATION;
+        ec.assign( EINVAL, sys::generic_category(), &loc );
+        return 0;
+    }
+
+    ssize_t r = ::read( fd_, buffer, size );
+
+    if( r < 0 )
+    {
+        static constexpr boost::source_location loc = BOOST_CURRENT_LOCATION;
+        ec.assign( errno, sys::system_category(), &loc );
+        return 0;
+    }
+
+    ec = {}; // ec.clear(); under C++03
+    return r;
+}
+```
+
+That is, before every `ec.assign` statement, we need to declare a
+`static constexpr` variable holding the current source location, then pass
+a pointer to it to `assign`. Since `error_code` is small and there's no space
+in it for more than a pointer, we can't just store the `source_location` in it
+by value.
+
+`BOOST_CURRENT_LOCATION` is a macro expanding to the current source location
+(a combination of `++__FILE__++`, `++__LINE__++`, and `BOOST_CURRENT_FUNCTION`.)
+It's defined and documented in link:../../../assert/index.html[Boost.Assert].
+
+Under {cpp}03, instead of `static constexpr`, one needs to use `static const`.
+Another option is `BOOST_STATIC_CONSTEXPR`, a
+link:../../../config/index.html[Boost.Config] macro that expands to either
+`static constexpr` or `static const`, as appropriate.
+
+To avoid repeating this boilerplate each time we do `ec.assign`, we can define
+a macro:
+
+```
+#define ASSIGN(ec, ...) { \
+    BOOST_STATIC_CONSTEXPR boost::source_location loc = BOOST_CURRENT_LOCATION; \
+    (ec).assign(__VA_ARGS__, &loc); }
+```
+
+which we can now use to augment, for example, the POSIX implementation of `file::write`:
+
+```
+std::size_t file::write( void const * buffer, std::size_t size, sys::error_code& ec )
+{
+    if( size > SSIZE_MAX )
+    {
+        ASSIGN( ec, EINVAL, sys::generic_category() );
+        return 0;
+    }
+
+    ssize_t r = ::write( fd_, buffer, size );
+
+    if( r < 0 )
+    {
+        ASSIGN( ec, errno, sys::system_category() );
+        return 0;
+    }
+
+    if( r < size )
+    {
+        ASSIGN( ec, ENOSPC, sys::generic_category() );
+    }
+    else
+    {
+        ec = {}; // ec.clear(); under C++03
+    }
+
+    return r;
+}
+```
+
+## Obtaining Textual Representations of Error Codes for Logging and Display
+
+Assuming that we have an `error_code` instance `ec`, returned to us by some
+function, we have a variety of means to obtain textual representations of the
+error code represented therein.
+
+`ec.to_string()` gives us the result of streaming `ec` into a `std::ostream`,
+e.g. if `std::cout << ec << std::endl;` outputs `system:6`, this is what
+`ec.to_string()` will return. (`system:6` under Windows is `ERROR_INVALID_HANDLE`
+from `<winerror.h>`.)
+
+To obtain a human-readable error message corresponding to this code, we can
+use `ec.message()`. For `ERROR_INVALID_HANDLE`, it would give us "The handle is
+invalid" - possibly localized.
+
+If `ec` contains a source location, we can obtain its textual representation
+via `ec.location().to_string()`. This will give us something like
+
+```text
+C:\Projects\testbed2019\testbed2019.cpp:98 in function 'unsigned __int64 __cdecl file::read(void *,unsigned __int64,class boost::system::error_code &)'
+```
+
+if there is a location in `ec`, and
+
+```text
+(unknown source location)
+```
+
+if there isn't. (`ec.has_location()` is `true` when `ec` contains a location.)
+
+Finally, `ec.what()` will give us a string that contains all of the above,
+something like
+
+```text
+The handle is invalid [system:6 at C:\Projects\testbed2019\testbed2019.cpp:98 in function 'unsigned __int64 __cdecl file::read(void *,unsigned __int64,class boost::system::error_code &)']
+```
+
+Most logging and diagnostic output that is not intended for the end user would
+probably end up using `what()`. (`ec.what()`, augmented with the prefix
+supplied at construction, is also what `boost::system::system_error::what()`
+would return.)
+
+## Composing Functions Returning Error Codes
+
+Let's suppose that we need to implement a file copy function, with the following
+interface:
+
+```
+std::size_t file_copy( file& src, file& dest, sys::error_code& ec );
+```
+
+`file_copy` uses `src.read` to read bytes from `src`, then writes these bytes
+to `dest` using `dest.write`. This continues until one of these operations signals
+an error, or until end of file is reached. It returns the number of bytes written,
+and uses `ec` to signal an error.
+
+Here is one possible implementation:
+
+```
+std::size_t file_copy( file& src, file& dest, sys::error_code& ec )
+{
+    std::size_t r = 0;
+
+    for( ;; )
+    {
+        unsigned char buffer[ 1024 ];
+
+        std::size_t n = src.read( buffer, sizeof( buffer ), ec );
+
+        // read failed, leave the error in ec and return
+        if( ec.failed() ) return r;
+
+        // end of file has been reached, exit loop
+        if( n == 0 ) return r;
+
+        r += dest.write( buffer, n, ec );
+
+        // write failed, leave the error in ec and return
+        if( ec.failed() ) return r;
+    }
+}
+```
+
+Note that there is no longer any difference between POSIX and Windows
+implementations; their differences are contained in `file::read` and
+`file::write`. `file_copy` is portable and works under any platform.
+
+The general pattern in writing such higher-level functions is that
+they pass the output `error_code` parameter `ec` they received from
+the caller directly as the output parameter to the lower-level functions
+they are built upon. This way, when they detect a failure in an intermediate
+operation (by testing `ec.failed()`), they can immediately return to the
+caller, because the error code is already in its proper place.
+
+Note that `file_copy` doesn't even need to clear `ec` on success, by
+using `ec = {};`. Since we've already tested `ec.failed()`, we know that
+`ec` contains a value that means success.
+
+## Providing Dual (Throwing and Nonthrowing) Overloads
+
+Functions that signal errors via an output `error_code& ec` parameter
+require that the caller check `ec` after calling them, and take appropriate
+action (such as return immediately, as above.) Forgetting to check `ec`
+results in logic errors.
+
+While this is a preferred coding style for some, others prefer exceptions,
+which one cannot forget to check.
+
+An approach that has been introduced by
+link:../../../filesystem/index.html[Boost.Filesystem] (which later turned
+into `std::filesystem`) is to provide both alternatives: a nonthrowing
+function taking `error_code& ec`, as `file_copy` above, and a throwing
+function that does not take an `error_code` output parameter, and throws
+exceptions on failure.
+
+This is how this second throwing function is typically implemented:
+
+```
+std::size_t file_copy( file& src, file& dest )
+{
+    sys::error_code ec;
+    std::size_t r = file_copy( src, dest, ec );
+
+    if( ec.failed() ) throw sys::system_error( ec, __func__ );
+
+    return r;
+}
+```
+
+That is, we simply call the nonthrowing overload of `file_copy`, and if
+it signals failure in `ec`, throw a `system_error` exception.
+
+We use our function name `++__func__++` (`file_copy`) as the prefix, although
+that's a matter of taste.
+
+Note that typically under this style the overloads taking `error_code& ec`
+are decorated with `noexcept`, so that it's clear that they don't throw
+exceptions (although we haven't done so in the preceding examples in order
+to keep the code {cpp}03-friendly.)
+
+## result<T> as an Alternative to Dual APIs
+
+Instead of providing two functions for every operation, an alternative
+approach is to make the function return `sys::result<T>` instead of `T`.
+`result<T>` is a class holding either `T` or `error_code`, similar to
+link:../../../variant2/index.html[`variant<T, error_code>`].
+
+Clients that prefer to check for errors and not rely on exceptions can
+test whether a `result<T> r` contains a value via `if( r )` or its more
+verbose equivalent `if( r.has_value() )`, then obtain the value via
+`*r` or `r.value()`. If `r` doesn't contain a value, the `error_code`
+it holds can be obtained with `r.error()`.
+
+Those who prefer exceptions just call `r.value()` directly, without
+checking. In the no-value case, this will automatically throw a
+`system_error` corresponding to the `error_code` in `r`.
+
+Assuming our base `file` API is unchanged, this variation of `file_copy`
+would look like this:
+
+```
+sys::result<std::size_t> file_copy( file& src, file& dest )
+{
+    std::size_t r = 0;
+    sys::error_code ec;
+
+    for( ;; )
+    {
+        unsigned char buffer[ 1024 ];
+
+        std::size_t n = src.read( buffer, sizeof( buffer ), ec );
+
+        if( ec.failed() ) return ec;
+        if( n == 0 ) return r;
+
+        r += dest.write( buffer, n, ec );
+
+        if( ec.failed() ) return ec;
+    }
+}
+```
+
+The only difference here is that we return `ec` on error, instead of
+`r`.
+
+Note, however, that we can no longer return both an error code and a
+number of transferred bytes; that is, we can no longer signal _partial
+success_. This is often not an issue at higher levels, but lower-level
+primitives such as `file::read` and `file::write` might be better off
+written using the old style.
+
+Nevertheless, to demonstrate how `result` returning APIs are composed,
+we'll show how `file_copy` would look if `file::read` and `file::write`
+returned `result<size_t>`:
+
+```
+class file
+{
+public:
+
+    // ...
+
+    sys::result<std::size_t> read( void * buffer, std::size_t size );
+    sys::result<std::size_t> write( void const * buffer, std::size_t size );
+};
+
+sys::result<std::size_t> file_copy( file& src, file& dest )
+{
+    std::size_t m = 0;
+
+    for( ;; )
+    {
+        unsigned char buffer[ 1024 ];
+
+        auto r = src.read( buffer, sizeof( buffer ) );
+        if( !r ) return r;
+
+        std::size_t n = *r;
+        if( n == 0 ) return m;
+
+        auto r2 = dest.write( buffer, n );
+        if( !r2 ) return r2;
+
+        std::size_t n2 = *r2;
+        m += n2;
+    }
+}
+```

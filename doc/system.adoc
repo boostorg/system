@@ -19,6 +19,7 @@ Beman Dawes, Christopher Kohlhoff, Peter Dimov
 :leveloffset: +1
 
 include::system/introduction.adoc[]
+include::system/usage.adoc[]
 include::system/changes.adoc[]
 include::system/rationale.adoc[]
 include::system/reference.adoc[]
