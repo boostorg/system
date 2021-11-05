@@ -5,10 +5,10 @@ https://www.boost.org/LICENSE_1_0.txt
 ////
 
 [#usage]
-# Usage Examples
+# Usage
 :idprefix: usage_
 
-All of the following examples assume that these lines
+All of the following code snippets assume that these lines
 ```
 #include <boost/system.hpp>
 namespace sys = boost::system;
@@ -610,3 +610,67 @@ sys::result<std::size_t> file_copy( file& src, file& dest )
     }
 }
 ```
+
+## Testing for Specific Error Conditions
+
+Let's suppose that we have called a function that signals failure
+using `error_code`, we have passed it an `error_code` variable `ec`,
+and now for some reason want to check whether the function has
+failed with an error code of `EINVAL`, "invalid argument".
+
+Since `error_code` can be compared for equality, our first instict
+might be `if( ec == error_code( EINVAL, generic_category() )`.
+
+This is wrong, and we should never do it.
+
+First, under POSIX, the function might have returned `EINVAL` from
+the system category (because the error might have been returned by
+an OS API, and not by the function itself, as was the case in our
+`read` and `write` implementations.)
+
+Since `error_code` comparisons are exact, `EINVAL` from the generic
+category does not compare equal to `EINVAL` from the system category.
+
+(And before you start thinking about just comparing `ec.value()` to
+`EINVAL`, read on.)
+
+Second, under Windows, the function might have returned `error_code(
+ERROR_INVALID_PARAMETER, system_category() )`. As we have already
+mentioned, the integer error values in the system category under
+Windows are completely unrelated to the integer `errno` values.
+
+The correct approach is to compare `ec` not to specific error codes,
+but to `error_condition( EINVAL, generic_category() )`. Error
+conditions are a platform-independent way to represent the meaning
+of the concrete error codes. In our case, all error codes, under
+both POSIX and Windows, that represent `EINVAL` will compare equal
+to `error_condition( EINVAL, generic_category() )`.
+
+In short, you should never compare error codes to error codes, and
+should compare them to error conditions instead. This is the purpose
+of the `error_condition` class, which is very frequently misunderstood.
+
+Since
+
+```
+if( ec == sys::error_condition( EINVAL, sys::generic_category() ) )
+{
+    // handle EINVAL
+}
+```
+
+is a bit verbose, Boost.System provides enumerator values for the
+`errno` values against which an error code can be compared directly.
+
+These enumerators are defined in <<#ref_errc,`<boost/system/errc.hpp>`>>,
+and enable the above test to be written
+
+```
+if( ec == sys::errc::invalid_argument )
+{
+    // handle EINVAL
+}
+```
+
+which is what one should generally use for testing for a specific error
+condition, as a best practice.
