@@ -687,6 +687,8 @@ Because the integer error codes are library specific, and in general match
 neither `errno` values or system category values, we need to define a
 library-specific error category.
 
+### Wrapping SQLite Errors
+
 We'll take SQLite as an example. The general outline of a custom error
 category is as follows:
 
@@ -762,3 +764,176 @@ char const * sqlite3_category_impl::message( int ev, char * buffer, std::size_t 
 and we're done. `sqlite3_category()` can now be used like the predefined
 categories, and we can put an SQLite error code `int r` into a Boost.System
 `error_code ec` by means of `ec.assign( r, sqlite3_category() )`.
+
+### Wrapping ZLib Errors
+
+Another widely used C library is ZLib, and the portion of `zlib.h` that
+defines its error codes is shown below:
+
+```
+#define Z_OK            0
+#define Z_STREAM_END    1
+#define Z_NEED_DICT     2
+#define Z_ERRNO        (-1)
+#define Z_STREAM_ERROR (-2)
+#define Z_DATA_ERROR   (-3)
+#define Z_MEM_ERROR    (-4)
+#define Z_BUF_ERROR    (-5)
+#define Z_VERSION_ERROR (-6)
+/* Return codes for the compression/decompression functions. Negative values
+ * are errors, positive values are used for special but normal events.
+ */
+```
+
+There are three relevant differences with the previous case of SQLite:
+
+* While for SQLite all non-zero values were errors, as is the typical case,
+  here negative values are errors, but positive values are "special but normal",
+  that is, they represent success, not failure;
+* ZLib does not provide a function that returns the error message corresponding
+  to a specific error code;
+* When `Z_ERRNO` is returned, the error code should be retrieved from `errno`.
+
+Our category implementation will look like this:
+
+```
+class zlib_category_impl: public sys::error_category
+{
+public:
+
+    const char * name() const noexcept;
+
+    std::string message( int ev ) const;
+    char const * message( int ev, char * buffer, std::size_t len ) const noexcept;
+
+    bool failed( int ev ) const noexcept;
+};
+
+sys::error_category const& zlib_category()
+{
+    static const zlib_category_impl instance;
+    return instance;
+}
+```
+
+As usual, the implementation of `name` is trivial:
+
+```
+const char * zlib_category_impl::name() const noexcept
+{
+    return "zlib";
+}
+```
+
+We'll need to work a bit harder to implement `message` this time, as there's
+no preexisting function to lean on:
+
+```
+char const * zlib_category_impl::message( int ev, char * buffer, std::size_t len ) const noexcept
+{
+    switch( ev )
+    {
+    case Z_OK:            return "No error";
+    case Z_STREAM_END:    return "End of stream";
+    case Z_NEED_DICT:     return "A dictionary is needed";
+    case Z_ERRNO:         return "OS API error";
+    case Z_STREAM_ERROR:  return "Inconsistent stream state or invalid argument";
+    case Z_DATA_ERROR:    return "Data error";
+    case Z_MEM_ERROR:     return "Out of memory";
+    case Z_BUF_ERROR:     return "Insufficient buffer space";
+    case Z_VERSION_ERROR: return "Library version mismatch";
+    }
+
+    std::snprintf( buffer, len, "Unknown zlib error %d", ev );
+    return buffer;
+}
+```
+
+This is a typical implementation of the non-throwing `message` overload. Note
+that `message` is allowed to return something different from `buffer`, which
+means that we can return character literals directly, without copying them
+into the supplied buffer first. This allows our function to return the correct
+message text even when the buffer is too small.
+
+The `std::string` overload of `message` is now trivial:
+
+```
+std::string zlib_category_impl::message( int ev ) const
+{
+    char buffer[ 32 ];
+    return this->message( ev, buffer, sizeof( buffer ) );
+}
+```
+
+Finally, we need to implement `failed`, in order to override its default
+behavior of returning `true` for all nonzero values:
+
+```
+bool zlib_category_impl::failed( int ev ) const noexcept
+{
+    return ev < 0;
+}
+```
+
+This completes the implementation of `zlib_category()` and takes care of the
+first two bullets above, but we still haven't addressed the third one; namely,
+that we need to retrieve the error from `errno` in the `Z_ERRNO` case.
+
+To do that, we'll define a helper function that would be used to assign a ZLib
+error code to an `error_code`:
+
+```
+void assign_zlib_error( sys::error_code & ec, int r )
+{
+    if( r != Z_ERRNO )
+    {
+        ec.assign( r, zlib_category() );
+    }
+    else
+    {
+        ec.assign( errno, sys::generic_category() );
+    }
+}
+```
+
+so that, instead of using `ec.assign( r, zlib_category() )` directly, code
+would do
+
+```
+int r = some_zlib_function( ... );
+assign_zlib_error( ec, r );
+```
+
+We can stop here, as this covers everything we set out to do, but we can take
+an extra step and enable source locations for our error codes. For that, we'll
+need to change `assign_zlib_error` to take a `source_location`:
+
+```
+void assign_zlib_error( sys::error_code & ec, int r, boost::source_location const* loc )
+{
+    if( r != Z_ERRNO )
+    {
+        ec.assign( r, zlib_category(), loc );
+    }
+    else
+    {
+        ec.assign( errno, sys::generic_category(), loc );
+    }
+}
+```
+
+Define a helper macro to avoid the boilerplate of defining the `static
+constexpr` source location object each time:
+
+```
+#define ASSIGN_ZLIB_ERROR(ec, r) { \
+    static BOOST_CONSTEXPR boost::source_location loc = BOOST_CURRENT_LOCATION; \
+    assign_zlib_error( ec, r, &loc ); }
+```
+
+And then use the macro instead of the function:
+
+```
+int r = some_zlib_function( ... );
+ASSIGN_ZLIB_ERROR( ec, r );
+```
