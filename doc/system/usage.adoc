@@ -674,3 +674,91 @@ if( ec == sys::errc::invalid_argument )
 
 which is what one should generally use for testing for a specific error
 condition, as a best practice.
+
+## Wrapping Existing Integer Error Values
+
+Libraries with C (or `extern "C"`) APIs often signal failure by returning
+a library-specific integer error code (with zero typically being reserved
+for "no error".) When writing portable {cpp} wrappers, we need to decide
+how to expose these error codes, and using `error_code` is a good way to
+do it.
+
+Because the integer error codes are library specific, and in general match
+neither `errno` values or system category values, we need to define a
+library-specific error category.
+
+We'll take SQLite as an example. The general outline of a custom error
+category is as follows:
+
+```
+class sqlite3_category_impl: public sys::error_category
+{
+    // TODO add whatever's needed here
+};
+
+sys::error_category const& sqlite3_category()
+{
+    static const sqlite3_category_impl instance;
+    return instance;
+}
+```
+
+which can then be used similarly to the predefined generic and system
+categories:
+
+```
+int r = some_sqlite3_function( ... );
+ec.assign( r, sqlite3_category() );
+```
+
+If we try to compile the above category definition as-is, it will complain
+about our not implementing two pure virtual member functions, `name` and
+`message`, so at minimum, we'll need to add these. In addition, we'll also
+implement the non-allocating overload of `message`. It's not pure virtual,
+but its default implementation calls the `std::string`-returning overload,
+and that's almost never what one wants. (This default implementation is only
+provided for backward compatibility, in order to not break existing
+user-defined categories that were written before this overload was added.)
+
+So, the minimum we need to implement is this:
+
+```
+class sqlite3_category_impl: public sys::error_category
+{
+public:
+
+    const char * name() const noexcept;
+    std::string message( int ev ) const;
+    char const * message( int ev, char * buffer, std::size_t len ) const noexcept;
+};
+```
+
+`name` is easy, it just returns the category name:
+
+```
+const char * sqlite3_category_impl::name() const noexcept
+{
+    return "sqlite3";
+}
+```
+
+`message` is used to obtain an error message given an integer error code.
+SQLite provides the function `sqlite3_errstr` for this, so we don't need
+to do any work:
+
+```
+std::string sqlite3_category_impl::message( int ev ) const
+{
+    return sqlite3_errstr( ev );
+}
+
+char const * sqlite3_category_impl::message( int ev, char * buffer, std::size_t len ) const noexcept
+{
+    std::snprintf( buffer, len, "%s", sqlite3_errstr( ev ) );
+    return buffer;
+}
+```
+
+and we're done. `sqlite3_category()` can now be used like the predefined
+categories, and we can put an SQLite error code `int r` into a Boost.System
+`error_code ec` by means of `ec.assign( r, sqlite3_category() )`.
