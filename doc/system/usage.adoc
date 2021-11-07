@@ -937,3 +937,237 @@ And then use the macro instead of the function:
 int r = some_zlib_function( ... );
 ASSIGN_ZLIB_ERROR( ec, r );
 ```
+
+## Defining Library-Specific Error Codes
+
+Let's suppose that we are writing a library `libmyimg` for reading some
+hypothetical image format, and that we have defined the following API
+function for that:
+
+```
+namespace libmyimg
+{
+
+struct image;
+
+void load_image( file& f, image& im, sys::error_code& ec );
+
+} // namespace libmyimg
+```
+
+(using our portable `file` class from the preceding examples.)
+
+Our hypothetical image format is simple, consisting of a fixed header,
+followed by the image data, so an implementation of `load_image` might
+have the following structure:
+
+```
+namespace libmyimg
+{
+
+struct image_header
+{
+    uint32_t signature;
+    uint32_t width;
+    uint32_t height;
+    uint32_t bits_per_pixel;
+    uint32_t channels;
+};
+
+void load_image_header( file& f, image_header& im, sys::error_code& ec );
+
+struct image;
+
+void load_image( file& f, image& im, sys::error_code& ec )
+{
+    image_header ih = {};
+    load_image_header( f, ih, ec );
+
+    if( ec.failed() ) return;
+
+    if( ih.signature != 0xFF0AD71A )
+    {
+        // return an "invalid signature" error
+    }
+
+    if( ih.width == 0 )
+    {
+        // return an "invalid width" error
+    }
+
+    if( ih.height == 0 )
+    {
+        // return an "invalid height" error
+    }
+
+    if( ih.bits_per_pixel != 8 )
+    {
+        // return an "unsupported bit depth" error
+    }
+
+    if( ih.channels != 1 && ih.channels != 3 && ih.channels != 4 )
+    {
+        // return an "unsupported channel count" error
+    }
+
+    // initialize `image` and read image data
+
+    // ...
+}
+
+} // namespace libmyimg
+```
+
+We can see that we need to define five error codes of our own. (Our function
+can also return other kinds of failures in `ec` -- those will come from
+`file::read` which `load_image_header` will use to read the header.)
+
+To define these errors, we'll use a scoped enumeration type. (This example
+will take advantage of {cpp}11 features.)
+
+```
+namespace libmyimg
+{
+
+enum class error
+{
+    success = 0,
+
+    invalid_signature,
+    invalid_width,
+    invalid_height,
+    unsupported_bit_depth,
+    unsupported_channel_count
+};
+
+} // namespace libmyimg
+```
+
+Boost.System supports being told that an enumeration type represents an error
+code, which enables implicit conversions between the enumeration type and
+`error_code`. It's done by specializing the `is_error_code_enum` type trait,
+which resides in `namespace boost::system` like the rest of the library:
+
+```
+namespace boost
+{
+namespace system
+{
+
+template<> struct is_error_code_enum< ::libmyimg::error >: std::true_type
+{
+};
+
+} // namespace system
+} // namespace boost
+```
+
+Once this is in place, we can now assign values of `libmyimg::error` to
+`sys::error_code`, which enables the implementation of `load_image` to be
+written as follows:
+
+```
+void load_image( file& f, image& im, sys::error_code& ec )
+{
+    image_header ih = {};
+    load_image_header( f, ih, ec );
+
+    if( ec.failed() ) return;
+
+    if( ih.signature != 0xFF0AD71A )
+    {
+        ec = error::invalid_signature;
+        return;
+    }
+
+    if( ih.width == 0 )
+    {
+        ec = error::invalid_width;
+        return;
+    }
+
+    if( ih.height == 0 )
+    {
+        ec = error::invalid_height;
+        return;
+    }
+
+    if( ih.bits_per_pixel != 8 )
+    {
+        ec = error::unsupported_bit_depth;
+        return;
+    }
+
+    if( ih.channels != 1 && ih.channels != 3 && ih.channels != 4 )
+    {
+        ec = error::unsupported_channel_count;
+        return;
+    }
+
+    // initialize `image` and read image data
+
+    // ...
+}
+```
+
+This is however not enough; we still need to define the error category
+for our enumerators, and associate them with it.
+
+The first step follows our previous two examples very closely, so we'll
+not show it here, and just assume that we have the function
+`myimg_category` implemented.
+
+The second step involves implementing a function `make_error_code` in
+the namespace of our enumeration type `error` that takes `error` and
+returns `boost::system::error_code`:
+
+```
+namespace libmyimg
+{
+
+enum class error
+{
+    success = 0,
+
+    invalid_signature,
+    invalid_width,
+    invalid_height,
+    unsupported_bit_depth,
+    unsupported_channel_count
+};
+
+sys::error_category const& myimg_category();
+
+sys::error_code make_error_code( error e )
+{
+    return sys::error_code( static_cast<int>( e ), myimg_category() );
+}
+
+} // namespace libmyimg
+```
+
+Now `load_image` will compile, and we just need to fill the rest of its
+implementation with code that uses `file::read` to read the image data.
+
+There's one additional embellishment we can make. As we know, Boost.System
+was proposed for, and accepted into, the {cpp}11 standard, and now there's
+a standard implementation of it in `<system_error>`. We can make our
+error enumeration type compatible with `std::error_code` as well, by
+specializing the standard type trait `std::is_error_code_enum`:
+
+```
+namespace std
+{
+
+template<> struct is_error_code_enum< ::libmyimg::error >: std::true_type
+{
+};
+
+} // namespace std
+```
+
+This makes our enumerators convertible to `std::error_code`.
+
+(The reason this works is that `boost::system::error_code` is convertible
+to `std::error_code`, so the return value of our `make_error_code` overload
+can be used to initialize a `std::error_code`.)
