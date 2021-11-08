@@ -1113,9 +1113,57 @@ void load_image( file& f, image& im, sys::error_code& ec )
 This is however not enough; we still need to define the error category
 for our enumerators, and associate them with it.
 
-The first step follows our previous two examples very closely, so we'll
-not show it here, and just assume that we have the function
-`myimg_category` implemented.
+The first step follows our previous two examples very closely:
+
+```
+namespace libmyimg
+{
+
+class myimg_category_impl: public sys::error_category
+{
+public:
+
+    const char * name() const noexcept;
+
+    std::string message( int ev ) const;
+    char const * message( int ev, char * buffer, std::size_t len ) const noexcept;
+};
+
+const char * myimg_category_impl::name() const noexcept
+{
+    return "libmyimg";
+}
+
+std::string myimg_category_impl::message( int ev ) const
+{
+    char buffer[ 32 ];
+    return this->message( ev, buffer, sizeof( buffer ) );
+}
+
+char const * myimg_category_impl::message( int ev, char * buffer, std::size_t len ) const noexcept
+{
+    switch( static_cast<error>( ev ) )
+    {
+    case error::success:                   return "No error";
+    case error::invalid_signature:         return "Invalid image signature";
+    case error::invalid_width:             return "Invalid image width";
+    case error::invalid_height:            return "Invalid image height";
+    case error::unsupported_bit_depth:     return "Unsupported bit depth";
+    case error::unsupported_channel_count: return "Unsupported number of channels";
+    }
+
+    std::snprintf( buffer, len, "Unknown libmyimg error %d", ev );
+    return buffer;
+}
+
+sys::error_category const& myimg_category()
+{
+    static const myimg_category_impl instance;
+    return instance;
+}
+
+} // namespace libmyimg
+```
 
 The second step involves implementing a function `make_error_code` in
 the namespace of our enumeration type `error` that takes `error` and
@@ -1124,19 +1172,6 @@ returns `boost::system::error_code`:
 ```
 namespace libmyimg
 {
-
-enum class error
-{
-    success = 0,
-
-    invalid_signature,
-    invalid_width,
-    invalid_height,
-    unsupported_bit_depth,
-    unsupported_channel_count
-};
-
-sys::error_category const& myimg_category();
 
 sys::error_code make_error_code( error e )
 {
