@@ -938,6 +938,61 @@ int r = some_zlib_function( ... );
 ASSIGN_ZLIB_ERROR( ec, r );
 ```
 
+### Supporting Comparisons against Conditions
+
+We notice that some of the ZLib error codes correspond to portable `errno`
+conditions. `Z_STREAM_ERROR`, for instance, is returned in cases where
+POSIX functions would have returned `EINVAL`; `Z_MEM_ERROR` is `ENOMEM`;
+and `Z_BUF_ERROR`, insufficient space in the output buffer to store the
+result, roughly corresponds to `ERANGE`, result out of range.
+
+To encode this relationship, we need to implement either
+`default_error_condition` or `equivalent` in our category. Since we have
+a simple one to one mapping, the former will suffice:
+
+```
+class zlib_category_impl: public sys::error_category
+{
+public:
+
+    const char * name() const noexcept;
+
+    std::string message( int ev ) const;
+    char const * message( int ev, char * buffer, std::size_t len ) const noexcept;
+
+    bool failed( int ev ) const noexcept;
+
+    sys::error_condition default_error_condition( int ev ) const noexcept;
+};
+```
+
+The implementation is straightforward:
+
+```
+sys::error_condition zlib_category_impl::default_error_condition( int ev ) const noexcept
+{
+    switch( ev )
+    {
+    case Z_OK:            return sys::error_condition();
+    case Z_STREAM_ERROR:  return sys::errc::invalid_argument;
+    case Z_MEM_ERROR:     return sys::errc::not_enough_memory;
+    case Z_BUF_ERROR:     return sys::errc::result_out_of_range;
+    }
+
+    return sys::error_condition( ev, *this );
+}
+```
+
+Once this is added, we will be able to compare a ZLib `error_code ec` against
+`errc` enumerators:
+
+```
+if( ec == sys::errc::not_enough_memory )
+{
+    // Z_MEM_ERROR, or ENOMEM
+}
+```
+
 ## Defining Library-Specific Error Codes
 
 Let's suppose that we are writing a library `libmyimg` for reading some
