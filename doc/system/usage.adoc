@@ -675,7 +675,7 @@ if( ec == sys::errc::invalid_argument )
 which is what one should generally use for testing for a specific error
 condition, as a best practice.
 
-## Wrapping Existing Integer Error Values
+## Adapting Existing Integer Error Values
 
 Libraries with C (or `extern "C"`) APIs often signal failure by returning
 a library-specific integer error code (with zero typically being reserved
@@ -687,7 +687,7 @@ Because the integer error codes are library specific, and in general match
 neither `errno` values or system category values, we need to define a
 library-specific error category.
 
-### Wrapping SQLite Errors
+### Adapting SQLite Errors
 
 We'll take SQLite as an example. The general outline of a custom error
 category is as follows:
@@ -765,7 +765,7 @@ and we're done. `sqlite3_category()` can now be used like the predefined
 categories, and we can put an SQLite error code `int r` into a Boost.System
 `error_code ec` by means of `ec.assign( r, sqlite3_category() )`.
 
-### Wrapping ZLib Errors
+### Adapting ZLib Errors
 
 Another widely used C library is ZLib, and the portion of `zlib.h` that
 defines its error codes is shown below:
