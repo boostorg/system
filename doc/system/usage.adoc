@@ -198,7 +198,7 @@ It's possible to use system as well, as `EINVAL` is also a system category
 value under POSIX; however, using the generic category for values belonging
 to the portable `errno` subset is slightly preferrable.
 
-Our implementation of `file::write` needs to uindergo a similar treatment.
+Our implementation of `file::write` needs to undergo a similar treatment.
 There, however, we'll apply another change. When there's no space left on
 the disk, `::write` returns a number of bytes written that is lower than
 what we requested with `size`, but our function signals no error. We'll make
@@ -297,7 +297,7 @@ std::size_t file::write( void const * buffer, std::size_t size, sys::error_code&
 ## Attaching a Source Location to Error Codes
 
 Unlike the standard `<system_error>`, Boost.System allows source locations
-(file:line:function) to be stored in `error_code`, so that functions handling
+(file/line/function) to be stored in `error_code`, so that functions handling
 the error can display or log the source code location where the error occurred.
 To take advantage of this functionality, our POSIX `file::read` function needs
 to be augmented as follows:
@@ -514,8 +514,8 @@ std::size_t file_copy( file& src, file& dest )
 That is, we simply call the nonthrowing overload of `file_copy`, and if
 it signals failure in `ec`, throw a `system_error` exception.
 
-We use our function name `++__func__++` (`file_copy`) as the prefix, although
-that's a matter of taste.
+We use our function name `++__func__++` (`"file_copy"`) as the prefix,
+although that's a matter of taste.
 
 Note that typically under this style the overloads taking `error_code& ec`
 are decorated with `noexcept`, so that it's clear that they don't throw
