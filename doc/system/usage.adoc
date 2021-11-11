@@ -860,7 +860,7 @@ The `std::string` overload of `message` is now trivial:
 ```
 std::string zlib_category_impl::message( int ev ) const
 {
-    char buffer[ 32 ];
+    char buffer[ 64 ];
     return this->message( ev, buffer, sizeof( buffer ) );
 }
 ```
@@ -1065,7 +1065,7 @@ void load_image( file& f, image& im, sys::error_code& ec )
         // return an "unsupported channel count" error
     }
 
-    // initialize `image` and read image data
+    // initialize `im` and read image data
 
     // ...
 }
@@ -1191,7 +1191,7 @@ const char * myimg_category_impl::name() const noexcept
 
 std::string myimg_category_impl::message( int ev ) const
 {
-    char buffer[ 32 ];
+    char buffer[ 64 ];
     return this->message( ev, buffer, sizeof( buffer ) );
 }
 
@@ -1261,3 +1261,154 @@ This makes our enumerators convertible to `std::error_code`.
 (The reason this works is that `boost::system::error_code` is convertible
 to `std::error_code`, so the return value of our `make_error_code` overload
 can be used to initialize a `std::error_code`.)
+
+## Defining Library-Specific Error Conditions
+
+All of the `libmyimg::error` error codes we have so far represent the same
+error condition - invalid or unsupported image format. It might make sense to
+enable testing for this condition without the need to enumerate all five
+specific codes. To do this, we can define an error condition enumeration type:
+
+```
+namespace libmyimg
+{
+
+enum class condition
+{
+    invalid_format = 1
+};
+
+} // namespace libmyimg
+```
+
+which we can tag as representing an error condition by specializing
+`is_error_condition_enum`:
+
+```
+namespace boost
+{
+namespace system
+{
+
+template<> struct is_error_condition_enum< ::libmyimg::condition >: std::true_type
+{
+};
+
+} // namespace system
+} // namespace boost
+
+namespace std
+{
+
+template<> struct is_error_condition_enum< ::libmyimg::condition >: std::true_type
+{
+};
+
+} // namespace std
+```
+
+Similarly to the error code enumeration type, which needed a `make_error_code`
+overload, this one will need to have a `make_error_condition` overload, and a
+category.
+
+It's in principle possible to reuse the category we already defined for our
+error codes, by making the condition values start from, say, 10000 instead of
+1. This saves some typing, but a better practice is to use a separate category
+for the error conditions. So that's what we'll do:
+
+```
+namespace libmyimg
+{
+
+class myimg_condition_category_impl: public sys::error_category
+{
+public:
+
+    const char * name() const noexcept;
+
+    std::string message( int ev ) const;
+    char const * message( int ev, char * buffer, std::size_t len ) const noexcept;
+};
+
+const char * myimg_condition_category_impl::name() const noexcept
+{
+    return "libmyimg_condition";
+}
+
+std::string myimg_condition_category_impl::message( int ev ) const
+{
+    char buffer[ 64 ];
+    return this->message( ev, buffer, sizeof( buffer ) );
+}
+
+char const * myimg_condition_category_impl::message( int ev, char * buffer, std::size_t len ) const noexcept
+{
+    switch( static_cast<condition>( ev ) )
+    {
+    case condition::invalid_format: return "Invalid or unsupported image format";
+    }
+
+    std::snprintf( buffer, len, "Unknown libmyimg condition %d", ev );
+    return buffer;
+}
+
+sys::error_category const& myimg_condition_category()
+{
+    static const myimg_condition_category_impl instance;
+    return instance;
+}
+
+sys::error_condition make_error_condition( condition e )
+{
+    return sys::error_condition( static_cast<int>( e ), myimg_condition_category() );
+}
+
+} // namespace libmyimg
+```
+
+We have our condition, but it doesn't do anything yet. To enable
+`libmyimg::condition::invalid_format` to compare equal to our error codes,
+we need to implement `default_error_condition` in the error code category:
+
+```
+namespace libmyimg
+{
+
+class myimg_category_impl: public sys::error_category
+{
+public:
+
+    const char * name() const noexcept;
+
+    std::string message( int ev ) const;
+    char const * message( int ev, char * buffer, std::size_t len ) const noexcept;
+
+    sys::error_condition default_error_condition( int ev ) const noexcept;
+};
+
+sys::error_condition myimg_category_impl::default_error_condition( int ev ) const noexcept
+{
+    switch( static_cast<error>( ev ) )
+    {
+    case error::success:
+
+        return {};
+
+    case error::invalid_signature:
+    case error::invalid_width:
+    case error::invalid_height:
+    case error::unsupported_bit_depth:
+    case error::unsupported_channel_count:
+
+        return condition::invalid_format;
+    }
+
+    return sys::error_condition( ev, *this );
+}
+
+} // namespace libmyimg
+```
+
+That's it; now `ec == libmyimg::condition::invalid_format` can be used to test
+whether `ec` contains one of our error codes corresponding to the "invalid
+image format" condition.
