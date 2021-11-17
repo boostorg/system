@@ -927,7 +927,7 @@ constexpr` source location object each time:
 
 ```
 #define ASSIGN_ZLIB_ERROR(ec, r) { \
-    static BOOST_CONSTEXPR boost::source_location loc = BOOST_CURRENT_LOCATION; \
+    BOOST_STATIC_CONSTEXPR boost::source_location loc = BOOST_CURRENT_LOCATION; \
     assign_zlib_error( ec, r, &loc ); }
 ```
 
