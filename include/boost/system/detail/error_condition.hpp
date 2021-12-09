@@ -84,7 +84,7 @@ public:
 
     template<class ErrorConditionEnum> BOOST_SYSTEM_CONSTEXPR error_condition( ErrorConditionEnum e,
       typename detail::enable_if<boost::system::detail::is_same<ErrorConditionEnum, errc::errc_t>::value>::type* = 0) BOOST_NOEXCEPT:
-        val_( e ), cat_( 0 )
+        val_( static_cast<int>( e ) ), cat_( 0 )
     {
     }
 

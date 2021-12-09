@@ -18,7 +18,7 @@ struct foo
   foo()
   {
     boost::system::error_code ec;
-    BOOST_TEST_NE( ec, boost::system::errc::permission_denied );
+    BOOST_TEST( ec != boost::system::errc::permission_denied );
   }
 } f;
 

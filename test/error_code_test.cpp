@@ -165,7 +165,7 @@ int main( int, char ** )
   econd = ec.default_error_condition();
   BOOST_TEST( econd.value() == static_cast<int>(errc::permission_denied) );
   BOOST_TEST( econd.category() == generic_category() );
-  BOOST_TEST( econd == error_condition( errc::permission_denied, generic_category() ) );
+  BOOST_TEST( econd == error_condition( static_cast<int>(errc::permission_denied), generic_category() ) );
   BOOST_TEST( econd == errc::permission_denied );
   BOOST_TEST( errc::permission_denied == econd );
   BOOST_TEST( ec == errc::permission_denied );
@@ -244,35 +244,35 @@ int main( int, char ** )
   ec = error_code( ERROR_ACCESS_DENIED, system_category() );
   BOOST_TEST( ec.value() == ERROR_ACCESS_DENIED );
   BOOST_TEST( ec == errc::permission_denied );
-  BOOST_TEST( ec.default_error_condition().value() == errc::permission_denied );
+  BOOST_TEST( ec.default_error_condition().value() == static_cast<int>(errc::permission_denied) );
   BOOST_TEST( ec.default_error_condition().category() == generic_category() );
 
   //   test the second entry in the decoder table:
   ec = error_code( ERROR_ALREADY_EXISTS, system_category() );
   BOOST_TEST( ec.value() == ERROR_ALREADY_EXISTS );
   BOOST_TEST( ec == errc::file_exists );
-  BOOST_TEST( ec.default_error_condition().value() == errc::file_exists );
+  BOOST_TEST( ec.default_error_condition().value() == static_cast<int>(errc::file_exists) );
   BOOST_TEST( ec.default_error_condition().category() == generic_category() );
 
   //   test the third entry in the decoder table:
   ec = error_code( ERROR_BAD_UNIT, system_category() );
   BOOST_TEST( ec.value() == ERROR_BAD_UNIT );
   BOOST_TEST( ec == errc::no_such_device );
-  BOOST_TEST( ec.default_error_condition().value() == errc::no_such_device );
+  BOOST_TEST( ec.default_error_condition().value() == static_cast<int>(errc::no_such_device) );
   BOOST_TEST( ec.default_error_condition().category() == generic_category() );
 
   //   test the last non-Winsock entry in the decoder table:
   ec = error_code( ERROR_WRITE_PROTECT, system_category() );
   BOOST_TEST( ec.value() == ERROR_WRITE_PROTECT );
   BOOST_TEST( ec == errc::permission_denied );
-  BOOST_TEST( ec.default_error_condition().value() == errc::permission_denied );
+  BOOST_TEST( ec.default_error_condition().value() == static_cast<int>(errc::permission_denied) );
   BOOST_TEST( ec.default_error_condition().category() == generic_category() );
 
   //   test the last Winsock entry in the decoder table:
   ec = error_code( WSAEWOULDBLOCK, system_category() );
   BOOST_TEST( ec.value() == WSAEWOULDBLOCK );
   BOOST_TEST( ec == errc::operation_would_block );
-  BOOST_TEST( ec.default_error_condition().value() == errc::operation_would_block );
+  BOOST_TEST( ec.default_error_condition().value() == static_cast<int>(errc::operation_would_block) );
   BOOST_TEST( ec.default_error_condition().category() == generic_category() );
 
   //   test not-in-table condition:
@@ -289,7 +289,7 @@ int main( int, char ** )
   BOOST_TEST( error_code( errc::permission_denied, system_category() ) == ec );
   BOOST_TEST( ec == errc::permission_denied );
   BOOST_TEST( errc::permission_denied == ec );
-  BOOST_TEST( ec.default_error_condition().value() == errc::permission_denied );
+  BOOST_TEST( ec.default_error_condition().value() == static_cast<int>(errc::permission_denied) );
   BOOST_TEST( ec.default_error_condition().category() == generic_category() );
 
 #endif

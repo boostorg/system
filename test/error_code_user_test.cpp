@@ -118,7 +118,7 @@ namespace boost
       boost::system::error_condition default_error_condition( int ev ) const BOOST_SYSTEM_NOEXCEPT
       {
         return ev == boo_boo
-          ? boost::system::error_condition( boost::system::errc::io_error,
+          ? boost::system::error_condition( static_cast<int>( boost::system::errc::io_error ),
               boost::system::generic_category() )
           : boost::system::error_condition( ev,
               boost::lib3::lib3_error_category );
@@ -180,7 +180,7 @@ namespace lib4
     boost::system::error_condition default_error_condition( int ev ) const  BOOST_SYSTEM_NOEXCEPT
     {
       return ev == boo_boo.value()
-        ? boost::system::error_condition( boost::system::errc::io_error,
+        ? boost::system::error_condition( static_cast<int>( boost::system::errc::io_error ),
             boost::system::generic_category() )
         : boost::system::error_condition( ev, lib4::lib4_error_category );
     }
