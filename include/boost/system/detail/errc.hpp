@@ -12,100 +12,121 @@
 
 #include <boost/system/is_error_condition_enum.hpp>
 #include <boost/system/detail/cerrno.hpp>
+#include <boost/config.hpp>
 
 namespace boost
 {
-
 namespace system
 {
+
+#define BOOST_SYSTEM_ENUMERATE_ERRC(F) \
+    F(success, 0) \
+    F(address_family_not_supported, EAFNOSUPPORT) \
+    F(address_in_use, EADDRINUSE) \
+    F(address_not_available, EADDRNOTAVAIL) \
+    F(already_connected, EISCONN) \
+    F(argument_list_too_long, E2BIG) \
+    F(argument_out_of_domain, EDOM) \
+    F(bad_address, EFAULT) \
+    F(bad_file_descriptor, EBADF) \
+    F(bad_message, EBADMSG) \
+    F(broken_pipe, EPIPE) \
+    F(connection_aborted, ECONNABORTED) \
+    F(connection_already_in_progress, EALREADY) \
+    F(connection_refused, ECONNREFUSED) \
+    F(connection_reset, ECONNRESET) \
+    F(cross_device_link, EXDEV) \
+    F(destination_address_required, EDESTADDRREQ) \
+    F(device_or_resource_busy, EBUSY) \
+    F(directory_not_empty, ENOTEMPTY) \
+    F(executable_format_error, ENOEXEC) \
+    F(file_exists, EEXIST) \
+    F(file_too_large, EFBIG) \
+    F(filename_too_long, ENAMETOOLONG) \
+    F(function_not_supported, ENOSYS) \
+    F(host_unreachable, EHOSTUNREACH) \
+    F(identifier_removed, EIDRM) \
+    F(illegal_byte_sequence, EILSEQ) \
+    F(inappropriate_io_control_operation, ENOTTY) \
+    F(interrupted, EINTR) \
+    F(invalid_argument, EINVAL) \
+    F(invalid_seek, ESPIPE) \
+    F(io_error, EIO) \
+    F(is_a_directory, EISDIR) \
+    F(message_size, EMSGSIZE) \
+    F(network_down, ENETDOWN) \
+    F(network_reset, ENETRESET) \
+    F(network_unreachable, ENETUNREACH) \
+    F(no_buffer_space, ENOBUFS) \
+    F(no_child_process, ECHILD) \
+    F(no_link, ENOLINK) \
+    F(no_lock_available, ENOLCK) \
+    F(no_message_available, ENODATA) \
+    F(no_message, ENOMSG) \
+    F(no_protocol_option, ENOPROTOOPT) \
+    F(no_space_on_device, ENOSPC) \
+    F(no_stream_resources, ENOSR) \
+    F(no_such_device_or_address, ENXIO) \
+    F(no_such_device, ENODEV) \
+    F(no_such_file_or_directory, ENOENT) \
+    F(no_such_process, ESRCH) \
+    F(not_a_directory, ENOTDIR) \
+    F(not_a_socket, ENOTSOCK) \
+    F(not_a_stream, ENOSTR) \
+    F(not_connected, ENOTCONN) \
+    F(not_enough_memory, ENOMEM) \
+    F(not_supported, ENOTSUP) \
+    F(operation_canceled, ECANCELED) \
+    F(operation_in_progress, EINPROGRESS) \
+    F(operation_not_permitted, EPERM) \
+    F(operation_not_supported, EOPNOTSUPP) \
+    F(operation_would_block, EWOULDBLOCK) \
+    F(owner_dead, EOWNERDEAD) \
+    F(permission_denied, EACCES) \
+    F(protocol_error, EPROTO) \
+    F(protocol_not_supported, EPROTONOSUPPORT) \
+    F(read_only_file_system, EROFS) \
+    F(resource_deadlock_would_occur, EDEADLK) \
+    F(resource_unavailable_try_again, EAGAIN) \
+    F(result_out_of_range, ERANGE) \
+    F(state_not_recoverable, ENOTRECOVERABLE) \
+    F(stream_timeout, ETIME) \
+    F(text_file_busy, ETXTBSY) \
+    F(timed_out, ETIMEDOUT) \
+    F(too_many_files_open_in_system, ENFILE) \
+    F(too_many_files_open, EMFILE) \
+    F(too_many_links, EMLINK) \
+    F(too_many_symbolic_link_levels, ELOOP) \
+    F(value_too_large, EOVERFLOW) \
+    F(wrong_protocol_type, EPROTOTYPE)
 
 namespace errc
 {
 
+#if !defined(BOOST_NO_CXX11_SCOPED_ENUMS) && !defined(BOOST_SYSTEM_ENABLE_DEPRECATED)
+enum class errc_t
+#else
 enum errc_t
+#endif
 {
-    success = 0,
-    address_family_not_supported = EAFNOSUPPORT,
-    address_in_use = EADDRINUSE,
-    address_not_available = EADDRNOTAVAIL,
-    already_connected = EISCONN,
-    argument_list_too_long = E2BIG,
-    argument_out_of_domain = EDOM,
-    bad_address = EFAULT,
-    bad_file_descriptor = EBADF,
-    bad_message = EBADMSG,
-    broken_pipe = EPIPE,
-    connection_aborted = ECONNABORTED,
-    connection_already_in_progress = EALREADY,
-    connection_refused = ECONNREFUSED,
-    connection_reset = ECONNRESET,
-    cross_device_link = EXDEV,
-    destination_address_required = EDESTADDRREQ,
-    device_or_resource_busy = EBUSY,
-    directory_not_empty = ENOTEMPTY,
-    executable_format_error = ENOEXEC,
-    file_exists = EEXIST,
-    file_too_large = EFBIG,
-    filename_too_long = ENAMETOOLONG,
-    function_not_supported = ENOSYS,
-    host_unreachable = EHOSTUNREACH,
-    identifier_removed = EIDRM,
-    illegal_byte_sequence = EILSEQ,
-    inappropriate_io_control_operation = ENOTTY,
-    interrupted = EINTR,
-    invalid_argument = EINVAL,
-    invalid_seek = ESPIPE,
-    io_error = EIO,
-    is_a_directory = EISDIR,
-    message_size = EMSGSIZE,
-    network_down = ENETDOWN,
-    network_reset = ENETRESET,
-    network_unreachable = ENETUNREACH,
-    no_buffer_space = ENOBUFS,
-    no_child_process = ECHILD,
-    no_link = ENOLINK,
-    no_lock_available = ENOLCK,
-    no_message_available = ENODATA,
-    no_message = ENOMSG,
-    no_protocol_option = ENOPROTOOPT,
-    no_space_on_device = ENOSPC,
-    no_stream_resources = ENOSR,
-    no_such_device_or_address = ENXIO,
-    no_such_device = ENODEV,
-    no_such_file_or_directory = ENOENT,
-    no_such_process = ESRCH,
-    not_a_directory = ENOTDIR,
-    not_a_socket = ENOTSOCK,
-    not_a_stream = ENOSTR,
-    not_connected = ENOTCONN,
-    not_enough_memory = ENOMEM,
-    not_supported = ENOTSUP,
-    operation_canceled = ECANCELED,
-    operation_in_progress = EINPROGRESS,
-    operation_not_permitted = EPERM,
-    operation_not_supported = EOPNOTSUPP,
-    operation_would_block = EWOULDBLOCK,
-    owner_dead = EOWNERDEAD,
-    permission_denied = EACCES,
-    protocol_error = EPROTO,
-    protocol_not_supported = EPROTONOSUPPORT,
-    read_only_file_system = EROFS,
-    resource_deadlock_would_occur = EDEADLK,
-    resource_unavailable_try_again = EAGAIN,
-    result_out_of_range = ERANGE,
-    state_not_recoverable = ENOTRECOVERABLE,
-    stream_timeout = ETIME,
-    text_file_busy = ETXTBSY,
-    timed_out = ETIMEDOUT,
-    too_many_files_open_in_system = ENFILE,
-    too_many_files_open = EMFILE,
-    too_many_links = EMLINK,
-    too_many_symbolic_link_levels = ELOOP,
-    value_too_large = EOVERFLOW,
-    wrong_protocol_type = EPROTOTYPE
-};
+
+#define BOOST_SYSTEM_DEFINE_ERRC(x, y) x = y,
+BOOST_SYSTEM_ENUMERATE_ERRC(BOOST_SYSTEM_DEFINE_ERRC)
+#undef BOOST_SYSTEM_DEFINE_ERRC
+
+}; // enum errc_t
+
+#if !defined(BOOST_NO_CXX11_SCOPED_ENUMS) && !defined(BOOST_SYSTEM_ENABLE_DEPRECATED)
+
+#define BOOST_SYSTEM_SURFACE_ERRC(x, y) BOOST_CONSTEXPR_OR_CONST errc_t x = errc_t::x;
+BOOST_SYSTEM_ENUMERATE_ERRC(BOOST_SYSTEM_SURFACE_ERRC)
+#undef BOOST_SYSTEM_SURFACE_ERRC
+
+#endif
 
 } // namespace errc
+
+#undef BOOST_SYSTEM_ENUMERATE_ERRC
 
 #ifdef BOOST_SYSTEM_ENABLE_DEPRECATED
 
@@ -120,7 +141,6 @@ template<> struct is_error_condition_enum<errc::errc_t>
 };
 
 } // namespace system
-
 } // namespace boost
 
 #endif // #ifndef BOOST_SYSTEM_DETAIL_ERRC_HPP_INCLUDED

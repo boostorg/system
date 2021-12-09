@@ -25,7 +25,7 @@ namespace system
 namespace detail
 {
 
-inline int system_category_condition_win32( int ev ) BOOST_NOEXCEPT
+inline errc::errc_t system_category_condition_win32_( int ev ) BOOST_NOEXCEPT
 {
     // When using the Windows Runtime, most system errors are reported as HRESULTs.
     // We want to map the common Win32 errors to their equivalent error condition,
@@ -138,8 +138,13 @@ inline int system_category_condition_win32( int ev ) BOOST_NOEXCEPT
     case WSAETIMEDOUT_: return timed_out;
     case WSAEWOULDBLOCK_: return operation_would_block;
 
-    default: return -1;
+    default: return static_cast<errc::errc_t>( -1 );
     }
+}
+
+inline int system_category_condition_win32( int ev ) BOOST_NOEXCEPT
+{
+    return static_cast<int>( system_category_condition_win32_( ev ) );
 }
 
 } // namespace detail

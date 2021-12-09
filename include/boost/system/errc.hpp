@@ -32,13 +32,13 @@ namespace errc
 // explicit conversion:
 BOOST_SYSTEM_CONSTEXPR inline error_code make_error_code( errc_t e ) BOOST_NOEXCEPT
 {
-    return error_code( e, generic_category() );
+    return error_code( static_cast<int>( e ), generic_category() );
 }
 
 // implicit conversion:
 BOOST_SYSTEM_CONSTEXPR inline error_condition make_error_condition( errc_t e ) BOOST_NOEXCEPT
 {
-    return error_condition( e, generic_category() );
+    return error_condition( static_cast<int>( e ), generic_category() );
 }
 
 } // namespace errc
