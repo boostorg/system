@@ -19,7 +19,7 @@ namespace boost
 namespace system
 {
 
-#define BOOST_SYSTEM_ENUMERATE_ERRC(F) \
+#define BOOST_SYSTEM_ENUMERATE_ERRC(F, G) \
     F(success, 0) \
     F(address_family_not_supported, EAFNOSUPPORT) \
     F(address_in_use, EADDRINUSE) \
@@ -98,7 +98,7 @@ namespace system
     F(too_many_links, EMLINK) \
     F(too_many_symbolic_link_levels, ELOOP) \
     F(value_too_large, EOVERFLOW) \
-    F(wrong_protocol_type, EPROTOTYPE)
+    G(wrong_protocol_type, EPROTOTYPE)
 
 namespace errc
 {
@@ -111,15 +111,17 @@ enum errc_t
 {
 
 #define BOOST_SYSTEM_DEFINE_ERRC(x, y) x = y,
-BOOST_SYSTEM_ENUMERATE_ERRC(BOOST_SYSTEM_DEFINE_ERRC)
+#define BOOST_SYSTEM_DEFINE_ERRC2(x, y) x = y
+BOOST_SYSTEM_ENUMERATE_ERRC(BOOST_SYSTEM_DEFINE_ERRC, BOOST_SYSTEM_DEFINE_ERRC2)
 #undef BOOST_SYSTEM_DEFINE_ERRC
+#undef BOOST_SYSTEM_DEFINE_ERRC2
 
 }; // enum errc_t
 
 #if !defined(BOOST_NO_CXX11_SCOPED_ENUMS) && !defined(BOOST_SYSTEM_ENABLE_DEPRECATED)
 
 #define BOOST_SYSTEM_SURFACE_ERRC(x, y) BOOST_CONSTEXPR_OR_CONST errc_t x = errc_t::x;
-BOOST_SYSTEM_ENUMERATE_ERRC(BOOST_SYSTEM_SURFACE_ERRC)
+BOOST_SYSTEM_ENUMERATE_ERRC(BOOST_SYSTEM_SURFACE_ERRC, BOOST_SYSTEM_SURFACE_ERRC)
 #undef BOOST_SYSTEM_SURFACE_ERRC
 
 #endif
