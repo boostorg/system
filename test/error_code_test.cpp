@@ -285,8 +285,8 @@ int main( int, char ** )
 
   std::cout << "POSIX tests...\n";
   ec = error_code( EACCES, system_category() );
-  BOOST_TEST( ec == error_code( errc::permission_denied, system_category() ) );
-  BOOST_TEST( error_code( errc::permission_denied, system_category() ) == ec );
+  BOOST_TEST( ec == error_code( static_cast<int>(errc::permission_denied), system_category() ) );
+  BOOST_TEST( error_code( static_cast<int>(errc::permission_denied), system_category() ) == ec );
   BOOST_TEST( ec == errc::permission_denied );
   BOOST_TEST( errc::permission_denied == ec );
   BOOST_TEST( ec.default_error_condition().value() == static_cast<int>(errc::permission_denied) );
