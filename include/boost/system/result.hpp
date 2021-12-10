@@ -39,6 +39,15 @@ constexpr in_place_value_t in_place_value{};
 using in_place_error_t = variant2::in_place_index_t<1>;
 constexpr in_place_error_t in_place_error{};
 
+namespace detail
+{
+
+template<class T> using remove_cvref = typename std::remove_cv< typename std::remove_reference<T>::type >::type;
+
+template<class... T> using is_errc_t = std::is_same<mp11::mp_list<remove_cvref<T>...>, mp11::mp_list<errc::errc_t>>;
+
+} // namespace detail
+
 // result
 
 template<class T, class E = error_code> class result
@@ -65,6 +74,7 @@ public:
     // implicit, value
     template<class A = T, typename std::enable_if<
         std::is_convertible<A, T>::value &&
+        !(detail::is_errc_t<A>::value && std::is_arithmetic<T>::value) &&
         !std::is_constructible<E, A>::value, int>::type = 0>
     constexpr result( A&& a )
         noexcept( std::is_nothrow_constructible<T, A>::value )
@@ -85,6 +95,7 @@ public:
     // explicit, value
     template<class... A, class En = typename std::enable_if<
         std::is_constructible<T, A...>::value &&
+        !(detail::is_errc_t<A...>::value && std::is_arithmetic<T>::value) &&
         !std::is_constructible<E, A...>::value
         >::type>
     explicit constexpr result( A&&... a )
