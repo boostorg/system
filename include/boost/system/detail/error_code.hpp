@@ -604,7 +604,7 @@ public:
         inline friend std::basic_ostream<Ch, Tr>&
         operator<< (std::basic_ostream<Ch, Tr>& os, error_code const & ec)
     {
-        return os << ec.to_string();
+        return os << ec.to_string().c_str();
     }
 
     std::string what() const
