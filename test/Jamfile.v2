@@ -134,6 +134,8 @@ run system_error_test3.cpp ;
 
 run std_interop_test11.cpp ;
 
+run ec_wstream_test.cpp ;
+
 # result
 
 import ../../config/checks/config : requires ;
