@@ -188,7 +188,11 @@ public:
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
             std::error_code const& ec = *reinterpret_cast<std::error_code const*>( d2_ );
-            return ec.value() + 1000 * static_cast<unsigned>( reinterpret_cast<boost::uintptr_t>( &ec.category() ) % 2097143 ); // 2^21-9, prime
+
+            unsigned cv = static_cast<unsigned>( ec.value() );
+            unsigned ch = static_cast<unsigned>( reinterpret_cast<boost::uintptr_t>( &ec.category() ) % 2097143 ); // 2^21-9, prime
+
+            return static_cast<int>( cv + 1000 * ch );
 #else
 
             return -1;
