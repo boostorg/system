@@ -8,6 +8,10 @@ https://www.boost.org/LICENSE_1_0.txt
 # Revision History
 :idprefix:
 
+## Changes in Boost 1.79
+
+* Added a `throw_exception_from_error` overload for `std::error_code`.
+
 ## Changes in Boost 1.78
 
 * Added support for source locations to `error_code`.
