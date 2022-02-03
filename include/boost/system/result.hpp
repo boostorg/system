@@ -26,7 +26,7 @@ namespace system
 
 // throw_exception_from_error
 
-BOOST_NORETURN inline void throw_exception_from_error( error_code const & e )
+BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( error_code const & e )
 {
     boost::throw_exception( system_error( e ) );
 }
