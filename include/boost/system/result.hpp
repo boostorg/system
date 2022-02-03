@@ -16,6 +16,7 @@
 #include <type_traits>
 #include <utility>
 #include <iosfwd>
+#include <system_error>
 
 //
 
@@ -29,6 +30,11 @@ namespace system
 BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( error_code const & e )
 {
     boost::throw_exception( system_error( e ) );
+}
+
+BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( std::error_code const & e )
+{
+    boost::throw_exception( std::system_error( e ) );
 }
 
 // in_place_*
