@@ -83,6 +83,28 @@ private:
     // >3: pointer to source_location, failed_ in lsb
     boost::uintptr_t lc_flags_;
 
+private:
+
+    char const* category_name() const BOOST_NOEXCEPT
+    {
+        // return category().name();
+
+        if( lc_flags_ == 0 )
+        {
+            // must match detail::system_error_category::name()
+            return "system";
+        }
+        else if( lc_flags_ == 1 )
+        {
+            // must match detail::interop_error_category::name()
+            return "std:unknown";
+        }
+        else
+        {
+            return d1_.cat_->name();
+        }
+    }
+
 public:
 
     // constructors:
@@ -598,7 +620,7 @@ public:
         else
 #endif
         {
-            std::string r = category().name();
+            std::string r = category_name();
             detail::append_int( r, value() );
             return r;
         }
