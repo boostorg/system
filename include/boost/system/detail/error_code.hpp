@@ -256,7 +256,14 @@ public:
 
 #endif
 
-        return category().message( value() );
+        if( lc_flags_ == 0 )
+        {
+            return detail::system_error_category_message( value() );
+        }
+        else
+        {
+            return category().message( value() );
+        }
     }
 
     char const * message( char * buffer, std::size_t len ) const BOOST_NOEXCEPT
@@ -264,23 +271,33 @@ public:
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
         if( lc_flags_ == 1 )
         {
+            std::error_code const& ec = *reinterpret_cast<std::error_code const*>( d2_ );
+
 #if !defined(BOOST_NO_EXCEPTIONS)
             try
 #endif
             {
-                std::error_code const& ec = *reinterpret_cast<std::error_code const*>( d2_ );
                 detail::snprintf( buffer, len, "%s", ec.message().c_str() );
                 return buffer;
             }
 #if !defined(BOOST_NO_EXCEPTIONS)
             catch( ... )
             {
+                detail::snprintf( buffer, len, "No message text available for error std:%s:%d", ec.category().name(), ec.value() );
+                return buffer;
             }
 #endif
         }
 #endif
 
-        return category().message( value(), buffer, len );
+        if( lc_flags_ == 0 )
+        {
+            return detail::system_error_category_message( value(), buffer, len );
+        }
+        else
+        {
+            return category().message( value(), buffer, len );
+        }
     }
 
     BOOST_SYSTEM_CONSTEXPR bool failed() const BOOST_NOEXCEPT
