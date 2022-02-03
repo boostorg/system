@@ -27,6 +27,11 @@ namespace system
 
 // throw_exception_from_error
 
+#if defined(__GNUC__) && __GNUC__ >= 7 && __GNUC__ <= 8
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wattributes"
+#endif
+
 BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( error_code const & e )
 {
     boost::throw_exception( system_error( e ) );
@@ -36,6 +41,10 @@ BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( std::error
 {
     boost::throw_exception( std::system_error( e ) );
 }
+
+#if defined(__GNUC__) && __GNUC__ >= 7 && __GNUC__ <= 8
+# pragma GCC diagnostic pop
+#endif
 
 // in_place_*
 
