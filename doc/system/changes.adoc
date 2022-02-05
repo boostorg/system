@@ -1,5 +1,5 @@
 ////
-Copyright 2018-2021 Peter Dimov
+Copyright 2018-2022 Peter Dimov
 Distributed under the Boost Software License, Version 1.0.
 https://www.boost.org/LICENSE_1_0.txt
 ////
@@ -11,6 +11,9 @@ https://www.boost.org/LICENSE_1_0.txt
 ## Changes in Boost 1.79
 
 * Added a `throw_exception_from_error` overload for `std::error_code`.
+* Added a `boost::source_location` parameter to `throw_exception_from_error`.
+* `result<T>::value` now automatically supplies `BOOST_CURRENT_LOCATION` to
+  `throw_exception_from_error` via a default argument.
 
 ## Changes in Boost 1.78
 

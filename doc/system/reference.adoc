@@ -1,6 +1,6 @@
 ////
 Copyright 2003-2017 Beman Dawes
-Copyright 2018-2021 Peter Dimov
+Copyright 2018-2022 Peter Dimov
 
 Distributed under the Boost Software License, Version 1.0.
 
@@ -1454,8 +1454,11 @@ namespace system {
 
 // throw_exception_from_error
 
-BOOST_NORETURN inline void throw_exception_from_error( error_code const & e );
-BOOST_NORETURN inline void throw_exception_from_error( std::error_code const & e );
+BOOST_NORETURN inline void throw_exception_from_error( error_code const & e,
+  boost::source_location const & loc );
+
+BOOST_NORETURN inline void throw_exception_from_error( std::error_code const & e,
+  boost::source_location const & loc );
 
 // in_place_*
 
@@ -1487,22 +1490,24 @@ If `result<T, E>` is used with other error types, the user is expected to provid
 an appropriate overload of `throw_exception_from_error` in the namespace of `E`.
 
 ```
-BOOST_NORETURN inline void throw_exception_from_error( error_code const & e );
+BOOST_NORETURN inline void throw_exception_from_error( error_code const & e,
+  boost::source_location const & loc );
 ```
 [none]
 * {blank}
 +
 Effects: ::
-  `boost::throw_exception( system_error( e ) )`.
+  `boost::throw_exception( system_error( e ), loc )`.
 
 ```
-BOOST_NORETURN inline void throw_exception_from_error( std::error_code const & e );
+BOOST_NORETURN inline void throw_exception_from_error( std::error_code const & e,
+  boost::source_location const & loc );
 ```
 [none]
 * {blank}
 +
 Effects: ::
-  `boost::throw_exception( std::system_error( e ) )`.
+  `boost::throw_exception( std::system_error( e ), loc )`.
 
 ### result<T, E>
 
@@ -1538,10 +1543,17 @@ public:
 
     // checked value access
 
-    constexpr T& value() & ;
-    constexpr T const& value() const& ;
-    constexpr T&& value() && ;
-    constexpr T const&& value() const&& ;
+    constexpr T& value( boost::source_location const & loc =
+      BOOST_CURRENT_LOCATION ) & ;
+
+    constexpr T const& value( boost::source_location const & loc =
+      BOOST_CURRENT_LOCATION ) const& ;
+
+    constexpr T&& value( boost::source_location const & loc =
+      BOOST_CURRENT_LOCATION ) && ;
+
+    constexpr T const&& value( boost::source_location const & loc =
+      BOOST_CURRENT_LOCATION ) const&& ;
 
     // unchecked value access
 
@@ -1663,10 +1675,17 @@ Returns: ::
 #### Checked Value Access
 
 ```
-constexpr T& value() & ;
-constexpr T const& value() const& ;
-constexpr T&& value() && ;
-constexpr T const&& value() const&& ;
+constexpr T& value(
+  boost::source_location const & loc = BOOST_CURRENT_LOCATION ) & ;
+
+constexpr T const& value(
+  boost::source_location const & loc = BOOST_CURRENT_LOCATION ) const& ;
+
+constexpr T&& value(
+  boost::source_location const & loc = BOOST_CURRENT_LOCATION ) && ;
+
+constexpr T const&& value(
+  boost::source_location const & loc = BOOST_CURRENT_LOCATION ) const&& ;
 ```
 [none]
 * {blank}
@@ -1674,7 +1693,7 @@ constexpr T const&& value() const&& ;
 Effects: ::
   If `*this` holds a value, returns a reference to it. Otherwise,
   calls `throw_exception_from_error`, passing it a reference to
-  the held error.
+  the held error, and `loc`.
 
 #### Unchecked Value Access
 
@@ -1809,7 +1828,8 @@ public:
 
     // checked value access
 
-    constexpr void value() const;
+    constexpr void value( boost::source_location const & loc =
+      BOOST_CURRENT_LOCATION ) const;
 
     // unchecked value access
 
@@ -1922,14 +1942,15 @@ Returns: ::
 #### Checked Value Access
 
 ```
-constexpr void value() const;
+constexpr void value(
+  boost::source_location const & loc = BOOST_CURRENT_LOCATION ) const;
 ```
 [none]
 * {blank}
 +
 Effects: ::
   If `*this` doesn't hold a value, calls `throw_exception_from_error`,
-  passing it a reference to the held error.
+  passing it a reference to the held error, and `loc`.
 
 #### Unchecked Value Access
 
