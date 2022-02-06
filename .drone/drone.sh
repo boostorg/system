@@ -23,7 +23,7 @@ git submodule update --init tools/boostdep
 cp -r $TRAVIS_BUILD_DIR/* libs/system
 python tools/boostdep/depinst/depinst.py system
 ./bootstrap.sh
-./b2 headers
+./b2 -d0 headers
 
 echo '==================================> SCRIPT'
 

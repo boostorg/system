@@ -1,5 +1,4 @@
 @ECHO ON
-setlocal enabledelayedexpansion
 
 set TRAVIS_OS_NAME=windows
 
@@ -9,24 +8,19 @@ IF "!DRONE_BRANCH!" == "" (
   SET TRAVIS_BRANCH=!DRONE_BRANCH!
 )
 
-echo '==================================> INSTALL'
-REM there seems to be some problem with b2 bootstrap on Windows
-REM when CXX env variable is set
-SET "CXX="
-
-git clone https://github.com/boostorg/boost-ci.git boost-ci-cloned --depth 1
-cp -prf boost-ci-cloned/ci .
-rm -rf boost-ci-cloned
-REM source ci/travis/install.sh
-REM The contents of install.sh below:
-
 for /F %%i in ("%DRONE_REPO%") do @set SELF=%%~nxi
-SET BOOST_CI_TARGET_BRANCH=!TRAVIS_BRANCH!
-SET BOOST_CI_SRC_FOLDER=%cd%
 
-call ci\common_install.bat
+set BOOST_BRANCH=develop
+if "%TRAVIS_BRANCH%" == "master" set BOOST_BRANCH=master
+cd ..
+git clone -b %BOOST_BRANCH% --depth 1 https://github.com/boostorg/boost.git boost-root
+cd boost-root
+git submodule update --init tools/boostdep
+xcopy /s /e /q %APPVEYOR_BUILD_FOLDER% libs\%SELF%\
+python tools/boostdep/depinst/depinst.py %SELF%
+cmd /c bootstrap
+b2 -d0 headers
 
-echo '==================================> COMPILE'
-
-set B2_TARGETS=libs/!SELF!/test libs/!SELF!/example
-call !BOOST_ROOT!\libs\!SELF!\ci\build.bat
+if not "%CXXSTD%" == "" set CXXSTD=cxxstd=%CXXSTD%
+if not "%ADDRMD%" == "" set ADDRMD=address-model=%ADDRMD%
+b2 -j3 libs/%SELF%/test toolset=%TOOLSET% %CXXSTD% %ADDRMD% variant=debug,release embed-manifest-via=linker
