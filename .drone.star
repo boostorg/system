@@ -1,14 +1,9 @@
-# Use, modification, and distribution are
-# subject to the Boost Software License, Version 1.0. (See accompanying
-# file LICENSE.txt)
-#
-# Copyright Rene Rivera 2020.
+# Copyright 2020 Rene Rivera
+# Copyright 2022 Peter Dimov
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
 
-# For Drone CI we use the Starlark scripting language to reduce duplication.
-# As the yaml syntax for Drone CI is rather limited.
-#
-#
-globalenv={}
+globalenv={ 'B2_CI_VERSION': '1', 'B2_VARIANT': 'debug,release' }
 linuxglobalimage="cppalliance/droneubuntu1604:1"
 windowsglobalimage="cppalliance/dronevs2019"
 
