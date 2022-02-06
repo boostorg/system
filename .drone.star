@@ -23,6 +23,10 @@ def main(ctx):
   linux_cxx("Clang 11 UBSAN", "clang++-11", packages="clang-11", llvm_os="xenial", llvm_ver="11", buildtype="boost", buildscript="drone", image=linuxglobalimage, environment={'UBSAN': '1', 'TOOLSET': 'clang', 'COMPILER': 'clang++-11', 'CXXSTD': '03,11,14,17,20', 'UBSAN_OPTIONS': 'print_stacktrace=1', 'DRONE_JOB_UUID': '0ade7c2cf9'}, globalenv=globalenv),
   linux_cxx("Clang libc++ UBSAN", "clang++-libc++", packages="libc++-dev", buildtype="boost", buildscript="drone", image="cppalliance/droneubuntu1804:1", environment={'UBSAN': '1', 'TOOLSET': 'clang', 'COMPILER': 'clang++-libc++', 'CXXSTD': '03,11,14,17,2a', 'UBSAN_OPTIONS': 'print_stacktrace=1', 'DRONE_JOB_UUID': 'b1d5781111'}, globalenv=globalenv),
   osx_cxx("Clang UBSAN", "clang++", packages="", buildtype="boost", buildscript="drone", xcode_version="12.2", environment={'UBSAN': '1', 'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03,11,14,1z', 'UBSAN_OPTIONS': 'print_stacktrace=1', 'DRONE_JOB_UUID': '0716d9708d'}, globalenv=globalenv),
+  windows_cxx("msvc-14.0", "", image="cppalliance/dronevs2015", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.0", "B2_CXXSTD": "14,latest"}, globalenv=globalenv),
+  windows_cxx("msvc-14.1", "", image="cppalliance/dronevs2017", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.1", "B2_CXXSTD": "14,17,latest"}, globalenv=globalenv),
+  windows_cxx("msvc-14.2", "", image="cppalliance/dronevs2019", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.2", "B2_CXXSTD": "14,17,20,latest"}, globalenv=globalenv),
+  windows_cxx("msvc-14.3", "", image="cppalliance/dronevs2022:1", buildtype="boost", buildscript="drone", environment={"B2_TOOLSET": "msvc-14.3", "B2_CXXSTD": "14,17,20,latest"}, globalenv=globalenv)
     ]
 
 # from https://github.com/boostorg/boost-ci
