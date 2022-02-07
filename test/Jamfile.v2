@@ -138,6 +138,8 @@ run std_interop_test11.cpp ;
 
 run ec_wstream_test.cpp ;
 
+run std_interop_test12.cpp ;
+
 # result
 
 import ../../config/checks/config : requires ;
