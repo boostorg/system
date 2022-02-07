@@ -15,10 +15,10 @@ cd ..
 git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
 cd boost-root
 git submodule update --init tools/boostdep
-cp -r $DRONE_BUILD_DIR/* libs/$SELF
-python tools/boostdep/depinst/depinst.py $SELF
+cp -r $DRONE_BUILD_DIR/* libs/$LIBRARY
+python tools/boostdep/depinst/depinst.py $LIBRARY
 ./bootstrap.sh
 ./b2 -d0 headers
 
 echo "using $TOOLSET : : $COMPILER ;" > ~/user-config.jam
-./b2 -j3 libs/$SELF/test toolset=$TOOLSET cxxstd=$CXXSTD variant=debug,release ${ADDRMD:+address-model=$ADDRMD} ${UBSAN:+cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=undefined linkflags=-fsanitize=undefined define=UBSAN=1 debug-symbols=on} ${LINKFLAGS:+linkflags=$LINKFLAGS}
+./b2 -j3 libs/$LIBRARY/test toolset=$TOOLSET cxxstd=$CXXSTD variant=debug,release ${ADDRMD:+address-model=$ADDRMD} ${UBSAN:+cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=undefined linkflags=-fsanitize=undefined define=UBSAN=1 debug-symbols=on} ${LINKFLAGS:+linkflags=$LINKFLAGS}
