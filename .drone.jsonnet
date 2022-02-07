@@ -166,10 +166,10 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 	),
 
 	linux_pipeline(
-		"Linux 20.04 GCC 10",
+		"Linux 20.04 GCC 10 32/64 ASAN",
 		"cppalliance/droneubuntu2004:1",
-		{ TOOLSET: 'gcc', COMPILER: 'g++-10', CXXSTD: '03,11,14,17,20' },
-		"g++-10",
+		{ TOOLSET: 'gcc', COMPILER: 'g++-10', CXXSTD: '03,11,14,17,20', ADDRMD: '32,64' } + asan,
+		"g++-10-multilib",
 	),
 
 	linux_pipeline(
