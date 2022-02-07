@@ -71,7 +71,7 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 				'git clone -b %BOOST_BRANCH% --depth 1 https://github.com/boostorg/boost.git boost-root',
 				'cd boost-root',
 				'git submodule update --init tools/boostdep',
-				'xcopy /s /e /q %DRONE_BUILD_DIR% libs\\%SELF%\\',
+				'xcopy /s /e /q %DRONE_BUILD_DIR% libs\\\\%SELF%\\\\',
 				'python tools/boostdep/depinst/depinst.py %SELF%',
 				'cmd /c bootstrap',
 				'b2 -d0 headers',
@@ -176,5 +176,9 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 		["deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main"],
 	),
 
-	#windows_pipeline("Windows VS2015 msvc-14.0", "cppalliance/dronevs2015", { TOOLSET: 'msvc-14.0', CXXSTD: '14,latest' }, ),
+	windows_pipeline(
+		"Windows VS2015 msvc-14.0",
+		"cppalliance/dronevs2015",
+		{ TOOLSET: 'msvc-14.0', CXXSTD: '14,latest' },
+	),
 ]
