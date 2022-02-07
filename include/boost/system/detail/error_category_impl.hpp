@@ -14,6 +14,7 @@
 #include <boost/system/detail/error_condition.hpp>
 #include <boost/system/detail/error_code.hpp>
 #include <boost/system/detail/snprintf.hpp>
+#include <boost/system/detail/config.hpp>
 #include <boost/config.hpp>
 #include <string>
 #include <cstring>
@@ -108,7 +109,7 @@ inline error_category::operator std::error_category const & () const
     if( id_ == detail::generic_category_id )
     {
 // This condition must be the same as the one in error_condition.hpp
-#if defined(BOOST_LIBSTDCXX_VERSION) && BOOST_LIBSTDCXX_VERSION < 50000
+#if defined(BOOST_SYSTEM_AVOID_STD_GENERIC_CATEGORY)
 
     static const boost::system::detail::std_category generic_instance( this, 0x1F4D3 );
     return generic_instance;
@@ -123,12 +124,7 @@ inline error_category::operator std::error_category const & () const
     if( id_ == detail::system_category_id )
     {
 // This condition must be the same as the one in error_code.hpp
-#if defined(__CYGWIN__) || defined(__MINGW32__) || (defined(_MSC_VER) && _MSC_VER == 1800) || (defined(BOOST_LIBSTDCXX_VERSION) && BOOST_LIBSTDCXX_VERSION < 90000)
-
-    // Under Cygwin (and MinGW!), std::system_category() is POSIX
-    // Under VS2013, std::system_category() isn't quite right
-    // Under libstdc++ before 7.4, before 8.3, before 9.1, default_error_condition
-    // for the system category returns a condition from the system category
+#if defined(BOOST_SYSTEM_AVOID_STD_SYSTEM_CATEGORY)
 
     static const boost::system::detail::std_category system_instance( this, 0x1F4D7 );
     return system_instance;
