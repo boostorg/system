@@ -41,8 +41,30 @@ local linux_pipeline(name, image, environment, packages = "", sources = [], arch
     ]
 };
 
-local macos_pipeline =
+local macos_pipeline(name, environment, xcode_version = "12.2", osx_version = "catalina", arch = "amd64") =
 {
+	name: name,
+	kind: "pipeline",
+	type: "exec",
+	trigger: triggers,
+	platform: {
+		"os": "darwin",
+		"arch": arch
+	},
+	node: {
+		"os": osx_version
+	},
+	steps: [
+		{
+			name: "everything",
+			environment: environment + { "DEVELOPER_DIR": "/Applications/Xcode-" + xcode_version + ".app/Contents/Developer" },
+			commands:
+			[
+				'export LIBRARY=' + library,
+				'./.drone/drone.sh',
+			]
+		}
+	]
 };
 
 local windows_pipeline(name, image, environment, arch = "amd64") =
@@ -163,9 +185,32 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 		["deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main"],
 	),
 
+	macos_pipeline(
+		"MacOS 10.15 Xcode 12.2 UBSAN",
+		{'UBSAN': '1', 'TOOLSET': 'clang', 'COMPILER': 'clang++', 'CXXSTD': '03,11,14,1z'},
+	),
+
 	windows_pipeline(
 		"Windows VS2015 msvc-14.0",
 		"cppalliance/dronevs2015",
 		{ TOOLSET: 'msvc-14.0', CXXSTD: '14,latest' },
+	),
+
+	windows_pipeline(
+		"Windows VS2017 msvc-14.1",
+		"cppalliance/dronevs2017",
+		{ TOOLSET: 'msvc-14.1', CXXSTD: '14,17,latest' },
+	),
+
+	windows_pipeline(
+		"Windows VS2019 msvc-14.2",
+		"cppalliance/dronevs2019",
+		{ TOOLSET: 'msvc-14.2', CXXSTD: '14,17,20,latest' },
+	),
+
+	windows_pipeline(
+		"Windows VS2022 msvc-14.3",
+		"cppalliance/dronevs2022:1",
+		{ TOOLSET: 'msvc-14.3', CXXSTD: '14,17,20,latest' },
 	),
 ]
