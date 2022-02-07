@@ -26,10 +26,11 @@ local linux_pipeline(name, image, environment, packages = "", sources = [], arch
 			"environment": environment,
 			"commands":
 			[
-				'set -e'
+				'set -e',
+				'wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -',
 			] +
 			(if sources != [] then [ ('apt-add-repository "' + source + '"') for source in sources ] else []) +
-			(if packages != "" then [ "apt-get update; apt-get -y install " + packages ] else []) +
+			(if packages != "" then [ 'apt-get update', 'apt-get -y install ' + packages ] else []) +
 			[
 				'SELF=system',
 
@@ -46,7 +47,7 @@ local linux_pipeline(name, image, environment, packages = "", sources = [], arch
 				'./b2 -d0 headers',
 
 				'echo "using $TOOLSET : : $COMPILER ;" > ~/user-config.jam',
-				'./b2 -j3 libs/$SELF/test toolset=$TOOLSET cxxstd=$CXXSTD variant=debug,release ${ADDRMD:+address-model=$ADDRMD} ${UBSAN:+cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=undefined linkflags=-fsanitize=undefined define=UBSAN=1 debug-symbols=on} ${LINKFLAGS:+linkflags=$LINKFLAGS}'
+				'./b2 -j3 libs/$SELF/test toolset=$TOOLSET cxxstd=$CXXSTD variant=debug,release ${ADDRMD:+address-model=$ADDRMD} ${UBSAN:+cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=undefined linkflags=-fsanitize=undefined define=UBSAN=1 debug-symbols=on} ${LINKFLAGS:+linkflags=$LINKFLAGS}',
 			]
 		}
     ]
@@ -86,6 +87,13 @@ local windows_pipeline =
 		"cppalliance/droneubuntu2004:multiarch",
 		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '17', ADDRMD: '64' },
 		arch="arm64",
+	),
+
+	linux_pipeline(
+		"Linux 20.04 GCC 10",
+		"cppalliance/droneubuntu2004:1",
+		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '17', ADDRMD: '64' },
+		"gcc-10",
 	),
 
 	linux_pipeline(
