@@ -21,10 +21,10 @@ local linux_pipeline(name, image, environment, packages = "", sources = [], arch
     steps:
     [
 		{
-			"name": "everything",
-			"image": image,
-			"environment": environment,
-			"commands":
+			name: "everything",
+			image: image,
+			environment: environment,
+			commands:
 			[
 				'set -e',
 				'wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -',
@@ -43,8 +43,44 @@ local macos_pipeline =
 {
 };
 
-local windows_pipeline =
+local windows_pipeline(name, image, environment, arch = "amd64") =
 {
+	name: name,
+	kind: "pipeline",
+	type: "docker",
+	trigger: triggers,
+	platform:
+	{
+		os: "windows",
+		arch: arch
+	},
+	"steps":
+	[
+		{
+			name: "everything",
+			image: image,
+			environment: environment,
+			commands:
+			[
+				'set SELF=system',
+
+				'set DRONE_BUILD_DIR=%CD%',
+				'set BOOST_BRANCH=develop',
+				'if "%DRONE_BRANCH%" == "master" set BOOST_BRANCH=master',
+				'cd ..',
+				'git clone -b %BOOST_BRANCH% --depth 1 https://github.com/boostorg/boost.git boost-root',
+				'cd boost-root',
+				'git submodule update --init tools/boostdep',
+				'xcopy /s /e /q %DRONE_BUILD_DIR% libs\%SELF%\',
+				'python tools/boostdep/depinst/depinst.py %SELF%',
+				'cmd /c bootstrap',
+				'b2 -d0 headers',
+				'if not "%CXXSTD%" == "" set CXXSTD=cxxstd=%CXXSTD%',
+				'if not "%ADDRMD%" == "" set ADDRMD=address-model=%ADDRMD%',
+				'b2 -j3 libs/%SELF%/test toolset=%TOOLSET% %CXXSTD% %ADDRMD% variant=debug,release embed-manifest-via=linker',
+			]
+		}
+	]
 };
 
 [
@@ -138,5 +174,11 @@ local windows_pipeline =
 		{ TOOLSET: 'clang', COMPILER: 'clang++-14', CXXSTD: '03,11,14,17,20' },
 		"clang-14",
 		["deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main"],
+	),
+
+	windows_pipeline(
+		"Windows VS2015 msvc-14.0",
+		"cppalliance/dronevs2015",
+		{ TOOLSET: 'msvc-14.0', CXXSTD: '14,latest' },
 	),
 ]
