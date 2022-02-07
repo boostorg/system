@@ -144,7 +144,7 @@ run std_interop_test12.cpp ;
 
 import ../../config/checks/config : requires ;
 
-CPP11 = [ requires cxx11_variadic_templates cxx11_template_aliases cxx11_decltype cxx11_constexpr cxx11_noexcept ] ;
+CPP11 = [ requires cxx11_variadic_templates cxx11_template_aliases cxx11_decltype cxx11_constexpr cxx11_noexcept ] <toolset>gcc-4.7:<build>no ;
 
 run result_default_construct.cpp : : : $(CPP11) ;
 run result_value_construct.cpp : : : $(CPP11) ;
