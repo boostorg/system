@@ -65,7 +65,7 @@ local windows_pipeline =
 	linux_pipeline(
 		"Linux 18.04 GCC 8",
 		"cppalliance/droneubuntu1804:1",
-		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '14', ADDRMD: '64' },
+		{ TOOLSET: 'gcc', COMPILER: 'g++-8', CXXSTD: '14', ADDRMD: '64' },
 		"gcc-8",
 	),
 
@@ -76,23 +76,29 @@ local windows_pipeline =
 	),
 
 	linux_pipeline(
-		"Linux 20.04 GCC 9+",
+		"Linux 20.04 GCC 9 32/64",
 		"cppalliance/droneubuntu2004:1",
-		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '17', ADDRMD: '64' },
-		"gcc-9",
+		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '17', ADDRMD: '32,64' },
 	),
 
 	linux_pipeline(
 		"Linux 20.04 GCC 9 ARM",
 		"cppalliance/droneubuntu2004:multiarch",
-		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '17', ADDRMD: '64' },
+		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '17', ADDRMD: '32,64' },
 		arch="arm64",
 	),
 
 	linux_pipeline(
 		"Linux 20.04 GCC 10",
 		"cppalliance/droneubuntu2004:1",
-		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '17', ADDRMD: '64' },
+		{ TOOLSET: 'gcc', COMPILER: 'g++-10', CXXSTD: '17', ADDRMD: '64' },
+		"gcc-10",
+	),
+
+	linux_pipeline(
+		"Linux 20.04 GCC 10 32/64",
+		"cppalliance/droneubuntu2004:1",
+		{ TOOLSET: 'gcc', COMPILER: 'g++-10', CXXSTD: '17', ADDRMD: '32,64' },
 		"gcc-10",
 	),
 
