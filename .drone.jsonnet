@@ -7,7 +7,7 @@ local triggers =
 	branch: [ "master", "develop", "feature/*" ]
 };
 
-local linux_pipeline(name, image, environment, packages = "", sources = "", arch = "amd64") =
+local linux_pipeline(name, image, environment, packages = "", sources = [], arch = "amd64") =
 {
 	name: name,
     kind: "pipeline",
@@ -25,13 +25,11 @@ local linux_pipeline(name, image, environment, packages = "", sources = "", arch
 			"image": image,
 			"environment": environment,
 			"commands":
-			[
-				'set -e',
-
+			[ 'set -e' ]
+			+ (if sources != [] then [ ("apt-add-repository " + source) for source in sources ] else [])
+			+ (if packages != "" then [ "apt-get update; apt-get install " + packages ] else [])
+			+ [
 				'SELF=system',
-
-				if sources != "" then "apt-add-repository " + sources else "",
-				if packages != "" then "apt-get install " + packages else "",
 
 				'DRONE_BUILD_DIR=$(pwd)',
 				'BOOST_BRANCH=develop',
@@ -86,6 +84,6 @@ local windows_pipeline =
 		"cppalliance/droneubuntu2004:1",
 		{ TOOLSET: 'clang', COMPILER: 'clang++-13', CXXSTD: '17', ADDRMD: '64' },
 		"clang-13",
-		"deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main"
+		["deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main"]
 	),
 ]
