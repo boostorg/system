@@ -113,6 +113,14 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 	),
 
 	linux_pipeline(
+		"Linux 14.04 GCC 4.7",
+		"cppalliance/droneubuntu1404:1",
+		{ TOOLSET: 'gcc', COMPILER: 'g++-4.7', CXXSTD: '98,0x' },
+		"g++-4.7",
+		[ "ppa:ubuntu-toolchain-r/test" ],
+	),
+
+	linux_pipeline(
 		"Linux 14.04 GCC 4.8*",
 		"cppalliance/droneubuntu1404:1",
 		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '03,11' },
@@ -153,9 +161,15 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 	),
 
 	linux_pipeline(
-		"Linux 20.04 GCC 9* 32/64",
+		"Linux 20.04 GCC 9* 32",
 		"cppalliance/droneubuntu2004:1",
-		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '03,11,14,17,2a', ADDRMD: '32,64' },
+		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '03,11,14,17,2a', ADDRMD: '32' },
+	),
+
+	linux_pipeline(
+		"Linux 20.04 GCC 9* 64",
+		"cppalliance/droneubuntu2004:1",
+		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '03,11,14,17,2a', ADDRMD: '64' },
 	),
 
 	linux_pipeline(
@@ -166,16 +180,23 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 	),
 
 	linux_pipeline(
-		"Linux 20.04 GCC 10 32/64 ASAN",
+		"Linux 20.04 GCC 10 32 ASAN",
 		"cppalliance/droneubuntu2004:1",
-		{ TOOLSET: 'gcc', COMPILER: 'g++-10', CXXSTD: '03,11,14,17,20', ADDRMD: '32,64' } + asan,
+		{ TOOLSET: 'gcc', COMPILER: 'g++-10', CXXSTD: '03,11,14,17,20', ADDRMD: '32' } + asan,
 		"g++-10-multilib",
 	),
 
 	linux_pipeline(
-		"Linux 20.04 Clang 13 UBSAN",
+		"Linux 20.04 GCC 10 64 ASAN",
 		"cppalliance/droneubuntu2004:1",
-		{ TOOLSET: 'clang', COMPILER: 'clang++-13', CXXSTD: '03,11,14,17,20' } + ubsan,
+		{ TOOLSET: 'gcc', COMPILER: 'g++-10', CXXSTD: '03,11,14,17,20', ADDRMD: '64' } + asan,
+		"g++-10-multilib",
+	),
+
+	linux_pipeline(
+		"Linux 20.04 Clang 13",
+		"cppalliance/droneubuntu2004:1",
+		{ TOOLSET: 'clang', COMPILER: 'clang++-13', CXXSTD: '03,11,14,17,20' },
 		"clang-13",
 		["deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main"],
 	),
