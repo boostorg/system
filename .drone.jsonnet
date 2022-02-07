@@ -32,22 +32,8 @@ local linux_pipeline(name, image, environment, packages = "", sources = [], arch
 			(if sources != [] then [ ('apt-add-repository "' + source + '"') for source in sources ] else []) +
 			(if packages != "" then [ 'apt-get update', 'apt-get -y install ' + packages ] else []) +
 			[
-				'SELF=system',
-
-				'DRONE_BUILD_DIR=$(pwd)',
-				'BOOST_BRANCH=develop',
-				'if [ "$DRONE_BRANCH" = "master" ]; then BOOST_BRANCH=master; fi',
-				'cd ..',
-				'git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root',
-				'cd boost-root',
-				'git submodule update --init tools/boostdep',
-				'cp -r $DRONE_BUILD_DIR/* libs/$SELF',
-				'python tools/boostdep/depinst/depinst.py $SELF',
-				'./bootstrap.sh',
-				'./b2 -d0 headers',
-
-				'echo "using $TOOLSET : : $COMPILER ;" > ~/user-config.jam',
-				'./b2 -j3 libs/$SELF/test toolset=$TOOLSET cxxstd=$CXXSTD variant=debug,release ${ADDRMD:+address-model=$ADDRMD} ${UBSAN:+cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=undefined linkflags=-fsanitize=undefined define=UBSAN=1 debug-symbols=on} ${LINKFLAGS:+linkflags=$LINKFLAGS}',
+				'export SELF=system',
+				'./.drone/drone.sh',
 			]
 		}
     ]
