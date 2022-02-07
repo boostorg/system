@@ -9,6 +9,9 @@ local triggers =
 	branch: [ "master", "develop", "feature/*" ]
 };
 
+local ubsan = { UBSAN: '1', UBSAN_OPTIONS: 'print_stacktrace=1' };
+local asan = { ASAN: '1' };
+
 local linux_pipeline(name, image, environment, packages = "", sources = [], arch = "amd64") =
 {
 	name: name,
@@ -172,7 +175,7 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 	linux_pipeline(
 		"Linux 20.04 Clang 13 UBSAN",
 		"cppalliance/droneubuntu2004:1",
-		{ UBSAN: '1', TOOLSET: 'clang', COMPILER: 'clang++-13', CXXSTD: '03,11,14,17,20' },
+		{ TOOLSET: 'clang', COMPILER: 'clang++-13', CXXSTD: '03,11,14,17,20' } + ubsan,
 		"clang-13",
 		["deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main"],
 	),
@@ -180,14 +183,27 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 	linux_pipeline(
 		"Linux 20.04 Clang 14 UBSAN",
 		"cppalliance/droneubuntu2004:1",
-		{ UBSAN: '1', TOOLSET: 'clang', COMPILER: 'clang++-14', CXXSTD: '03,11,14,17,20' },
+		{ TOOLSET: 'clang', COMPILER: 'clang++-14', CXXSTD: '03,11,14,17,20' } + ubsan,
+		"clang-14",
+		["deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main"],
+	),
+
+	linux_pipeline(
+		"Linux 20.04 Clang 14 ASAN",
+		"cppalliance/droneubuntu2004:1",
+		{ TOOLSET: 'clang', COMPILER: 'clang++-14', CXXSTD: '03,11,14,17,20' } + asan,
 		"clang-14",
 		["deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main"],
 	),
 
 	macos_pipeline(
 		"MacOS 10.15 Xcode 12.2 UBSAN",
-		{ UBSAN: '1', TOOLSET: 'clang', COMPILER: 'clang++', CXXSTD: '03,11,14,1z' },
+		{ TOOLSET: 'clang', COMPILER: 'clang++', CXXSTD: '03,11,14,1z' } + ubsan,
+	),
+
+	macos_pipeline(
+		"MacOS 10.15 Xcode 12.2 ASAN",
+		{ TOOLSET: 'clang', COMPILER: 'clang++', CXXSTD: '03,11,14,1z' } + asan,
 	),
 
 	windows_pipeline(
