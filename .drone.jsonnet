@@ -71,7 +71,7 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 				'git clone -b %BOOST_BRANCH% --depth 1 https://github.com/boostorg/boost.git boost-root',
 				'cd boost-root',
 				'git submodule update --init tools/boostdep',
-				'xcopy /s /e /q %DRONE_BUILD_DIR% libs\%SELF%\',
+				'xcopy /s /e /q %DRONE_BUILD_DIR% libs\\%SELF%\\',
 				'python tools/boostdep/depinst/depinst.py %SELF%',
 				'cmd /c bootstrap',
 				'b2 -d0 headers',
@@ -149,7 +149,7 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 	linux_pipeline(
 		"Linux 20.04 GCC 9 ARM64 32/64",
 		"cppalliance/droneubuntu2004:multiarch",
-		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '17', ADDRMD: '32,64' },
+		{ TOOLSET: 'gcc', COMPILER: 'g++', CXXSTD: '03,11,14,17,2a', ADDRMD: '32,64' },
 		arch="arm64",
 	),
 
