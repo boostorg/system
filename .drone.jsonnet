@@ -176,9 +176,5 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 		["deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main"],
 	),
 
-	windows_pipeline(
-		"Windows VS2015 msvc-14.0",
-		"cppalliance/dronevs2015",
-		{ TOOLSET: 'msvc-14.0', CXXSTD: '14,latest' },
-	),
+	#windows_pipeline("Windows VS2015 msvc-14.0", "cppalliance/dronevs2015", { TOOLSET: 'msvc-14.0', CXXSTD: '14,latest' }, ),
 ]
