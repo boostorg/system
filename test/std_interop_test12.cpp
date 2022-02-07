@@ -92,7 +92,11 @@ template<> struct std::is_error_code_enum<my_errc>: std::true_type {};
 
 boost::system::error_code make_error_code( my_errc e )
 {
-    static BOOST_SYSTEM_CONSTEXPR my_category cat;
+    // If `cat` is declared constexpr or const, msvc-14.1 and
+    // msvc-14.2 before 19.29 put it in read-only memory,
+    // despite the `ps_` member being mutable. So it crashes.
+
+    static /*BOOST_SYSTEM_CONSTEXPR*/ my_category cat;
     return boost::system::error_code( e, cat );
 }
 
