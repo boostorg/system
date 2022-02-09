@@ -37,7 +37,7 @@ BOOST_SYSTEM_CONSTEXPR inline error_code make_error_code( errc_t e ) BOOST_NOEXC
 }
 
 // explicit conversion:
-inline error_code make_error_code( errc_t e, boost::source_location const* loc ) BOOST_NOEXCEPT
+inline error_code make_error_code( errc_t e, boost::source_location const * loc ) BOOST_NOEXCEPT
 {
     return error_code( e, generic_category(), loc );
 }

@@ -185,8 +185,12 @@ namespace errc {
 template<> struct is_error_condition_enum<errc::errc_t>
   { static const bool value = true; };
 
-constexpr error_code make_error_code( errc::errc_t e ) noexcept;
 constexpr error_condition make_error_condition( errc::errc_t e ) noexcept;
+
+constexpr error_code make_error_code( errc::errc_t e ) noexcept;
+
+error_code make_error_code( errc::errc_t e,
+  boost::source_location const * loc ) noexcept;
 
 } // namespace system
 } // namespace boost
@@ -249,6 +253,38 @@ void my_api_function( boost::system::error_code& ec )
     {
         // return ENOMEM
         ec = make_error_code( boost::system::errc::out_of_memory );
+        return;
+    }
+
+    // use p
+}
+```
+
+```
+constexpr error_code make_error_code( errc::errc_t e,
+  boost::source_location const * loc ) noexcept;
+```
+[none]
+* {blank}
++
+Returns: :: `error_code( e, generic_category(), loc )`.
+
+Same as the above overload, but takes a source location.
+* {blank}
++
+```
+void my_api_function( boost::system::error_code& ec )
+{
+    void* p = std::malloc( 16 );
+
+    if( p == 0 )
+    {
+        // return ENOMEM
+
+        BOOST_STATIC_CONSTEXPR boost::source_location loc =
+          BOOST_CURRENT_LOCATION;
+
+        ec = make_error_code( boost::system::errc::out_of_memory, &loc );
         return;
     }
 
