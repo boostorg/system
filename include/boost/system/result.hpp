@@ -35,12 +35,12 @@ namespace system
 
 BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( error_code const & e, boost::source_location const& loc )
 {
-    boost::throw_exception( system_error( e ), loc );
+    boost::throw_with_location( system_error( e ), loc );
 }
 
 BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( std::error_code const & e, boost::source_location const& loc )
 {
-    boost::throw_exception( std::system_error( e ), loc );
+    boost::throw_with_location( std::system_error( e ), loc );
 }
 
 #if defined(__GNUC__) && __GNUC__ >= 7 && __GNUC__ <= 8
