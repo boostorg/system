@@ -1533,7 +1533,7 @@ BOOST_NORETURN inline void throw_exception_from_error( error_code const & e,
 * {blank}
 +
 Effects: ::
-  `boost::throw_exception( system_error( e ), loc )`.
+  `boost::throw_with_location( system_error( e ), loc )`.
 
 ```
 BOOST_NORETURN inline void throw_exception_from_error( std::error_code const & e,
@@ -1543,7 +1543,7 @@ BOOST_NORETURN inline void throw_exception_from_error( std::error_code const & e
 * {blank}
 +
 Effects: ::
-  `boost::throw_exception( std::system_error( e ), loc )`.
+  `boost::throw_with_location( std::system_error( e ), loc )`.
 
 ### result<T, E>
 
