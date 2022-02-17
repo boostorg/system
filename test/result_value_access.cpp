@@ -183,6 +183,34 @@ int main()
     }
 
     {
+        result<int, errc::errc_t> const r( in_place_error, errc::invalid_argument );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_NOT( r );
+        BOOST_TEST( !r );
+
+        BOOST_TEST_THROWS( r.value(), system_error );
+
+        BOOST_TEST_EQ( r.operator->(), static_cast<int*>(0) );
+    }
+
+    {
+        result<int, std::errc> const r( std::errc::invalid_argument );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_NOT( r );
+        BOOST_TEST( !r );
+
+        BOOST_TEST_THROWS( r.value(), std::system_error );
+
+        BOOST_TEST_EQ( r.operator->(), static_cast<int*>(0) );
+    }
+
+    {
         result<X> r( 1 );
 
         BOOST_TEST( r.has_value() );
@@ -362,6 +390,34 @@ int main()
         auto ec = make_error_code( std::errc::invalid_argument );
 
         result<void, std::error_code> const r( ec );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_NOT( r );
+        BOOST_TEST( !r );
+
+        BOOST_TEST_THROWS( r.value(), std::system_error );
+
+        BOOST_TEST_EQ( r.operator->(), static_cast<void*>(0) );
+    }
+
+    {
+        result<void, errc::errc_t> const r( in_place_error, errc::invalid_argument );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_NOT( r );
+        BOOST_TEST( !r );
+
+        BOOST_TEST_THROWS( r.value(), system_error );
+
+        BOOST_TEST_EQ( r.operator->(), static_cast<void*>(0) );
+    }
+
+    {
+        result<void, std::errc> const r( std::errc::invalid_argument );
 
         BOOST_TEST( !r.has_value() );
         BOOST_TEST( r.has_error() );

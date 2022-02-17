@@ -38,9 +38,19 @@ BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( error_code
     boost::throw_with_location( system_error( e ), loc );
 }
 
+BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( errc::errc_t const & e, boost::source_location const& loc )
+{
+    boost::throw_with_location( system_error( make_error_code( e ) ), loc );
+}
+
 BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( std::error_code const & e, boost::source_location const& loc )
 {
     boost::throw_with_location( std::system_error( e ), loc );
+}
+
+BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( std::errc const & e, boost::source_location const& loc )
+{
+    boost::throw_with_location( std::system_error( make_error_code( e ) ), loc );
 }
 
 #if defined(__GNUC__) && __GNUC__ >= 7 && __GNUC__ <= 8
