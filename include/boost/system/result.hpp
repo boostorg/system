@@ -18,6 +18,7 @@
 #include <utility>
 #include <iosfwd>
 #include <system_error>
+#include <exception>
 
 //
 
@@ -51,6 +52,18 @@ BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( std::error
 BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( std::errc const & e, boost::source_location const& loc )
 {
     boost::throw_with_location( std::system_error( make_error_code( e ) ), loc );
+}
+
+BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( std::exception_ptr const & p, boost::source_location const& loc )
+{
+    if( p )
+    {
+        std::rethrow_exception( p );
+    }
+    else
+    {
+        boost::throw_with_location( std::bad_exception(), loc );
+    }
 }
 
 #if defined(__GNUC__) && __GNUC__ >= 7 && __GNUC__ <= 8

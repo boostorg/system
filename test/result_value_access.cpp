@@ -32,6 +32,10 @@ BOOST_NORETURN void throw_exception_from_error( Y const &, boost::source_locatio
     throw E();
 }
 
+struct E2
+{
+};
+
 int main()
 {
     {
@@ -206,6 +210,34 @@ int main()
         BOOST_TEST( !r );
 
         BOOST_TEST_THROWS( r.value(), std::system_error );
+
+        BOOST_TEST_EQ( r.operator->(), static_cast<int*>(0) );
+    }
+
+    {
+        result<int, std::exception_ptr> const r( std::make_exception_ptr( E2() ) );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_NOT( r );
+        BOOST_TEST( !r );
+
+        BOOST_TEST_THROWS( r.value(), E2 );
+
+        BOOST_TEST_EQ( r.operator->(), static_cast<int*>(0) );
+    }
+
+    {
+        result<int, std::exception_ptr> const r( in_place_error );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_NOT( r );
+        BOOST_TEST( !r );
+
+        BOOST_TEST_THROWS( r.value(), std::bad_exception );
 
         BOOST_TEST_EQ( r.operator->(), static_cast<int*>(0) );
     }
@@ -426,6 +458,34 @@ int main()
         BOOST_TEST( !r );
 
         BOOST_TEST_THROWS( r.value(), std::system_error );
+
+        BOOST_TEST_EQ( r.operator->(), static_cast<void*>(0) );
+    }
+
+    {
+        result<void, std::exception_ptr> const r( std::make_exception_ptr( E2() ) );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_NOT( r );
+        BOOST_TEST( !r );
+
+        BOOST_TEST_THROWS( r.value(), E2 );
+
+        BOOST_TEST_EQ( r.operator->(), static_cast<void*>(0) );
+    }
+
+    {
+        result<void, std::exception_ptr> const r( in_place_error );
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_NOT( r );
+        BOOST_TEST( !r );
+
+        BOOST_TEST_THROWS( r.value(), std::bad_exception );
 
         BOOST_TEST_EQ( r.operator->(), static_cast<void*>(0) );
     }
