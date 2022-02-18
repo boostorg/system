@@ -1496,6 +1496,15 @@ BOOST_NORETURN inline void throw_exception_from_error( error_code const & e,
 BOOST_NORETURN inline void throw_exception_from_error( std::error_code const & e,
   boost::source_location const & loc );
 
+BOOST_NORETURN inline void throw_exception_from_error( errc::errc_t const & e,
+  boost::source_location const & loc );
+
+BOOST_NORETURN inline void throw_exception_from_error( std::errc const & e,
+  boost::source_location const & loc );
+
+BOOST_NORETURN inline void throw_exception_from_error( std::exception_ptr & e,
+  boost::source_location const & loc );
+
 // in_place_*
 
 using in_place_value_t = /*unspecified*/;
@@ -1544,6 +1553,39 @@ BOOST_NORETURN inline void throw_exception_from_error( std::error_code const & e
 +
 Effects: ::
   `boost::throw_with_location( std::system_error( e ), loc )`.
+
+```
+BOOST_NORETURN inline void throw_exception_from_error( errc::errc_t const & e,
+  boost::source_location const & loc );
+```
+[none]
+* {blank}
++
+Effects: ::
+  `boost::throw_with_location( system_error( make_error_code( e ) ), loc )`.
+
+```
+BOOST_NORETURN inline void throw_exception_from_error( std::errc const & e,
+  boost::source_location const & loc );
+```
+[none]
+* {blank}
++
+Effects: ::
+  `boost::throw_with_location( std::system_error( make_error_code( e ) ), loc )`.
+
+```
+BOOST_NORETURN inline void throw_exception_from_error( std::exception_ptr & e,
+  boost::source_location const & loc );
+```
+[none]
+* {blank}
++
+Effects: ::
++
+[disc]
+** If `e` isn't null, `std::rethrow_exception( e )`.
+** Otherwise, `boost::throw_with_location( std::bad_exception(), loc )`.
 
 ### result<T, E>
 
