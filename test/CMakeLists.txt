@@ -119,6 +119,7 @@ boost_test(TYPE run SOURCES std_interop_test12.cpp)
 boost_test(TYPE run SOURCES errc_test4.cpp)
 
 boost_test(TYPE run SOURCES std_interop_test13.cpp)
+boost_test(TYPE run SOURCES std_interop_test14.cpp)
 
 # result
 

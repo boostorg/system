@@ -143,6 +143,7 @@ run std_interop_test12.cpp ;
 run errc_test4.cpp ;
 
 run std_interop_test13.cpp ;
+run std_interop_test14.cpp ;
 
 # result
 
