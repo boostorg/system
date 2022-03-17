@@ -21,6 +21,11 @@
 #include <boost/system/detail/append_int.hpp>
 #include <boost/system/detail/snprintf.hpp>
 #include <boost/system/detail/config.hpp>
+
+#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
+# include <boost/system/detail/std_category.hpp>
+#endif
+
 #include <boost/assert/source_location.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/config.hpp>
@@ -158,9 +163,21 @@ public:
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
     error_code( std::error_code const& ec ) BOOST_NOEXCEPT:
-        lc_flags_( 1 )
+        d1_(), lc_flags_( 0 )
     {
-        ::new( d2_ ) std::error_code( ec );
+#ifndef BOOST_NO_RTTI
+
+        if( detail::std_category const* pc2 = dynamic_cast< detail::std_category const* >( &ec.category() ) )
+        {
+            *this = boost::system::error_code( ec.value(), pc2->original_category() );
+        }
+        else
+
+#endif
+        {
+            ::new( d2_ ) std::error_code( ec );
+            lc_flags_ = 1;
+        }
     }
 
 #endif

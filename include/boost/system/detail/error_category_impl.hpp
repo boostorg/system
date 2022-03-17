@@ -97,7 +97,7 @@ inline char const * error_category::message( int ev, char * buffer, std::size_t 
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
-#include <boost/system/detail/std_category.hpp>
+#include <boost/system/detail/std_category_impl.hpp>
 
 namespace boost
 {
