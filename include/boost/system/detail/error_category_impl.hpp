@@ -143,6 +143,19 @@ inline error_category::operator std::error_category const & () const
         return *p;
     }
 
+    // One `std_category` object is allocated for every
+    // user-defined `error_category` that is converted to
+    // `std::error_category`.
+    //
+    // This one-time allocation will show up on leak checkers.
+    // That's unavoidable. There is no way to deallocate the
+    // `std_category` object because first, `error_category`
+    // is a literal type (so it can't have a destructor) and
+    // second, `error_category` needs to be usable during program
+    // shutdown.
+    //
+    // https://github.com/boostorg/system/issues/78
+
     detail::std_category* q = new detail::std_category( this, 0 );
 
     if( ps_.compare_exchange_strong( p, q, std::memory_order_release, std::memory_order_acquire ) )
