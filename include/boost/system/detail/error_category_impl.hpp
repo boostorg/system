@@ -176,7 +176,7 @@ inline error_category::operator std::error_category const & () const
         init_stdcat();
     }
 
-    return *reinterpret_cast<boost::system::detail::std_category const*>( stdcat_ );
+    return *static_cast<boost::system::detail::std_category const*>( static_cast<void const*>( stdcat_ ) );
 }
 
 } // namespace system
