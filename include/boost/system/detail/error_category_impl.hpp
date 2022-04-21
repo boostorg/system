@@ -139,6 +139,11 @@ inline BOOST_NOINLINE void error_category::init_stdcat() const
     }
 }
 
+#if defined( BOOST_GCC ) && BOOST_GCC >= 40800 && BOOST_GCC < 70000
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif
+
 inline error_category::operator std::error_category const & () const
 {
     if( id_ == detail::generic_category_id )
@@ -178,6 +183,10 @@ inline error_category::operator std::error_category const & () const
 
     return *static_cast<boost::system::detail::std_category const*>( static_cast<void const*>( stdcat_ ) );
 }
+
+#if defined( BOOST_GCC ) && BOOST_GCC >= 40800 && BOOST_GCC < 70000
+#pragma GCC diagnostic pop
+#endif
 
 } // namespace system
 } // namespace boost
