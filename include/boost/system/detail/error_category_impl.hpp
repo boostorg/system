@@ -118,7 +118,7 @@ template<class T> std::mutex stdcat_mx_holder<T>::mx_;
 
 } // namespace detail
 
-inline BOOST_NOINLINE void error_category::init_stdcat() const
+inline void error_category::init_stdcat() const
 {
     static_assert( sizeof( stdcat_ ) >= sizeof( boost::system::detail::std_category ), "sizeof(stdcat_) is not enough for std_category" );
 
@@ -144,7 +144,7 @@ inline BOOST_NOINLINE void error_category::init_stdcat() const
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
-inline error_category::operator std::error_category const & () const
+inline BOOST_NOINLINE error_category::operator std::error_category const & () const
 {
     if( id_ == detail::generic_category_id )
     {
