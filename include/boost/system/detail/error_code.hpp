@@ -155,22 +155,6 @@ public:
         }
     }
 
-    template<class ErrorCodeEnum> error_code( ErrorCodeEnum e, source_location const * loc,
-        typename detail::enable_if<is_error_code_enum<ErrorCodeEnum>::value>::type* = 0 ) BOOST_NOEXCEPT:
-        d1_(), lc_flags_( 0 )
-    {
-        error_code e2 = make_error_code( e );
-
-        if( e2.lc_flags_ == 0 || e2.lc_flags_ == 1 )
-        {
-            *this = e2;
-        }
-        else
-        {
-            *this = error_code( e2.d1_.val_, *e2.d1_.cat_, loc );
-        }
-    }
-
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
     error_code( std::error_code const& ec ) BOOST_NOEXCEPT:
@@ -216,13 +200,6 @@ public:
     {
         *this = make_error_code( val );
         return *this;
-    }
-
-    template<typename ErrorCodeEnum>
-        typename detail::enable_if<is_error_code_enum<ErrorCodeEnum>::value, void>::type
-        assign( ErrorCodeEnum val, source_location const * loc ) BOOST_NOEXCEPT
-    {
-        *this = error_code( val, loc );
     }
 
     BOOST_SYSTEM_CONSTEXPR void clear() BOOST_NOEXCEPT
