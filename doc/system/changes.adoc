@@ -14,6 +14,8 @@ https://www.boost.org/LICENSE_1_0.txt
   to `error_code`, the original is now restored, if possible.
 * Reworked the conversion from `error_category` to `std::error_category`
   to avoid the one-time allocation that shows up on leak checkers.
+* Added a constructor that allows replacing the source location of an
+  `error_code`, and a corresponding `assign`.
 
 ## Changes in Boost 1.79
 
