@@ -145,6 +145,9 @@ run errc_test4.cpp ;
 run std_interop_test13.cpp ;
 run std_interop_test14.cpp ;
 
+run ec_location_test3.cpp ;
+run ec_location_test4.cpp ;
+
 # result
 
 import ../../config/checks/config : requires ;

@@ -144,6 +144,17 @@ public:
         *this = make_error_code( e );
     }
 
+    error_code( error_code const& ec, source_location const * loc ) BOOST_NOEXCEPT:
+        d1_(), lc_flags_( 0 )
+    {
+        *this = ec;
+
+        if( ec.lc_flags_ != 0 && ec.lc_flags_ != 1 )
+        {
+            lc_flags_ = ( loc? reinterpret_cast<boost::uintptr_t>( loc ): 2 ) | ( ec.lc_flags_ & 1 );
+        }
+    }
+
     template<class ErrorCodeEnum> error_code( ErrorCodeEnum e, source_location const * loc,
         typename detail::enable_if<is_error_code_enum<ErrorCodeEnum>::value>::type* = 0 ) BOOST_NOEXCEPT:
         d1_(), lc_flags_( 0 )
@@ -192,6 +203,11 @@ public:
     void assign( int val, const error_category & cat, source_location const * loc ) BOOST_NOEXCEPT
     {
         *this = error_code( val, cat, loc );
+    }
+
+    void assign( error_code const& ec, source_location const * loc ) BOOST_NOEXCEPT
+    {
+        *this = error_code( ec, loc );
     }
 
     template<typename ErrorCodeEnum>
