@@ -1608,6 +1608,12 @@ public:
     template<class... A>
       constexpr result( in_place_error_t, A&&... a );
 
+    template<class T2, class E2>
+      constexpr result( result<T2, E2> const& r2 );
+
+    template<class T2, class E2>
+      constexpr result( result<T2, E2>&& r2 );
+
     // queries
 
     constexpr bool has_value() const noexcept;
@@ -1715,6 +1721,30 @@ Ensures: ::
   `*this` holds the error `E( std::forward<A>(a)... )`.
 Remarks: ::
   This constructor is only enabled when `std::is_constructible<E, A...>::value` is `true`.
+
+```
+template<class T2, class E2>
+  constexpr result( result<T2, E2> const& r2 );
+```
+[none]
+* {blank}
++
+Ensures: ::
+  If `r2.has_value()` is `true`, `*this` holds the value `T( *r2 )`, otherwise `*this` holds the value `E( r2.error() )`.
+Remarks: ::
+  This constructor is only enabled when `std::is_convertible<T2, T>::value && std::is_convertible<E2, E>::value` is `true`.
+
+```
+template<class T2, class E2>
+  constexpr result( result<T2, E2>&& r2 );
+```
+[none]
+* {blank}
++
+Ensures: ::
+  If `r2.has_value()` is `true`, `*this` holds the value `T( std::move( *r2 ) )`, otherwise `*this` holds the value `E( r2.error() )`.
+Remarks: ::
+  This constructor is only enabled when `std::is_convertible<T2, T>::value && std::is_convertible<E2, E>::value` is `true`.
 
 #### Queries
 
