@@ -56,6 +56,14 @@
 # define BOOST_SYSTEM_DEPRECATED(msg)
 #endif
 
+// BOOST_SYSTEM_IMPLICIT
+
+#if __cplusplus >= 202002L
+# define BOOST_SYSTEM_IMPLICIT explicit( false )
+#else
+# define BOOST_SYSTEM_IMPLICIT
+#endif
+
 // BOOST_SYSTEM_CLANG_6
 
 #if defined(__clang__) && (__clang_major__ < 7 || (defined(__APPLE__) && __clang_major__ < 11))
