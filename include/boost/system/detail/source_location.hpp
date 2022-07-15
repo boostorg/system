@@ -97,6 +97,10 @@ private:
         return &loc_;                                                                    \
     }( BOOST_CURRENT_LOCATION ) )
 
+#elif defined(BOOST_NO_CXX11_LAMBDAS)
+
+# define BOOST_SYSTEM_NO_CURRENT_LOCATION_PTR 1
+
 #else
 
 // no function_name(), so it's OK to collect BOOST_CURRENT_LOCATION inside the lambda.

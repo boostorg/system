@@ -36,6 +36,7 @@ int main()
     int const val = ENOENT;
     boost::system::error_category const & cat = boost::system::generic_category();
 
+#if !defined(BOOST_SYSTEM_NO_CURRENT_LOCATION_PTR)
     {
         BOOST_STATIC_CONSTEXPR boost::source_location loc = BOOST_CURRENT_LOCATION;
 
@@ -51,6 +52,7 @@ int main()
         BOOST_TEST_EQ( ec.location().function_name(), loc.function_name() );
         BOOST_TEST_EQ( ec.location().line(), loc.line() + 2 );
     }
+#endif
 
     return boost::report_errors();
 }
