@@ -60,18 +60,6 @@ private:
 
 # define BOOST_SYSTEM_CURRENT_LOCATION_PTR ::boost::system::detail::source_location_ptr()
 
-#elif defined(BOOST_MSVC) && BOOST_MSVC >= 1926
-
-// MSVC allows use of __builtin_FUNCTION() as a template argument; everything else is the same inside the lambda as
-// outside.
-# define BOOST_SYSTEM_CURRENT_LOCATION_PTR ::boost::system::detail::source_location_ptr( \
-    []<char const* function_>()                                                          \
-    {                                                                                    \
-        static BOOST_SYSTEM_CONSTEXPR ::boost::source_location loc_(                     \
-            __builtin_FILE(), __builtin_LINE(), function_, __builtin_COLUMN() );         \
-        return &loc_;                                                                    \
-    }.template operator()<__builtin_FUNCTION()>() )
-
 #elif defined(__cpp_lib_source_location) && __cpp_lib_source_location >= 201907L && defined(BOOST_GCC)
 
 // gcc __builtin_source_location() returns std::source_location::__impl const* cast to void const*; we test that
