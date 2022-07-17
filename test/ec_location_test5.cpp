@@ -20,14 +20,18 @@ using std_source_location_impl = decltype( get_std_source_location_impl( get_std
 
 static_assert( static_cast< const std_source_location_impl* >( __builtin_source_location() )->_M_line == __LINE__ );
 
+# if __cpp_lib_is_layout_compatible >= 201907L
 static_assert( std::is_layout_compatible_v< boost::source_location, std_source_location_impl > );
+# endif
 
 #elif defined(__cpp_lib_source_location) && __cpp_lib_source_location >= 201907L && defined(BOOST_CLANG)
 
 static_assert( __builtin_source_location()->_M_line == __LINE__ );
 
+# if __cpp_lib_is_layout_compatible >= 201907L
 static_assert( std::is_layout_compatible_v< boost::source_location,
     std::remove_cvref_t< decltype( *__builtin_source_location() ) > > );
+# endif
 
 #endif
 
