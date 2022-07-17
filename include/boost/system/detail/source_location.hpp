@@ -86,8 +86,8 @@ private:
     reinterpret_cast<::boost::source_location const*>( __builtin_source_location() ) )
 
 #elif (defined(__cpp_lib_source_location) && __cpp_lib_source_location >= 201907L) \
-    || (defined(BOOST_CLANG) && BOOST_CLANG_VERSION >= 90000) \
-    || (defined(BOOST_GCC) && BOOST_GCC >= 50000)
+    || (defined(BOOST_CLANG) && BOOST_CLANG_VERSION >= 90000 && !defined(BOOST_NO_CXX11_LAMBDAS)) \
+    || (defined(BOOST_GCC) && BOOST_GCC >= 50000 && !defined(BOOST_NO_CXX11_LAMBDAS))
 
 // BOOST_CURRENT_LOCATION has function_name(), so we have to collect it outside the lambda.
 # define BOOST_SYSTEM_CURRENT_LOCATION_PTR ::boost::system::detail::source_location_ptr( \
@@ -99,6 +99,7 @@ private:
 
 #elif defined(BOOST_NO_CXX11_LAMBDAS)
 
+// Not implementable without C++11 lambdas.
 # define BOOST_SYSTEM_NO_CURRENT_LOCATION_PTR 1
 
 #else
