@@ -74,6 +74,7 @@ private:
     reinterpret_cast<::boost::source_location const*>( __builtin_source_location() ) )
 
 #elif (defined(__cpp_lib_source_location) && __cpp_lib_source_location >= 201907L) \
+    || (defined(BOOST_MSVC) && BOOST_MSVC >= 1926) \
     || (defined(BOOST_CLANG) && BOOST_CLANG_VERSION >= 90000 && !defined(BOOST_NO_CXX11_LAMBDAS)) \
     || (defined(BOOST_GCC) && BOOST_GCC >= 50000 && !defined(BOOST_NO_CXX11_LAMBDAS))
 
