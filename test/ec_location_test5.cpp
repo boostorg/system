@@ -52,8 +52,8 @@ int main()
         BOOST_TEST( ec.failed() );
 
         BOOST_TEST( ec.has_location() );
-        BOOST_TEST_EQ( ec.location().file_name(), loc.file_name() );
-        BOOST_TEST_EQ( ec.location().function_name(), loc.function_name() );
+        BOOST_TEST_EQ( std::strcmp( ec.location().file_name(), loc.file_name() ), 0 );
+        BOOST_TEST_EQ( std::strcmp( ec.location().function_name(), loc.function_name() ), 0 );
         BOOST_TEST_EQ( ec.location().line(), loc.line() + 2 );
     }
 
