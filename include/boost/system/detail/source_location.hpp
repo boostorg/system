@@ -80,7 +80,7 @@ private:
 
 // BOOST_CURRENT_LOCATION has function_name(), so we have to collect it outside the lambda.
 # define BOOST_SYSTEM_CURRENT_LOCATION_PTR ::boost::system::detail::source_location_ptr( \
-    []( ::boost::source_location loc )                                                   \
+    []( ::boost::source_location loc ) -> ::boost::source_location const*                \
     {                                                                                    \
         static const ::boost::source_location loc_ = loc;                                \
         return &loc_;                                                                    \
@@ -95,7 +95,7 @@ private:
 
 // no function_name(), so it's OK to collect BOOST_CURRENT_LOCATION inside the lambda.
 # define BOOST_SYSTEM_CURRENT_LOCATION_PTR ::boost::system::detail::source_location_ptr( \
-    []()                                                                                 \
+    []() -> ::boost::source_location const*                                              \
     {                                                                                    \
         static BOOST_SYSTEM_CONSTEXPR ::boost::source_location loc_ = BOOST_CURRENT_LOCATION; \
         return &loc_;                                                                    \
