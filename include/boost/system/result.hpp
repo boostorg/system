@@ -135,7 +135,8 @@ public:
     template<class... A, class En = typename std::enable_if<
         std::is_constructible<T, A...>::value &&
         !(detail::is_errc_t<A...>::value && std::is_arithmetic<T>::value) &&
-        !std::is_constructible<E, A...>::value
+        !std::is_constructible<E, A...>::value &&
+        sizeof...(A) >= 1
         >::type>
     explicit constexpr result( A&&... a )
         noexcept( std::is_nothrow_constructible<T, A...>::value )
@@ -146,7 +147,8 @@ public:
     // explicit, error
     template<class... A, class En2 = void, class En = typename std::enable_if<
         !std::is_constructible<T, A...>::value &&
-        std::is_constructible<E, A...>::value
+        std::is_constructible<E, A...>::value &&
+        sizeof...(A) >= 1
         >::type>
     explicit constexpr result( A&&... a )
         noexcept( std::is_nothrow_constructible<E, A...>::value )
