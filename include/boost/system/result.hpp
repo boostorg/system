@@ -222,7 +222,7 @@ public:
 
     constexpr bool has_error() const noexcept
     {
-        return v_.index() != 0;
+        return v_.index() == 1;
     }
 
     constexpr explicit operator bool() const noexcept
@@ -511,7 +511,7 @@ public:
 
     constexpr bool has_error() const noexcept
     {
-        return v_.index() != 0;
+        return v_.index() == 1;
     }
 
     constexpr explicit operator bool() const noexcept
