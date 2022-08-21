@@ -124,6 +124,8 @@ boost_test(TYPE run SOURCES std_interop_test14.cpp)
 boost_test(TYPE run SOURCES ec_location_test3.cpp)
 boost_test(TYPE run SOURCES ec_location_test4.cpp)
 
+boost_test(TYPE compile SOURCES constexpr_test2.cpp)
+
 # result
 
 set(BOOST_TEST_COMPILE_FEATURES cxx_std_11)
