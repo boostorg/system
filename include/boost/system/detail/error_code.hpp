@@ -29,6 +29,7 @@
 #include <boost/assert/source_location.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/config.hpp>
+#include <boost/config/workaround.hpp>
 #include <ostream>
 #include <new>
 #include <cstdio>
@@ -114,7 +115,7 @@ public:
 
     // constructors:
 
-#if ! BOOST_WORKAROUND(BOOST_GCC, < 40800)
+#if !BOOST_WORKAROUND(BOOST_GCC, < 40800)
     BOOST_CONSTEXPR
 #endif
     error_code() BOOST_NOEXCEPT:
