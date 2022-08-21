@@ -114,7 +114,10 @@ public:
 
     // constructors:
 
-    BOOST_SYSTEM_CONSTEXPR error_code() BOOST_NOEXCEPT:
+#if ! BOOST_WORKAROUND(BOOST_GCC, < 40800)
+    BOOST_CONSTEXPR
+#endif
+    error_code() BOOST_NOEXCEPT:
         d1_(), lc_flags_( 0 )
     {
     }
