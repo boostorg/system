@@ -127,6 +127,7 @@ boost_test(TYPE run SOURCES ec_location_test4.cpp)
 boost_test(TYPE compile SOURCES constexpr_test2.cpp)
 
 boost_test(TYPE run SOURCES error_code_test3.cpp)
+boost_test(TYPE run SOURCES std_interop_test15.cpp)
 
 # result
 

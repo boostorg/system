@@ -155,6 +155,7 @@ run ec_location_test4.cpp ;
 compile constexpr_test2.cpp ;
 
 run error_code_test3.cpp ;
+run std_interop_test15.cpp ;
 
 # result
 
