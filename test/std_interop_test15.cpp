@@ -13,6 +13,11 @@
 BOOST_PRAGMA_MESSAGE( "BOOST_SYSTEM_HAS_SYSTEM_ERROR not defined, test will be skipped" )
 int main() {}
 
+#elif defined(BOOST_SYSTEM_AVOID_STD_GENERIC_CATEGORY)
+
+BOOST_PRAGMA_MESSAGE( "Skipping test, BOOST_SYSTEM_AVOID_STD_GENERIC_CATEGORY is defined" )
+int main() {}
+
 #else
 
 #include <system_error>
