@@ -7,6 +7,7 @@
 #include <boost/core/lightweight_test.hpp>
 #include <boost/config/pragma_message.hpp>
 #include <boost/config.hpp>
+#include <boost/config/workaround.hpp>
 
 #if !defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
@@ -75,7 +76,16 @@ int main()
     BOOST_TEST_EQ( en, enomem_c );
     BOOST_TEST_EQ( enomem_c, en );
 
+#if BOOST_WORKAROUND(BOOST_MSVC, == 1800)
+
+    // msvc-12.0 has op== as a member of std::error_condition
+
+#else
+
     BOOST_TEST_EQ( en, enomem_n );
+
+#endif
+
     BOOST_TEST_EQ( enomem_n, en );
 
     return boost::report_errors();
