@@ -15,6 +15,7 @@ macro(system_run s1)
   boost_test(SOURCES ${s1} ${ARGN})
   boost_test(SOURCES ${s1} ${ARGN} COMPILE_DEFINITIONS BOOST_NO_ANSI_APIS NAME ${n1}_no_ansi)
   boost_test(SOURCES ${s1} ${ARGN} COMPILE_DEFINITIONS BOOST_SYSTEM_USE_UTF8 NAME ${n1}_utf8)
+  boost_test(SOURCES ${s1} ${ARGN} COMPILE_DEFINITIONS BOOST_SYSTEM_DISABLE_THREADS NAME ${n1}_nthr)
 
 endmacro()
 
