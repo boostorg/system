@@ -97,6 +97,11 @@ private:
 
 public:
 
+    using value_type = T;
+    using error_type = E;
+
+public:
+
     // constructors
 
     // default
@@ -443,6 +448,11 @@ template<class E> class result<void, E>
 private:
 
     variant2::variant<variant2::monostate, E> v_;
+
+public:
+
+    using value_type = void;
+    using error_type = E;
 
 public:
 
