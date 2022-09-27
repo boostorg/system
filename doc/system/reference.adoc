@@ -29,6 +29,11 @@ When `BOOST_SYSTEM_USE_UTF8` is defined, on Windows the library returns
 UTF-8 messages using code page `CP_UTF8` instead of the default `CP_ACP`.
 This macro has no effect on POSIX.
 
+When `BOOST_SYSTEM_DISABLE_THREADS` is defined, the library assumes that
+the current platform doesn't support multiple threads and disables the use
+of the standard header `<mutex>`, eliminating the mutex locks. The single
+threaded `libstdc++` is one such platform.
+
 ## Deprecated Names
 
 In the process of adding Boost.System to the {cpp}11 standard library, the
