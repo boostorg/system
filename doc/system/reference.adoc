@@ -1600,6 +1600,12 @@ template<class T, class E = error_code> class result
 {
 public:
 
+    using value_type = T;
+    using error_type = E;
+
+    static constexpr in_place_value_t in_place_value{};
+    static constexpr in_place_error_t in_place_error{};
+
     // constructors
 
     constexpr result();
@@ -1915,6 +1921,12 @@ namespace system {
 template<class E> class result<void, E>
 {
 public:
+
+    using value_type = void;
+    using error_type = E;
+
+    static constexpr in_place_value_t in_place_value{};
+    static constexpr in_place_error_t in_place_error{};
 
     // constructors
 
