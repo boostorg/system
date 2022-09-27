@@ -100,6 +100,9 @@ public:
     using value_type = T;
     using error_type = E;
 
+    static constexpr in_place_value_t in_place_value{};
+    static constexpr in_place_error_t in_place_error{};
+
 public:
 
     // constructors
@@ -453,6 +456,9 @@ public:
 
     using value_type = void;
     using error_type = E;
+
+    static constexpr in_place_value_t in_place_value{};
+    static constexpr in_place_error_t in_place_error{};
 
 public:
 
