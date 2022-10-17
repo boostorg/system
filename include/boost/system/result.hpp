@@ -401,6 +401,14 @@ public:
         return has_error()? variant2::unsafe_get<1>( v_ ): E();
     }
 
+    // emplace
+
+    template<class... A>
+    BOOST_CXX14_CONSTEXPR T& emplace( A&&... a )
+    {
+        return v_.template emplace<0>( std::forward<A>(a)... );
+    }
+
     // swap
 
     BOOST_CXX14_CONSTEXPR void swap( result& r )
@@ -571,6 +579,13 @@ public:
         noexcept( std::is_nothrow_default_constructible<E>::value && std::is_nothrow_copy_constructible<E>::value )
     {
         return has_error()? variant2::unsafe_get<1>( v_ ): E();
+    }
+
+    // emplace
+
+    BOOST_CXX14_CONSTEXPR void emplace()
+    {
+        v_.template emplace<0>();
     }
 
     // swap
