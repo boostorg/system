@@ -14,6 +14,7 @@ https://www.boost.org/LICENSE_1_0.txt
   the use of `<mutex>` (e.g. on single-threaded libstdc++).
 * Added `value_type`, `error_type`, `in_place_value`, `in_place_error`
   to `result<>`.
+* Added `emplace` to `result<>`.
 
 ## Changes in Boost 1.80
 
