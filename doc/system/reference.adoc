@@ -1659,6 +1659,11 @@ public:
 
     constexpr E error() const;
 
+    // emplace
+
+    template<class... A>
+      constexpr T& emplace( A&&... a );
+
     // swap
 
     constexpr void swap( result& r );
@@ -1854,6 +1859,20 @@ constexpr E error() const;
 Effects: ::
   If `*this` holds an error, returns it. Otherwise, returns `E()`.
 
+#### emplace
+
+```
+template<class... A>
+  constexpr T& emplace( A&&... a );
+```
+[none]
+* {blank}
++
+Ensures: ::
+  `*this` holds the value `T( std::forward<A>(a)... )`.
+Returns: ::
+  A reference to the contained value.
+
 #### swap
 
 ```
@@ -1961,6 +1980,10 @@ public:
     // error access
 
     constexpr E error() const;
+
+    // emplace
+
+    constexpr void emplace();
 
     // swap
 
@@ -2104,6 +2127,17 @@ constexpr E error() const;
 +
 Effects: ::
   If `*this` holds an error, returns it. Otherwise, returns `E()`.
+
+#### emplace
+
+```
+constexpr void emplace();
+```
+[none]
+* {blank}
++
+Ensures: ::
+  `*this` holds an unspecified value.
 
 #### swap
 
