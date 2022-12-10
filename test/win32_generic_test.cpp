@@ -37,7 +37,7 @@ int main()
 
         if( en1 != en2 )
         {
-            std::cout << en1 << " (" << en1.message() << ") != cond:" << en2.category().name() << ":" << en2.value() << " (" << en2.message() << ")\n";
+            std::cout << i << ": " << en1 << " (" << en1.message() << ") != cond:" << en2.category().name() << ":" << en2.value() << " (" << en2.message() << ")\n";
 
             if( en2.category() == std::generic_category() )
             {
