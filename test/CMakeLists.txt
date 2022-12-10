@@ -130,6 +130,8 @@ boost_test(TYPE compile SOURCES constexpr_test2.cpp)
 boost_test(TYPE run SOURCES error_code_test3.cpp)
 boost_test(TYPE run SOURCES std_interop_test15.cpp)
 
+boost_test(TYPE run SOURCES win32_generic_test.cpp)
+
 # result
 
 set(BOOST_TEST_COMPILE_FEATURES cxx_std_11)
