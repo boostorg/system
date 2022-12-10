@@ -39,7 +39,7 @@ int main()
         {
             std::cout << i << ": " << en1 << " (" << en1.message() << ") != cond:" << en2.category().name() << ":" << en2.value() << " (" << en2.message() << ")\n";
 
-            if( en2.category() == std::generic_category() )
+            if( en2.category() == std::generic_category() && i != 123 ) // msvc-14.0, msvc-14.1 disagree with us on ERROR_INVALID_NAME
             {
                 ++n;
             }
