@@ -143,7 +143,7 @@ inline void error_category::init_stdcat() const
 
     if( sc_init_.load( std::memory_order_acquire ) == 0 )
     {
-        ::new( static_cast<void*>( stdcat_ ) ) boost::system::detail::std_category( this, 0 );
+        ::new( static_cast<void*>( stdcat_ ) ) boost::system::detail::std_category( this, system::detail::id_wrapper<0>() );
         sc_init_.store( 1, std::memory_order_release );
     }
 }
@@ -160,7 +160,7 @@ inline BOOST_NOINLINE error_category::operator std::error_category const & () co
 // This condition must be the same as the one in error_condition.hpp
 #if defined(BOOST_SYSTEM_AVOID_STD_GENERIC_CATEGORY)
 
-        static const boost::system::detail::std_category generic_instance( this, 0x1F4D3 );
+        static const boost::system::detail::std_category generic_instance( this, system::detail::id_wrapper<0x1F4D3>() );
         return generic_instance;
 
 #else
@@ -175,7 +175,7 @@ inline BOOST_NOINLINE error_category::operator std::error_category const & () co
 // This condition must be the same as the one in error_code.hpp
 #if defined(BOOST_SYSTEM_AVOID_STD_SYSTEM_CATEGORY)
 
-        static const boost::system::detail::std_category system_instance( this, 0x1F4D7 );
+        static const boost::system::detail::std_category system_instance( this, system::detail::id_wrapper<0x1F4D7>() );
         return system_instance;
 
 #else
