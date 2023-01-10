@@ -64,7 +64,9 @@
 
 // BOOST_SYSTEM_CLANG_6
 
-#if defined(__clang__) && (__clang_major__ < 7 || (defined(__APPLE__) && __clang_major__ < 11))
+// Android NDK r18b has Clang 7.0.2 that still needs the workaround
+// https://github.com/boostorg/system/issues/100
+#if defined(__clang__) && (__clang_major__ < 7 || (defined(__APPLE__) && __clang_major__ < 11) || (defined(__ANDROID__) && __clang_major__ == 7))
 # define BOOST_SYSTEM_CLANG_6
 #endif
 
