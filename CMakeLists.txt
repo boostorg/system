@@ -23,7 +23,7 @@ target_link_libraries(boost_system
 if(CMAKE_VERSION VERSION_GREATER 3.18 AND CMAKE_GENERATOR MATCHES "Visual Studio")
 
   file(GLOB_RECURSE boost_system_IDEFILES CONFIGURE_DEPENDS include/*.hpp)
-  source_group(TREE ${PROJECT_SOURCE_DIR}/include FILES ${boost_system_IDEFILES})
+  source_group(TREE ${PROJECT_SOURCE_DIR}/include FILES ${boost_system_IDEFILES} PREFIX "Header Files")
   list(APPEND boost_system_IDEFILES extra/boost_system.natvis)
   target_sources(boost_system PRIVATE ${boost_system_IDEFILES})
 
