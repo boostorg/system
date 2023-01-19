@@ -31,6 +31,28 @@ struct mutex
 } // namespace system
 } // namespace boost
 
+#elif defined(BOOST_MSSTL_VERSION) && BOOST_MSSTL_VERSION >= 140
+
+// Under the MS STL, std::mutex::mutex() is not constexpr, as is
+// required by the standard, which leads to initialization order
+// issues. However, shared_mutex is based on SRWLock and its
+// default constructor is constexpr, so we use that instead.
+
+#include <shared_mutex>
+
+namespace boost
+{
+namespace system
+{
+namespace detail
+{
+
+typedef std::shared_mutex mutex;
+
+} // namespace detail
+} // namespace system
+} // namespace boost
+
 #else
 
 #include <mutex>
