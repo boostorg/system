@@ -106,18 +106,6 @@ namespace boost
 namespace system
 {
 
-namespace detail
-{
-
-template<class = void> struct stdcat_mx_holder
-{
-    static mutex mx_;
-};
-
-template<class T> mutex stdcat_mx_holder<T>::mx_;
-
-} // namespace detail
-
 inline void error_category::init_stdcat() const
 {
     static_assert( sizeof( stdcat_ ) >= sizeof( boost::system::detail::std_category ), "sizeof(stdcat_) is not enough for std_category" );
@@ -130,7 +118,13 @@ inline void error_category::init_stdcat() const
 
 #endif
 
-    system::detail::lock_guard<system::detail::mutex> lk( system::detail::stdcat_mx_holder<>::mx_ );
+    // detail::mutex has a constexpr default constructor,
+    // and therefore guarantees static initialization, on
+    // everything except VS 2013 (msvc-12.0)
+
+    static system::detail::mutex mx_;
+
+    system::detail::lock_guard<system::detail::mutex> lk( mx_ );
 
     if( sc_init_.load( std::memory_order_acquire ) == 0 )
     {
