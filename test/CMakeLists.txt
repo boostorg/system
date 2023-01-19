@@ -134,6 +134,8 @@ boost_test(TYPE run SOURCES win32_generic_test.cpp)
 
 boost_test(TYPE run SOURCES ec_hash_value_test.cpp)
 
+boost_test(TYPE run SOURCES std_interop_test16.cpp)
+
 # result
 
 set(BOOST_TEST_COMPILE_FEATURES cxx_std_11)

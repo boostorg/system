@@ -162,6 +162,8 @@ run win32_generic_test.cpp ;
 
 run ec_hash_value_test.cpp ;
 
+run std_interop_test16.cpp ;
+
 # result
 
 import ../../config/checks/config : requires ;
