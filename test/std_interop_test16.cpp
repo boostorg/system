@@ -2,7 +2,9 @@
 // Distributed under the Boost Software License, Version 1.0.
 // http://www.boost.org/LICENSE_1_0.txt
 
-#include <boost/system/detail/config.hpp>
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <boost/system/error_category.hpp>
 #include <boost/config/pragma_message.hpp>
 
 #if !defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
@@ -12,19 +14,45 @@ int main() {}
 
 #else
 
-#include <boost/asio/error.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <system_error>
 
+// get_user_category
+
+class user_category: public boost::system::error_category
+{
+public:
+
+    virtual const char * name() const BOOST_NOEXCEPT
+    {
+        return "user";
+    }
+
+    virtual std::string message( int ev ) const
+    {
+        char buffer[ 256 ];
+        std::sprintf( buffer, "user message %d", ev );
+
+        return buffer;
+    }
+};
+
+boost::system::error_category const & get_user_category()
+{
+    static user_category instance;
+    return instance;
+}
+
+//
+
 bool init_lwt = (boost::core::lwt_init(), true);
 
-std::error_category const & cat = boost::asio::error::get_misc_category();
+std::error_category const & cat = get_user_category();
 
 int main()
 {
-    BOOST_TEST_CSTR_EQ( cat.name(), "asio.misc" );
+    BOOST_TEST_CSTR_EQ( cat.name(), "user" );
     return boost::report_errors();
 }
-
 
 #endif
