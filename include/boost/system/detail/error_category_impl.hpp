@@ -98,32 +98,25 @@ inline char const * error_category::message( int ev, char * buffer, std::size_t 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
 #include <boost/system/detail/std_category_impl.hpp>
+#include <boost/system/detail/mutex.hpp>
 #include <new>
-
-#if !defined(BOOST_SYSTEM_DISABLE_THREADS)
-# include <mutex>
-#endif
 
 namespace boost
 {
 namespace system
 {
 
-#if !defined(BOOST_SYSTEM_DISABLE_THREADS)
-
 namespace detail
 {
 
 template<class = void> struct stdcat_mx_holder
 {
-    static std::mutex mx_;
+    static mutex mx_;
 };
 
-template<class T> std::mutex stdcat_mx_holder<T>::mx_;
+template<class T> mutex stdcat_mx_holder<T>::mx_;
 
 } // namespace detail
-
-#endif
 
 inline void error_category::init_stdcat() const
 {
@@ -137,9 +130,7 @@ inline void error_category::init_stdcat() const
 
 #endif
 
-#if !defined(BOOST_SYSTEM_DISABLE_THREADS)
-    std::lock_guard<std::mutex> lk( boost::system::detail::stdcat_mx_holder<>::mx_ );
-#endif
+    system::detail::lock_guard<system::detail::mutex> lk( system::detail::stdcat_mx_holder<>::mx_ );
 
     if( sc_init_.load( std::memory_order_acquire ) == 0 )
     {
