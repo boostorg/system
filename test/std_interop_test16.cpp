@@ -2,8 +2,6 @@
 // Distributed under the Boost Software License, Version 1.0.
 // http://www.boost.org/LICENSE_1_0.txt
 
-#define _CRT_SECURE_NO_WARNINGS
-
 #include <boost/system/error_category.hpp>
 #include <boost/config/pragma_message.hpp>
 
@@ -15,6 +13,7 @@ int main() {}
 #else
 
 #include <boost/core/lightweight_test.hpp>
+#include <boost/core/snprintf.hpp>
 #include <system_error>
 
 // get_user_category
@@ -31,7 +30,7 @@ public:
     virtual std::string message( int ev ) const
     {
         char buffer[ 256 ];
-        std::sprintf( buffer, "user message %d", ev );
+        boost::core::snprintf( buffer, sizeof( buffer ), "user message %d", ev );
 
         return buffer;
     }
