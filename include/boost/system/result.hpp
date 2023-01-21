@@ -122,7 +122,7 @@ public:
     template<class A = T, typename std::enable_if<
         std::is_convertible<A, T>::value &&
         !(detail::is_errc_t<A>::value && std::is_arithmetic<T>::value) &&
-        !std::is_constructible<E, A>::value, int>::type = 0>
+        !std::is_convertible<A, E>::value, int>::type = 0>
     constexpr result( A&& a )
         noexcept( std::is_nothrow_constructible<T, A>::value )
         : v_( in_place_value, std::forward<A>(a) )
@@ -132,7 +132,7 @@ public:
     // implicit, error
     template<class A = E, class = void, typename std::enable_if<
         std::is_convertible<A, E>::value &&
-        !std::is_constructible<T, A>::value, int>::type = 0>
+        !std::is_convertible<A, T>::value, int>::type = 0>
     constexpr result( A&& a )
         noexcept( std::is_nothrow_constructible<E, A>::value )
         : v_( in_place_error, std::forward<A>(a) )
