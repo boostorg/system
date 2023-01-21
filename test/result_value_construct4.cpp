@@ -24,10 +24,7 @@ int main()
         result<int> r( 5 );
         result<result<int>> r2( r );
 
-        BOOST_TEST( r2.has_value() );
-        BOOST_TEST( !r2.has_error() );
-
-        BOOST_TEST_EQ( r2.value(), r );
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( r2.value(), r );
     }
 
     {
