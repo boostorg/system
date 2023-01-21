@@ -187,7 +187,8 @@ public:
     // converting
     template<class T2, class E2, class En = typename std::enable_if<
         std::is_convertible<T2, T>::value &&
-        std::is_convertible<E2, E>::value
+        std::is_convertible<E2, E>::value &&
+        !std::is_convertible<result<T2, E2> const&, T>::value
         >::type>
     BOOST_CXX14_CONSTEXPR result( result<T2, E2> const& r2 )
         noexcept(
@@ -205,7 +206,8 @@ public:
 
     template<class T2, class E2, class En = typename std::enable_if<
         std::is_convertible<T2, T>::value &&
-        std::is_convertible<E2, E>::value
+        std::is_convertible<E2, E>::value &&
+        !std::is_convertible<result<T2, E2>&&, T>::value
         >::type>
     BOOST_CXX14_CONSTEXPR result( result<T2, E2>&& r2 )
         noexcept(
