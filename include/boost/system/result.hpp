@@ -85,6 +85,10 @@ template<class T> using remove_cvref = typename std::remove_cv< typename std::re
 
 template<class... T> using is_errc_t = std::is_same<mp11::mp_list<remove_cvref<T>...>, mp11::mp_list<errc::errc_t>>;
 
+template<class T, class... A> struct is_constructible: std::is_constructible<T, A...> {};
+template<class A> struct is_constructible<bool, A>: std::is_convertible<A, bool> {};
+template<class A> struct is_constructible<bool const, A>: std::is_convertible<A, bool> {};
+
 } // namespace detail
 
 // result
@@ -141,9 +145,9 @@ public:
 
     // explicit, value
     template<class... A, class En = typename std::enable_if<
-        std::is_constructible<T, A...>::value &&
+        detail::is_constructible<T, A...>::value &&
         !(detail::is_errc_t<A...>::value && std::is_arithmetic<T>::value) &&
-        !std::is_constructible<E, A...>::value &&
+        !detail::is_constructible<E, A...>::value &&
         sizeof...(A) >= 1
         >::type>
     explicit constexpr result( A&&... a )
@@ -154,8 +158,8 @@ public:
 
     // explicit, error
     template<class... A, class En2 = void, class En = typename std::enable_if<
-        !std::is_constructible<T, A...>::value &&
-        std::is_constructible<E, A...>::value &&
+        !detail::is_constructible<T, A...>::value &&
+        detail::is_constructible<E, A...>::value &&
         sizeof...(A) >= 1
         >::type>
     explicit constexpr result( A&&... a )
