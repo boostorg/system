@@ -8,6 +8,7 @@
 //
 // See http://www.boost.org/libs/system for documentation.
 
+#include <boost/system/detail/requires_cxx11.hpp>
 #include <boost/config.hpp>
 #include <boost/config/workaround.hpp>
 
