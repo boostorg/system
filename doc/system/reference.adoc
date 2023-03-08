@@ -1657,7 +1657,8 @@ public:
 
     // error access
 
-    constexpr E error() const;
+    constexpr E error() const &;
+    constexpr E error() &&;
 
     // emplace
 
