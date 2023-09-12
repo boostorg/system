@@ -194,3 +194,6 @@ run result_error_construct4.cpp : : : $(CPP11) ;
 run result_value_construct4.cpp : : : $(CPP11) ;
 run result_value_construct5.cpp : : : $(CPP11) ;
 run result_error_move.cpp : : : $(CPP11) ;
+run result_value_construct6.cpp : : : $(CPP11) ;
+run result_value_construct7.cpp : : : $(CPP11) ;
+run result_error_construct5.cpp : : : $(CPP11) ;

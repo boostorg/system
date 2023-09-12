@@ -52,6 +52,9 @@ int main()
 
         BOOST_TEST_TRAIT_FALSE((std::is_default_constructible<result<Y>>));
         BOOST_TEST_TRAIT_FALSE((std::is_default_constructible<result<Y, int>>));
+
+        BOOST_TEST_TRAIT_FALSE((std::is_default_constructible<result<int&>>));
+        BOOST_TEST_TRAIT_FALSE((std::is_default_constructible<result<int&, int>>));
     }
 
     return boost::report_errors();

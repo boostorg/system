@@ -1,9 +1,10 @@
-// Copyright 2017, 2021, 2022 Peter Dimov.
+// Copyright 2017, 2021 Peter Dimov.
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/system/result.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/core/lightweight_test_trait.hpp>
 #include <string>
 #include <cerrno>
 
@@ -36,8 +37,7 @@ int main()
     {
         auto ec = make_error_code( errc::invalid_argument );
 
-        using R = result<int>;
-        R r( R::in_place_error, ec );
+        result<int&> r( ec );
 
         BOOST_TEST( !r.has_value() );
         BOOST_TEST( r.has_error() );
@@ -46,8 +46,18 @@ int main()
     }
 
     {
-        using R = result<int>;
-        R r( R::in_place_error, EINVAL, generic_category() );
+        auto ec = make_error_code( errc::invalid_argument );
+
+        result<int&> r = ec;
+
+        BOOST_TEST( !r.has_value() );
+        BOOST_TEST( r.has_error() );
+
+        BOOST_TEST_EQ( r.error(), ec );
+    }
+
+    {
+        result<int&> r( EINVAL, generic_category() );
 
         BOOST_TEST( !r.has_value() );
         BOOST_TEST( r.has_error() );
@@ -58,8 +68,7 @@ int main()
     {
         auto ec = make_error_code( errc::invalid_argument );
 
-        using R = result<error_code>;
-        R r( R::in_place_error, ec );
+        result<error_code&> r( in_place_error, ec );
 
         BOOST_TEST( !r.has_value() );
         BOOST_TEST( r.has_error() );
@@ -68,8 +77,7 @@ int main()
     }
 
     {
-        using R = result<error_code>;
-        R r( R::in_place_error, EINVAL, generic_category() );
+        result<error_code&> r( in_place_error, EINVAL, generic_category() );
 
         BOOST_TEST( !r.has_value() );
         BOOST_TEST( r.has_error() );
@@ -80,8 +88,7 @@ int main()
     BOOST_TEST_EQ( X::instances, 0 );
 
     {
-        using R = result<std::string, X>;
-        R r( R::in_place_error, 1 );
+        result<std::string&, X> r( 1 );
 
         BOOST_TEST( !r.has_value() );
         BOOST_TEST( r.has_error() );
@@ -94,8 +101,7 @@ int main()
     BOOST_TEST_EQ( X::instances, 0 );
 
     {
-        using R = result<int, X>;
-        R r( R::in_place_error, 1, 2 );
+        result<int&, X> r( 1, 2 );
 
         BOOST_TEST( !r.has_value() );
         BOOST_TEST( r.has_error() );
@@ -108,8 +114,7 @@ int main()
     BOOST_TEST_EQ( X::instances, 0 );
 
     {
-        using R = result<int, X>;
-        R r( R::in_place_error, 1, 2, 3 );
+        result<int&, X> r( 1, 2, 3 );
 
         BOOST_TEST( !r.has_value() );
         BOOST_TEST( r.has_error() );
@@ -122,8 +127,7 @@ int main()
     BOOST_TEST_EQ( X::instances, 0 );
 
     {
-        using R = result<X, X>;
-        R r( R::in_place_error, 1 );
+        result<X&, X> r( in_place_error, 1 );
 
         BOOST_TEST( !r.has_value() );
         BOOST_TEST( r.has_error() );
@@ -136,47 +140,20 @@ int main()
     BOOST_TEST_EQ( X::instances, 0 );
 
     {
-        auto ec = make_error_code( errc::invalid_argument );
+        BOOST_TEST_TRAIT_TRUE((std::is_constructible<result<int&>, error_code>));
+        BOOST_TEST_TRAIT_TRUE((std::is_convertible<error_code, result<int&>>));
 
-        using R = result<void>;
-        R r( R::in_place_error, ec );
+        BOOST_TEST_TRAIT_TRUE((std::is_constructible<result<std::string&, X>, int>));
+        BOOST_TEST_TRAIT_FALSE((std::is_convertible<int, result<std::string&, X>>));
 
-        BOOST_TEST( !r.has_value() );
-        BOOST_TEST( r.has_error() );
+        BOOST_TEST_TRAIT_TRUE((std::is_constructible<result<int&, X>, int>));
+        BOOST_TEST_TRAIT_FALSE((std::is_convertible<int, result<int&, X>>));
 
-        BOOST_TEST_EQ( r.error(), ec );
-    }
+        // There's an ambiguity here between int& and X, but since is_convertible
+        // is true, is_constructible can't be false.
 
-    {
-        using R = result<void>;
-        R r( R::in_place_error, EINVAL, generic_category() );
-
-        BOOST_TEST( !r.has_value() );
-        BOOST_TEST( r.has_error() );
-
-        BOOST_TEST_EQ( r.error(), error_code( EINVAL, generic_category() ) );
-    }
-
-    {
-        auto ec = make_error_code( errc::invalid_argument );
-
-        using R = result<int&>;
-        R r( R::in_place_error, ec );
-
-        BOOST_TEST( !r.has_value() );
-        BOOST_TEST( r.has_error() );
-
-        BOOST_TEST_EQ( r.error(), ec );
-    }
-
-    {
-        using R = result<int&>;
-        R r( R::in_place_error, EINVAL, generic_category() );
-
-        BOOST_TEST( !r.has_value() );
-        BOOST_TEST( r.has_error() );
-
-        BOOST_TEST_EQ( r.error(), error_code( EINVAL, generic_category() ) );
+        // BOOST_TEST_TRAIT_FALSE((std::is_constructible<result<int&, X>, int&>));
+        BOOST_TEST_TRAIT_TRUE((std::is_convertible<int&, result<int&, X>>));
     }
 
     return boost::report_errors();
