@@ -538,6 +538,23 @@ public:
     {
     }
 
+    // converting
+    template<class E2, class En = typename std::enable_if<
+        std::is_convertible<E2, E>::value
+        >::type>
+    BOOST_CXX14_CONSTEXPR result( result<void, E2> const& r2 )
+        noexcept(
+            std::is_nothrow_constructible<E, E2>::value &&
+            std::is_nothrow_default_constructible<E2>::value &&
+            std::is_nothrow_copy_constructible<E2>::value )
+        : v_( in_place_error, r2.error() )
+    {
+        if( r2 )
+        {
+            this->emplace();
+        }
+    }
+
     // queries
 
     constexpr bool has_value() const noexcept
