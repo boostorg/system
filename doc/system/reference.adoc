@@ -1713,7 +1713,7 @@ Effects: ::
     ensures that `*this` holds the error `E( std::forward<A>(a)... )`.
   - Otherwise, this constructor does not participate in overload resolution.
 Remarks: ::
-  This constructor is only enabled when `sizeof...(T) > 0`.
+  This constructor is only enabled when `sizeof...(A) > 0`.
 
 ```
 template<class... A>
@@ -1747,7 +1747,7 @@ template<class T2, class E2>
 * {blank}
 +
 Ensures: ::
-  If `r2.has_value()` is `true`, `*this` holds the value `T( *r2 )`, otherwise `*this` holds the value `E( r2.error() )`.
+  If `r2.has_value()` is `true`, `*this` holds the value `T( *r2 )`, otherwise `*this` holds the error `E( r2.error() )`.
 Remarks: ::
   This constructor is only enabled when `std::is_convertible<T2, T>::value && std::is_convertible<E2, E>::value` is `true`.
 
@@ -1759,7 +1759,7 @@ template<class T2, class E2>
 * {blank}
 +
 Ensures: ::
-  If `r2.has_value()` is `true`, `*this` holds the value `T( std::move( *r2 ) )`, otherwise `*this` holds the value `E( r2.error() )`.
+  If `r2.has_value()` is `true`, `*this` holds the value `T( std::move( *r2 ) )`, otherwise `*this` holds the error `E( r2.error() )`.
 Remarks: ::
   This constructor is only enabled when `std::is_convertible<T2, T>::value && std::is_convertible<E2, E>::value` is `true`.
 
@@ -1961,6 +1961,9 @@ public:
     template<class... A>
       constexpr result( in_place_error_t, A&&... a );
 
+    template<class E2>
+      constexpr result( result<void, E2> const& r2 );
+
     // queries
 
     constexpr bool has_value() const noexcept;
@@ -2032,7 +2035,7 @@ Effects: ::
     ensures that `*this` holds the error `E( std::forward<A>(a)... )`.
   - Otherwise, this constructor does not participate in overload resolution.
 Remarks: ::
-  This constructor is only enabled when `sizeof...(T) > 0`.
+  This constructor is only enabled when `sizeof...(A) > 0`.
 
 ```
 template<class... A>
@@ -2055,6 +2058,18 @@ Ensures: ::
   `*this` holds the error `E( std::forward<A>(a)... )`.
 Remarks: ::
   This constructor is only enabled when `std::is_constructible<E, A...>::value` is `true`.
+
+```
+template<class E2>
+  constexpr result( result<void, E2> const& r2 );
+```
+[none]
+* {blank}
++
+Ensures: ::
+  If `r2.has_value()` is `true`, `*this` holds an unspecified value, otherwise `*this` holds the error `E( r2.error() )`.
+Remarks: ::
+  This constructor is only enabled when `std::is_convertible<E2, E>::value` is `true`.
 
 #### Queries
 
@@ -2200,6 +2215,278 @@ Effects: ::
   - If `*this` holds an error `e`, `os << "error:" << e`.
 Returns: ::
   `os`.
+
+### result<U&, E>
+
+```
+namespace boost {
+namespace system {
+
+template<class U, class E> class result<U&, E>
+{
+public:
+
+    using value_type = U&;
+    using error_type = E;
+
+    static constexpr in_place_value_t in_place_value{};
+    static constexpr in_place_error_t in_place_error{};
+
+    // constructors
+
+    template<class A>
+      constexpr result( A&& a ) noexcept;
+
+    template<class... A>
+      constexpr result( A&&... a );
+
+    template<class A>
+      constexpr result( in_place_value_t, A&& a ) noexcept;
+
+    template<class... A>
+      constexpr result( in_place_error_t, A&&... a );
+
+    template<class U2, class E2>
+      constexpr result( result<U2&, E2> const& r2 );
+
+    // queries
+
+    constexpr bool has_value() const noexcept;
+    constexpr bool has_error() const noexcept;
+    constexpr explicit operator bool() const noexcept;
+
+    // checked value access
+
+    constexpr U& value( boost::source_location const & loc =
+      BOOST_CURRENT_LOCATION ) const;
+
+    // unchecked value access
+
+    constexpr U* operator->() const noexcept;
+    constexpr U& operator*() const noexcept;
+
+    // error access
+
+    constexpr E error() const &;
+    constexpr E error() &&;
+
+    // emplace
+
+    template<class A>
+      constexpr U& emplace( A&& a ) noexcept;
+
+    // swap
+
+    constexpr void swap( result& r );
+    friend constexpr void swap( result & r1, result & r2 );
+
+    // equality
+
+    friend constexpr bool operator==( result const & r1, result const & r2 );
+    friend constexpr bool operator!=( result const & r1, result const & r2 );
+};
+
+} // namespace system
+} // namespace boost
+```
+
+#### Constructors
+
+```
+template<class A>
+  constexpr result( A&& a ) noexcept;
+```
+[none]
+* {blank}
++
+Ensures: ::
+  `*this` holds the reference `static_cast<U&>( std::forward<A>(a) )`.
+Remarks: ::
+  This constructor is only enabled when `A` is `B&` and `std::is_convertible<B*, U*>::value` is `true`.
+
+```
+template<class... A>
+  constexpr result( A&&... a );
+```
+[none]
+* {blank}
++
+Effects: ::
+  - If `std::is_constructible<E, A...>::value && !std::is_constructible<U&, A...>::value`,
+    ensures that `*this` holds the error `E( std::forward<A>(a)... )`.
+  - Otherwise, this constructor does not participate in overload resolution.
+Remarks: ::
+  This constructor is only enabled when `sizeof...(A) > 0`.
+
+```
+template<class A>
+  constexpr result( in_place_value_t, A&& a ) noexcept;
+```
+[none]
+* {blank}
++
+Ensures: ::
+  `*this` holds the reference `static_cast<U&>( std::forward<A>(a) )`.
+Remarks: ::
+  This constructor is only enabled when `A` is `B&` and `std::is_convertible<B*, U*>::value` is `true`.
+
+```
+template<class... A>
+  constexpr result( in_place_error_t, A&&... a );
+```
+[none]
+* {blank}
++
+Ensures: ::
+  `*this` holds the error `E( std::forward<A>(a)... )`.
+Remarks: ::
+  This constructor is only enabled when `std::is_constructible<E, A...>::value` is `true`.
+
+```
+template<class U2, class E2>
+  constexpr result( result<U2&, E2> const& r2 );
+```
+[none]
+* {blank}
++
+Ensures: ::
+  If `r2.has_value()` is `true`, `*this` holds the reference `static_cast<U&>( *r2 )`, otherwise `*this` holds the error `E( r2.error() )`.
+Remarks: ::
+  This constructor is only enabled when `std::is_convertible<U2*, U*>::value && std::is_convertible<E2, E>::value` is `true`.
+
+#### Queries
+
+```
+constexpr bool has_value() const noexcept;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `true` when `*this` holds a value, `false` otherwise.
+
+```
+constexpr bool has_error() const noexcept;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `!has_value()`.
+
+```
+constexpr explicit operator bool() const noexcept;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `has_value()`.
+
+#### Checked Value Access
+
+```
+constexpr U& value(
+  boost::source_location const & loc = BOOST_CURRENT_LOCATION ) const;
+```
+[none]
+* {blank}
++
+Effects: ::
+  If `*this` holds a reference, returns it. Otherwise,
+  calls `throw_exception_from_error`, passing it a reference to
+  the held error, and `loc`.
+
+#### Unchecked Value Access
+
+```
+constexpr U* operator->() const noexcept;
+```
+[none]
+* {blank}
++
+Returns: ::
+  If `*this` holds a reference, a pointer to its referent. Otherwise, `nullptr`.
+
+```
+constexpr U& operator*() const noexcept;
+```
+[none]
+* {blank}
++
+Requires: :: `*this` holds a reference.
+Returns: ::
+  `*operator\->()`.
+
+#### Error Access
+
+```
+constexpr E error() const &;
+constexpr E error() &&;
+```
+[none]
+* {blank}
++
+Effects: ::
+  If `*this` holds an error, returns it. Otherwise, returns `E()`.
+
+#### emplace
+
+```
+template<class A>
+  constexpr U& emplace( A&& a ) noexcept;
+```
+[none]
+* {blank}
++
+Ensures: ::
+  `*this` holds the reference `static_cast<U&>( std::forward<A>(a)... )`.
+Returns: ::
+  The contained reference.
+Remarks: ::
+  This function is only enabled when `A` is `B&` and `std::is_convertible<B*, U*>::value` is `true`.
+
+#### swap
+
+```
+constexpr void swap( result& r );
+```
+[none]
+* {blank}
++
+Effects: ::
+  Exchanges the contents of `*this` and `r`.
+
+```
+friend constexpr void swap( result & r1, result & r2 );
+```
+[none]
+* {blank}
++
+Effects: ::
+  Exchanges the contents of `r1` and `r2`.
+
+#### Equality
+
+```
+friend constexpr bool operator==( result const & r1, result const & r2 );
+```
+[none]
+* {blank}
++
+Effects: ::
+  - If `r1` holds a reference `t1` and `r2` holds a reference `t2`, returns `t1 == t2`.
+  - If `r1` holds an error `e1` and `r2` holds an error `e2`, returns `e1 == e2`.
+  - Otherwise, returns `false`.
+
+```
+friend constexpr bool operator!=( result const & r1, result const & r2 );
+```
+[none]
+* {blank}
++
+Returns: ::
+  `!( r1 == r2 )`.
 
 ## <boost/system.hpp>
 

@@ -744,7 +744,8 @@ public:
 
     // tagged, value
     template<class A, class En = typename std::enable_if<
-        std::is_constructible<U&, A>::value
+        std::is_constructible<U&, A>::value &&
+        !detail::reference_to_temporary<U, A>::value
         >::type>
     constexpr result( in_place_value_t, A&& a )
         noexcept( std::is_nothrow_constructible<U&, A>::value )
