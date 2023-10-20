@@ -227,6 +227,20 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
     ),
 
     linux_pipeline(
+        "Linux 23.04 GCC 13 32",
+        "cppalliance/droneubuntu2304:1",
+        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '03,11,14,17,20,2b', ADDRMD: '32' },
+        "g++-13-multilib",
+    ),
+
+    linux_pipeline(
+        "Linux 23.04 GCC 13 64",
+        "cppalliance/droneubuntu2304:1",
+        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '03,11,14,17,20,2b', ADDRMD: '64' },
+        "g++-13-multilib",
+    ),
+
+    linux_pipeline(
         "Linux 16.04 Clang 3.5",
         "cppalliance/droneubuntu1604:1",
         { TOOLSET: 'clang', COMPILER: 'clang++-3.5', CXXSTD: '03,11' },
@@ -283,6 +297,13 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
         ["deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main"],
     ),
 
+    linux_pipeline(
+        "Linux 23.04 Clang 16",
+        "cppalliance/droneubuntu2304:1",
+        { TOOLSET: 'clang', COMPILER: 'clang++-16', CXXSTD: '11,14,17,20,2b' },
+        "clang-16",
+    ),
+
     macos_pipeline(
         "MacOS 10.15 Xcode 12.2 UBSAN",
         { TOOLSET: 'clang', COMPILER: 'clang++', CXXSTD: '03,11,14,1z' } + ubsan,
@@ -291,6 +312,18 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
     macos_pipeline(
         "MacOS 10.15 Xcode 12.2 ASAN",
         { TOOLSET: 'clang', COMPILER: 'clang++', CXXSTD: '03,11,14,1z' } + asan,
+    ),
+
+    macos_pipeline(
+        "MacOS 12.4 Xcode 13.4.1 UBSAN",
+        { TOOLSET: 'clang', COMPILER: 'clang++', CXXSTD: '11,14,17,20,2b' } + ubsan,
+        xcode_version = "13.4.1", osx_version = "monterey", arch = "arm64",
+    ),
+
+    macos_pipeline(
+        "MacOS 12.4 Xcode 13.4.1 ASAN",
+        { TOOLSET: 'clang', COMPILER: 'clang++', CXXSTD: '11,14,17,20,2b' } + asan,
+        xcode_version = "13.4.1", osx_version = "monterey", arch = "arm64",
     ),
 
     windows_pipeline(
