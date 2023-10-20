@@ -29,6 +29,24 @@ int main()
     }
 
     {
+        result<int> r{};
+
+        BOOST_TEST( r.has_value() );
+        BOOST_TEST( !r.has_error() );
+
+        BOOST_TEST_EQ( r.value(), 0 );
+    }
+
+    {
+        result<int> r = {};
+
+        BOOST_TEST( r.has_value() );
+        BOOST_TEST( !r.has_error() );
+
+        BOOST_TEST_EQ( r.value(), 0 );
+    }
+
+    {
         result<X> r;
 
         BOOST_TEST( r.has_value() );
@@ -36,7 +54,35 @@ int main()
     }
 
     {
+        result<X> r{};
+
+        BOOST_TEST( r.has_value() );
+        BOOST_TEST( !r.has_error() );
+    }
+
+    {
+        result<X> r = {};
+
+        BOOST_TEST( r.has_value() );
+        BOOST_TEST( !r.has_error() );
+    }
+
+    {
         result<void> r;
+
+        BOOST_TEST( r.has_value() );
+        BOOST_TEST( !r.has_error() );
+    }
+
+    {
+        result<void> r{};
+
+        BOOST_TEST( r.has_value() );
+        BOOST_TEST( !r.has_error() );
+    }
+
+    {
+        result<void> r = {};
 
         BOOST_TEST( r.has_value() );
         BOOST_TEST( !r.has_error() );
