@@ -200,3 +200,4 @@ run result_error_construct5.cpp : : : $(CPP11) ;
 run result_or_value.cpp : : : $(CPP11) ;
 compile-fail result_or_value_fail.cpp : $(CPP11) ;
 compile-fail result_or_value_fail2.cpp : $(CPP11) ;
+run result_or_fn0v.cpp : : : $(CPP11) ;

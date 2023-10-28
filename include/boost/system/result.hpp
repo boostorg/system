@@ -935,6 +935,40 @@ template<class T, class E, class U,
     }
 }
 
+// result | nullary-returning-value
+
+template<class T, class E, class F,
+    class U = decltype( std::declval<F>()() ),
+    class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
+>
+    T operator|( result<T, E> const& r, F&& f )
+{
+    if( r )
+    {
+        return *r;
+    }
+    else
+    {
+        return std::forward<F>( f )();
+    }
+}
+
+template<class T, class E, class F,
+    class U = decltype( std::declval<F>()() ),
+    class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
+>
+    T operator|( result<T, E>&& r, F&& f )
+{
+    if( r )
+    {
+        return *std::move( r );
+    }
+    else
+    {
+        return std::forward<F>( f )();
+    }
+}
+
 } // namespace system
 } // namespace boost
 
