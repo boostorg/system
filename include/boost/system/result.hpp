@@ -885,6 +885,56 @@ public:
     }
 };
 
+// operator|
+
+namespace detail
+{
+
+template<class T, class U> struct is_value_convertible_to: std::is_convertible<T, U>
+{
+};
+
+template<class T, class U> struct is_value_convertible_to<T, U&>:
+    std::integral_constant<bool,
+        std::is_lvalue_reference<T>::value &&
+        std::is_convertible<std::remove_reference_t<T>*, U*>::value>
+{
+};
+
+} // namespace detail
+
+// result | value
+
+template<class T, class E, class U,
+    class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
+>
+    T operator|( result<T, E> const& r, U&& u )
+{
+    if( r )
+    {
+        return *r;
+    }
+    else
+    {
+        return std::forward<U>( u );
+    }
+}
+
+template<class T, class E, class U,
+    class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
+>
+    T operator|( result<T, E>&& r, U&& u )
+{
+    if( r )
+    {
+        return *std::move( r );
+    }
+    else
+    {
+        return std::forward<U>( u );
+    }
+}
+
 } // namespace system
 } // namespace boost
 
