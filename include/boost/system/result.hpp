@@ -897,7 +897,7 @@ template<class T, class U> struct is_value_convertible_to: std::is_convertible<T
 template<class T, class U> struct is_value_convertible_to<T, U&>:
     std::integral_constant<bool,
         std::is_lvalue_reference<T>::value &&
-        std::is_convertible<std::remove_reference_t<T>*, U*>::value>
+        std::is_convertible<typename std::remove_reference<T>::type*, U*>::value>
 {
 };
 
