@@ -1029,6 +1029,23 @@ template<class E, class F,
     }
 }
 
+template<class E, class F,
+    class U = decltype( std::declval<F>()() ),
+    class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<std::is_void<typename U::value_type>::value>::type
+>
+    U operator|( result<void, E>&& r, F&& f )
+{
+    if( r )
+    {
+        return {};
+    }
+    else
+    {
+        return std::forward<F>( f )();
+    }
+}
+
 } // namespace system
 } // namespace boost
 

@@ -335,5 +335,25 @@ int main()
         BOOST_TEST( r2.has_error() );
     }
 
+    {
+        result<void, E> r2 = result<void>() | fv;
+        BOOST_TEST( r2.has_value() );
+    }
+
+    {
+        result<void, E> r2 = result<void>() | fv2;
+        BOOST_TEST( r2.has_value() );
+    }
+
+    {
+        result<void, E> r2 = result<void>( in_place_error ) | fv;
+        BOOST_TEST( r2.has_value() );
+    }
+
+    {
+        result<void, E> r2 = result<void>( in_place_error ) | fv2;
+        BOOST_TEST( r2.has_error() );
+    }
+
     return boost::report_errors();
 }
