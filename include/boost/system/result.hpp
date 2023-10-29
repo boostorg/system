@@ -915,7 +915,7 @@ template<class T, class E> struct is_result< result<T, E> >: std::true_type {};
 template<class T, class E, class U,
     class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
 >
-    T operator|( result<T, E> const& r, U&& u )
+T operator|( result<T, E> const& r, U&& u )
 {
     if( r )
     {
@@ -930,7 +930,7 @@ template<class T, class E, class U,
 template<class T, class E, class U,
     class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
 >
-    T operator|( result<T, E>&& r, U&& u )
+T operator|( result<T, E>&& r, U&& u )
 {
     if( r )
     {
@@ -948,7 +948,7 @@ template<class T, class E, class F,
     class U = decltype( std::declval<F>()() ),
     class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
 >
-    T operator|( result<T, E> const& r, F&& f )
+T operator|( result<T, E> const& r, F&& f )
 {
     if( r )
     {
@@ -964,7 +964,7 @@ template<class T, class E, class F,
     class U = decltype( std::declval<F>()() ),
     class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
 >
-    T operator|( result<T, E>&& r, F&& f )
+T operator|( result<T, E>&& r, F&& f )
 {
     if( r )
     {
@@ -983,7 +983,7 @@ template<class T, class E, class F,
     class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<detail::is_value_convertible_to<T, typename U::value_type>::value>::type
 >
-    U operator|( result<T, E> const& r, F&& f )
+U operator|( result<T, E> const& r, F&& f )
 {
     if( r )
     {
@@ -1000,7 +1000,7 @@ template<class T, class E, class F,
     class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<detail::is_value_convertible_to<T, typename U::value_type>::value>::type
 >
-    U operator|( result<T, E>&& r, F&& f )
+U operator|( result<T, E>&& r, F&& f )
 {
     if( r )
     {
@@ -1017,7 +1017,7 @@ template<class E, class F,
     class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<std::is_void<typename U::value_type>::value>::type
 >
-    U operator|( result<void, E> const& r, F&& f )
+U operator|( result<void, E> const& r, F&& f )
 {
     if( r )
     {
@@ -1034,7 +1034,7 @@ template<class E, class F,
     class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<std::is_void<typename U::value_type>::value>::type
 >
-    U operator|( result<void, E>&& r, F&& f )
+U operator|( result<void, E>&& r, F&& f )
 {
     if( r )
     {
@@ -1046,13 +1046,15 @@ template<class E, class F,
     }
 }
 
+// operator&
+
 // result & unary-returning-value
 
 template<class T, class E, class F,
     class U = decltype( std::declval<F>()( std::declval<T const&>() ) ),
     class En = typename std::enable_if<!detail::is_result<U>::value>::type
 >
-    result<U, E> operator&( result<T, E> const& r, F&& f )
+result<U, E> operator&( result<T, E> const& r, F&& f )
 {
     if( r )
     {
@@ -1068,7 +1070,43 @@ template<class T, class E, class F,
     class U = decltype( std::declval<F>()( std::declval<T>() ) ),
     class En = typename std::enable_if<!detail::is_result<U>::value>::type
 >
-    result<U, E> operator&( result<T, E>&& r, F&& f )
+result<U, E> operator&( result<T, E>&& r, F&& f )
+{
+    if( r )
+    {
+        return std::forward<F>( f )( *std::move( r ) );
+    }
+    else
+    {
+        return r.error();
+    }
+}
+
+// result & unary-returning-result
+
+template<class T, class E, class F,
+    class U = decltype( std::declval<F>()( std::declval<T const&>() ) ),
+    class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<std::is_convertible<E, typename U::error_type>::value>::type
+>
+U operator&( result<T, E> const& r, F&& f )
+{
+    if( r )
+    {
+        return std::forward<F>( f )( *r );
+    }
+    else
+    {
+        return r.error();
+    }
+}
+
+template<class T, class E, class F,
+    class U = decltype( std::declval<F>()( std::declval<T>() ) ),
+    class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<std::is_convertible<E, typename U::error_type>::value>::type
+>
+U operator&( result<T, E>&& r, F&& f )
 {
     if( r )
     {
