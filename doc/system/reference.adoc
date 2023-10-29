@@ -1529,6 +1529,7 @@ template<class T, class E, class F> T operator|( result<T, E>&& r, F&& f );
 
 template<class T, class E, class F, class R = ...> R operator|( result<T, E> const& r, F&& f );
 template<class T, class E, class F, class R = ...> R operator|( result<T, E>&& r, F&& f );
+template<class E, class F, class R = ...> R operator|( result<void, E> const& r, F&& f );
 template<class E, class F, class R = ...> R operator|( result<void, E>&& r, F&& f );
 
 } // namespace system
@@ -2578,6 +2579,7 @@ which isn't necessary here, but would be needed for more complex expressions.
 ```
 template<class T, class E, class F, class R = ...> R operator|( result<T, E> const& r, F&& f );
 template<class T, class E, class F, class R = ...> R operator|( result<T, E>&& r, F&& f );
+template<class E, class F, class R = ...> R operator|( result<void, E> const& r, F&& f );
 template<class E, class F, class R = ...> R operator|( result<void, E>&& r, F&& f );
 ```
 [none]
