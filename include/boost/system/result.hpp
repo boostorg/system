@@ -1046,6 +1046,40 @@ template<class E, class F,
     }
 }
 
+// result & unary-returning-value
+
+template<class T, class E, class F,
+    class U = decltype( std::declval<F>()( std::declval<T const&>() ) ),
+    class En = typename std::enable_if<!detail::is_result<U>::value>::type
+>
+    result<U, E> operator&( result<T, E> const& r, F&& f )
+{
+    if( r )
+    {
+        return std::forward<F>( f )( *r );
+    }
+    else
+    {
+        return r.error();
+    }
+}
+
+template<class T, class E, class F,
+    class U = decltype( std::declval<F>()( std::declval<T>() ) ),
+    class En = typename std::enable_if<!detail::is_result<U>::value>::type
+>
+    result<U, E> operator&( result<T, E>&& r, F&& f )
+{
+    if( r )
+    {
+        return std::forward<F>( f )( *std::move( r ) );
+    }
+    else
+    {
+        return r.error();
+    }
+}
+
 } // namespace system
 } // namespace boost
 
