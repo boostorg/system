@@ -11,6 +11,7 @@ https://www.boost.org/LICENSE_1_0.txt
 ## Changes in Boost 1.84
 
 * Added support for `result<U&, E>`.
+* Added `operator|` for `result`.
 
 ## Changes in Boost 1.81
 

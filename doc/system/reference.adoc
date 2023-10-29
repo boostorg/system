@@ -1517,6 +1517,19 @@ constexpr in_place_error_t in_place_error{};
 
 template<class T, class E = error_code> class result;
 template<class E> class result<void, E>;
+template<class U, class E> class result<U&, E>;
+
+// operator|
+
+template<class T, class E, class U> T operator|( result<T, E> const& r, U&& u );
+template<class T, class E, class U> T operator|( result<T, E>&& r, U&& u );
+
+template<class T, class E, class F> T operator|( result<T, E> const& r, F&& f );
+template<class T, class E, class F> T operator|( result<T, E>&& r, F&& f );
+
+template<class T, class E, class F, class R = ...> R operator|( result<T, E> const& r, F&& f );
+template<class T, class E, class F, class R = ...> R operator|( result<T, E>&& r, F&& f );
+template<class E, class F, class R = ...> R operator|( result<void, E>&& r, F&& f );
 
 } // namespace system
 } // namespace boost
@@ -2487,6 +2500,110 @@ friend constexpr bool operator!=( result const & r1, result const & r2 );
 +
 Returns: ::
   `!( r1 == r2 )`.
+
+### Chaining
+
+#### operator|
+
+```
+template<class T, class E, class U> T operator|( result<T, E> const& r, U&& u );
+template<class T, class E, class U> T operator|( result<T, E>&& r, U&& u );
+```
+[none]
+* {blank}
++
+Returns the value in `r`, or if `r` contains an error, a default value `u`.
++
+Effects: ::
+  - If `r.has_value()` is `true`, returns `*r`.
+  - Otherwise, returns `u`.
+Remarks: ::
+  Only enabled when `U` is convertible to `T`.
+Example: ::
++
+```
+result<int> get_server_port(); // can fail
+
+int get_port()
+{
+    return get_server_port() | 443;
+}
+```
+
+```
+template<class T, class E, class F> T operator|( result<T, E> const& r, F&& f );
+template<class T, class E, class F> T operator|( result<T, E>&& r, F&& f );
+```
+[none]
+* {blank}
++
+Returns the value in `r`, or if `r` contains an error, a default value obtained
+by invoking the function `f`.
++
+Effects: ::
+  - If `r.has_value()` is `true`, returns `*r`.
+  - Otherwise, returns `f()`.
+Remarks: ::
+  Only enabled when `f()` is convertible to `T`.
+Example: ::
++
+```
+result<int> get_server_port(); // can fail
+int get_default_port();
+
+int get_port()
+{
+    return get_server_port() | get_default_port;
+}
+```
++
+Note that the right hand side is `get_default_port` and not `get_default_port()`.
+This is important; spelled this way, the function `get_default_port` is called
+only when `get_server_port_impl()` fails. If it were
++
+```
+    return get_server_port() | get_default_port();
+```
++
+the function would have been called unconditionally.
++
+Another, equivalent, way is to use a lambda
++
+```
+    return get_server_port() | []{ return get_default_port(); };
+```
++
+which isn't necessary here, but would be needed for more complex expressions.
+
+```
+template<class T, class E, class F, class R = ...> R operator|( result<T, E> const& r, F&& f );
+template<class T, class E, class F, class R = ...> R operator|( result<T, E>&& r, F&& f );
+template<class E, class F, class R = ...> R operator|( result<void, E>&& r, F&& f );
+```
+[none]
+* {blank}
++
+Returns the value in `r`, or if `r` contains an error, another `result` obtained
+by invoking the function `f`.
++
+Let `R` be the type of `f()`.
++
+Effects: ::
+  - If `r.has_value()` is `true`, returns `*r`.
+  - Otherwise, returns `f()`.
+Remarks: ::
+  Only enabled when `R` is an instance of `result` and `T` is convertible to `R::value_type`.
+Example: ::
++
+```
+result<int> get_server_port(); // can fail
+result<int> get_default_port(); // can fail
+
+int get_port()
+{
+    return get_server_port() | get_default_port | 443;
+}
+```
 
 ## <boost/system.hpp>
 
