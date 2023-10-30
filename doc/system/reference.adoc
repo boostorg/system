@@ -1532,6 +1532,16 @@ template<class T, class E, class F, class R = ...> R operator|( result<T, E>&& r
 template<class E, class F, class R = ...> R operator|( result<void, E> const& r, F&& f );
 template<class E, class F, class R = ...> R operator|( result<void, E>&& r, F&& f );
 
+// operator&
+
+template<class T, class E, class F, class U = ...>
+  result<U, E> operator&( result<T, E> const& r, F&& f );
+template<class T, class E, class F, class U = ...>
+  result<U, E> operator&( result<T, E>&& r, F&& f );
+
+template<class T, class E, class F, class R = ...> R operator&( result<T, E> const& r, F&& f );
+template<class T, class E, class F, class R = ...> R operator&( result<T, E>&& r, F&& f );
+
 } // namespace system
 } // namespace boost
 ```
@@ -2604,6 +2614,90 @@ result<int> get_default_port(); // can fail
 int get_port()
 {
     return get_server_port() | get_default_port | 443;
+}
+```
+
+#### operator&
+
+```
+template<class T, class E, class F, class U = ...>
+  result<U, E> operator&( result<T, E> const& r, F&& f );
+
+template<class T, class E, class F, class U = ...>
+  result<U, E> operator&( result<T, E>&& r, F&& f );
+```
+[none]
+* {blank}
++
+Returns the error in `r`, or if `r` contains a value, transforms the value by calling `f` on it.
++
+Let `U` be the type of `f(*r)`.
++
+Effects: ::
+  - If `r.has_value()` is `true`, returns `f(*r)`.
+  - Otherwise, returns `r.error()`.
+Remarks: ::
+  Only enabled when `U` is not an instance of `result`.
+Example: ::
++
+```
+struct currency_type
+{
+    char code_[ 4 ] = {};
+};
+
+result<double> get_exchange_rate( currency_type from, currency_type to );
+
+result<double> convert( double amount, currency_type from, currency_type to )
+{
+    return get_exchange_rate( from, to ) & [&](double rate){ return rate * amount; };
+}
+```
+
+```
+template<class T, class E, class F, class R = ...> R operator&( result<T, E> const& r, F&& f );
+template<class T, class E, class F, class R = ...> R operator&( result<T, E>&& r, F&& f );
+```
+[none]
+* {blank}
++
+Returns the error in `r`, or if `r` contains a value, another `result` obtained
+by invoking the function `f` on the value in `r`.
++
+Let `R` be the type of `f(*r)`.
++
+Effects: ::
+  - If `r.has_value()` is `true`, returns `f(*r)`.
+  - Otherwise, returns `r.error()`.
+Remarks: ::
+  Only enabled when `R` is an instance of `result` and `E` is convertible to `R::error_type`.
+Example: ::
++
+```
+struct JsonValue
+{
+    result<JsonValue const&> at( std::size_t i ) const noexcept;
+    result<JsonValue const&> at( std::string_view key ) const noexcept;
+    template<class T> result<T> to_number() const noexcept;
+};
+
+namespace helpers
+{
+    inline auto at( std::size_t i ) {
+        return [=](JsonValue const& jv){ return jv.at( i ); }; }
+
+    inline auto at( std::string_view key ) {
+        return [=](JsonValue const& jv){ return jv.at( key ); }; }
+
+    template<class T> inline auto to_number() {
+        return [](JsonValue const& jv){ return jv.to_number<T>(); }; }
+
+} // namespace helpers
+
+int get_port( JsonValue const& config, int def )
+{
+    using namespace helpers;
+    return config.at( "servers" ) & at( 0 ) & at( "port" ) & to_number<int>() | def;
 }
 ```
 
