@@ -1056,13 +1056,13 @@ template<class T, class E, class F,
 >
 result<U, E> operator&( result<T, E> const& r, F&& f )
 {
-    if( r )
+    if( r.has_error() )
     {
-        return std::forward<F>( f )( *r );
+        return r.error();
     }
     else
     {
-        return r.error();
+        return std::forward<F>( f )( *r );
     }
 }
 
@@ -1072,13 +1072,13 @@ template<class T, class E, class F,
 >
 result<U, E> operator&( result<T, E>&& r, F&& f )
 {
-    if( r )
+    if( r.has_error() )
     {
-        return std::forward<F>( f )( *std::move( r ) );
+        return r.error();
     }
     else
     {
-        return r.error();
+        return std::forward<F>( f )( *std::move( r ) );
     }
 }
 
@@ -1091,13 +1091,13 @@ template<class T, class E, class F,
 >
 U operator&( result<T, E> const& r, F&& f )
 {
-    if( r )
+    if( r.has_error() )
     {
-        return std::forward<F>( f )( *r );
+        return r.error();
     }
     else
     {
-        return r.error();
+        return std::forward<F>( f )( *r );
     }
 }
 
@@ -1108,13 +1108,13 @@ template<class T, class E, class F,
 >
 U operator&( result<T, E>&& r, F&& f )
 {
-    if( r )
+    if( r.has_error() )
     {
-        return std::forward<F>( f )( *std::move( r ) );
+        return r.error();
     }
     else
     {
-        return r.error();
+        return std::forward<F>( f )( *std::move( r ) );
     }
 }
 
