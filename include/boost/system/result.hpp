@@ -1137,6 +1137,24 @@ result<T, E>& operator&=( result<T, E>& r, F&& f )
     return r;
 }
 
+// result &= unary-returning-result
+
+template<class T, class E, class F,
+    class U = decltype( std::declval<F>()( std::declval<T>() ) ),
+    class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<detail::is_value_convertible_to<typename U::value_type, T>::value>::type,
+    class En3 = typename std::enable_if<std::is_convertible<typename U::error_type, E>::value>::type
+>
+result<T, E>& operator&=( result<T, E>& r, F&& f )
+{
+    if( r )
+    {
+        r = std::forward<F>( f )( *std::move( r ) );
+    }
+
+    return r;
+}
+
 } // namespace system
 } // namespace boost
 
