@@ -1542,6 +1542,14 @@ template<class T, class E, class F, class U = ...>
 template<class T, class E, class F, class R = ...> R operator&( result<T, E> const& r, F&& f );
 template<class T, class E, class F, class R = ...> R operator&( result<T, E>&& r, F&& f );
 
+// operator&=
+
+template<class T, class E, class F, class U = ...>
+  result<T, E>& operator&=( result<T, E>& r, F&& f );
+
+template<class T, class E, class F, class R = ...>
+  result<T, E>& operator&=( result<T, E>& r, F&& f );
+
 } // namespace system
 } // namespace boost
 ```
@@ -2683,14 +2691,15 @@ struct JsonValue
 
 namespace helpers
 {
-    inline auto at( std::size_t i ) {
-        return [=](JsonValue const& jv){ return jv.at( i ); }; }
 
-    inline auto at( std::string_view key ) {
-        return [=](JsonValue const& jv){ return jv.at( key ); }; }
+inline auto at( std::size_t i ) {
+    return [=](JsonValue const& jv){ return jv.at( i ); }; }
 
-    template<class T> inline auto to_number() {
-        return [](JsonValue const& jv){ return jv.to_number<T>(); }; }
+inline auto at( std::string_view key ) {
+    return [=](JsonValue const& jv){ return jv.at( key ); }; }
+
+template<class T> inline auto to_number() {
+    return [](JsonValue const& jv){ return jv.to_number<T>(); }; }
 
 } // namespace helpers
 
@@ -2698,6 +2707,71 @@ int get_port( JsonValue const& config, int def )
 {
     using namespace helpers;
     return config.at( "servers" ) & at( 0 ) & at( "port" ) & to_number<int>() | def;
+}
+```
+
+#### operator&=
+
+```
+template<class T, class E, class F, class U = ...>
+  result<T, E>& operator&=( result<T, E>& r, F&& f );
+```
+[none]
+* {blank}
++
+If `r` contains a value, replaces it with the result of invoking the function `f` on the value in `r`.
++
+Let `U` be the type of `f(*r)`.
++
+Effects: :: If `r.has_value()` is `true`, assigns `f(*std::move(r))` to `r`.
+Returns: :: `r`.
+Remarks: ::
+  Only enabled when `U` is not an instance of `result` and is convertible to `T`.
+
+```
+template<class T, class E, class F, class R = ...>
+  result<T, E>& operator&=( result<T, E>& r, F&& f );
+```
+[none]
+* {blank}
++
+If `r` contains a value, replaces `r` with the result of invoking the function `f` on the value in `r`.
++
+Let `R` be the type of `f(*r)`.
++
+Effects: :: If `r.has_value()` is `true`, assigns `f(*std::move(r))` to `r`.
+Returns: :: `r`.
+Remarks: ::
+  Only enabled when `R` is an instance of `result` and is convertible to `result<T, E>`.
+Example: ::
++
+```
+struct JsonValue
+{
+    result<JsonValue const&> at( std::string_view key ) const noexcept;
+};
+
+namespace helpers
+{
+
+inline auto at( std::string_view key ) {
+    return [=](JsonValue const& jv){ return jv.at( key ); }; }
+
+} // namespace helpers
+
+result<JsonValue const&> at_path( JsonValue const& jv,
+    std::initializer_list<std::string_view> path )
+{
+    result<JsonValue const&> r( jv );
+
+    using namespace helpers;
+
+    for( auto key: path )
+    {
+        r &= at( key );
+    }
+
+    return r;
 }
 ```
 
