@@ -206,3 +206,4 @@ run result_and_fn1v.cpp : : : $(CPP11) ;
 run result_and_fn1r.cpp : : : $(CPP11) ;
 run result_and_eq_fn1v.cpp : : : $(CPP11) ;
 run result_and_eq_fn1r.cpp : : : $(CPP11) ;
+run result_in_place_use.cpp : : : $(CPP11) ;
