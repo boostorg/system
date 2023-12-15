@@ -659,6 +659,13 @@ public:
     }
 };
 
+#if defined(BOOST_NO_CXX17_INLINE_VARIABLES)
+
+template<class E> constexpr in_place_value_t result<void, E>::in_place_value;
+template<class E> constexpr in_place_error_t result<void, E>::in_place_error;
+
+#endif
+
 template<class Ch, class Tr, class E> std::basic_ostream<Ch, Tr>& operator<<( std::basic_ostream<Ch, Tr>& os, result<void, E> const & r )
 {
     if( r.has_value() )
@@ -891,6 +898,13 @@ public:
         return !( r1 == r2 );
     }
 };
+
+#if defined(BOOST_NO_CXX17_INLINE_VARIABLES)
+
+template<class U, class E> constexpr in_place_value_t result<U&, E>::in_place_value;
+template<class U, class E> constexpr in_place_error_t result<U&, E>::in_place_error;
+
+#endif
 
 // operator|
 
