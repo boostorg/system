@@ -450,6 +450,13 @@ public:
     }
 };
 
+#if defined(BOOST_NO_CXX17_INLINE_VARIABLES)
+
+template<class T, class E> constexpr in_place_value_t result<T, E>::in_place_value;
+template<class T, class E> constexpr in_place_error_t result<T, E>::in_place_error;
+
+#endif
+
 template<class Ch, class Tr, class T, class E> std::basic_ostream<Ch, Tr>& operator<<( std::basic_ostream<Ch, Tr>& os, result<T, E> const & r )
 {
     if( r.has_value() )
