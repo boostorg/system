@@ -226,16 +226,16 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
     ),
 
     linux_pipeline(
-        "Linux 23.04 GCC 13 32",
+        "Linux 23.04 GCC 13 32 UBSAN",
         "cppalliance/droneubuntu2304:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '03,11,14,17,20,2b', ADDRMD: '32' },
+        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '03,11,14,17,20,2b', ADDRMD: '32' } + ubsan,
         "g++-13-multilib",
     ),
 
     linux_pipeline(
-        "Linux 23.04 GCC 13 64",
+        "Linux 23.04 GCC 13 64 UBSAN",
         "cppalliance/droneubuntu2304:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '03,11,14,17,20,2b', ADDRMD: '64' },
+        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '03,11,14,17,20,2b', ADDRMD: '64' } + ubsan,
         "g++-13-multilib",
     ),
 
@@ -275,16 +275,9 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
     ),
 
     linux_pipeline(
-        "Linux 22.04 Clang 14 UBSAN",
+        "Linux 22.04 Clang 14",
         "cppalliance/droneubuntu2204:1",
-        { TOOLSET: 'clang', COMPILER: 'clang++-14', CXXSTD: '03,11,14,17,20' } + ubsan,
-        "clang-14",
-    ),
-
-    linux_pipeline(
-        "Linux 22.04 Clang 14 ASAN",
-        "cppalliance/droneubuntu2204:1",
-        { TOOLSET: 'clang', COMPILER: 'clang++-14', CXXSTD: '03,11,14,17,20' } + asan,
+        { TOOLSET: 'clang', COMPILER: 'clang++-14', CXXSTD: '03,11,14,17,20' },
         "clang-14",
     ),
 
@@ -301,6 +294,20 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
         "cppalliance/droneubuntu2304:1",
         { TOOLSET: 'clang', COMPILER: 'clang++-16', CXXSTD: '11,14,17,20,2b' },
         "clang-16",
+    ),
+
+    linux_pipeline(
+        "Linux 23.10 Clang 17 UBSAN",
+        "cppalliance/droneubuntu2310:1",
+        { TOOLSET: 'clang', COMPILER: 'clang++-17', CXXSTD: '11,14,17,20,2b' } + ubsan,
+        "clang-17",
+    ),
+
+    linux_pipeline(
+        "Linux 23.10 Clang 17 ASAN",
+        "cppalliance/droneubuntu2310:1",
+        { TOOLSET: 'clang', COMPILER: 'clang++-17', CXXSTD: '11,14,17,20,2b' } + asan,
+        "clang-17",
     ),
 
     macos_pipeline(
