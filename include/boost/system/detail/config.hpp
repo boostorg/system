@@ -17,10 +17,6 @@
 //
 // https://github.com/boostorg/system/issues/92
 
-// BOOST_SYSTEM_HAS_SYSTEM_ERROR
-
-#define BOOST_SYSTEM_HAS_SYSTEM_ERROR
-
 // BOOST_SYSTEM_NOEXCEPT
 // Retained for backward compatibility
 

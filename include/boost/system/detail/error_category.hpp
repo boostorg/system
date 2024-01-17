@@ -17,11 +17,8 @@
 #include <string>
 #include <functional>
 #include <cstddef>
-
-#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
-# include <system_error>
-# include <atomic>
-#endif
+#include <system_error>
+#include <atomic>
 
 namespace boost
 {
@@ -81,15 +78,7 @@ private:
         void const* stdcat_align_;
     };
 
-#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
-
     mutable std::atomic< unsigned > sc_init_;
-
-#else
-
-    unsigned sc_init_;
-
-#endif
 
 protected:
 
@@ -156,8 +145,6 @@ public:
         return std::less<error_category const *>()( &lhs, &rhs );
     }
 
-#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
-
     void init_stdcat() const;
 
 # if defined(__SUNPRO_CC) // trailing __global is not supported
@@ -165,8 +152,6 @@ public:
 # else
     operator std::error_category const & () const BOOST_SYMBOL_VISIBLE;
 # endif
-
-#endif
 };
 
 #if defined(BOOST_MSVC) && BOOST_MSVC < 1900

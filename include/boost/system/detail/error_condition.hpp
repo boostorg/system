@@ -199,8 +199,6 @@ public:
         return !( lhs == rhs );
     }
 
-#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
-
     operator std::error_condition () const
     {
 // This condition must be the same as the one in error_category_impl.hpp
@@ -293,8 +291,6 @@ public:
     {
         return !( lhs == rhs );
     }
-
-#endif
 
     std::string to_string() const
     {

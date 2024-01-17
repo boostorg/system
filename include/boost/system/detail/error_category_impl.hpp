@@ -75,8 +75,6 @@ inline char const * error_category::message( int ev, char * buffer, std::size_t 
 
 // interoperability with std::error_code, std::error_condition
 
-#if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
-
 #include <boost/system/detail/std_category_impl.hpp>
 #include <boost/system/detail/mutex.hpp>
 #include <new>
@@ -164,7 +162,5 @@ inline BOOST_NOINLINE error_category::operator std::error_category const & () co
 
 } // namespace system
 } // namespace boost
-
-#endif // #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 
 #endif // #ifndef BOOST_SYSTEM_DETAIL_ERROR_CATEGORY_IMPL_HPP_INCLUDED
