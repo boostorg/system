@@ -138,8 +138,6 @@ boost_test(TYPE run SOURCES std_interop_test16.cpp)
 
 # result
 
-set(BOOST_TEST_COMPILE_FEATURES cxx_std_11)
-
 boost_test(TYPE run SOURCES result_default_construct.cpp)
 boost_test(TYPE run SOURCES result_value_construct.cpp)
 boost_test(TYPE run SOURCES result_error_construct.cpp)
