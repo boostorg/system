@@ -21,6 +21,7 @@
 #include <boost/system/detail/append_int.hpp>
 #include <boost/system/detail/snprintf.hpp>
 #include <boost/system/detail/config.hpp>
+#include <boost/system/detail/source_location.hpp>
 
 #if defined(BOOST_SYSTEM_HAS_SYSTEM_ERROR)
 # include <boost/system/detail/std_category.hpp>
@@ -88,7 +89,7 @@ private:
     // 1: holds std::error_code in d2_
     // 2: holds error code in d1_, failed == false
     // 3: holds error code in d1_, failed == true
-    // >3: pointer to source_location, failed_ in lsb
+    // >3: pointer to source_location or layout-compatible type, failed_ in lsb
     boost::uintptr_t lc_flags_;
 
 private:
@@ -132,8 +133,8 @@ public:
         d1_.cat_ = &cat;
     }
 
-    error_code( int val, const error_category & cat, source_location const * loc ) BOOST_NOEXCEPT:
-        d1_(), lc_flags_( ( loc? reinterpret_cast<boost::uintptr_t>( loc ): 2 ) | +detail::failed_impl( val, cat ) )
+    BOOST_SYSTEM_CONSTEXPR error_code( int val, const error_category & cat, detail::source_location_ptr loc ) BOOST_NOEXCEPT:
+        d1_(), lc_flags_( ( loc.value()? loc.value(): 2 ) | +detail::failed_impl( val, cat ) )
     {
         d1_.val_ = val;
         d1_.cat_ = &cat;
@@ -150,14 +151,14 @@ public:
         *this = make_error_code( e );
     }
 
-    error_code( error_code const& ec, source_location const * loc ) BOOST_NOEXCEPT:
+    error_code( error_code const& ec, detail::source_location_ptr loc ) BOOST_NOEXCEPT:
         d1_(), lc_flags_( 0 )
     {
         *this = ec;
 
         if( ec.lc_flags_ != 0 && ec.lc_flags_ != 1 )
         {
-            lc_flags_ = ( loc? reinterpret_cast<boost::uintptr_t>( loc ): 2 ) | ( ec.lc_flags_ & 1 );
+            lc_flags_ = ( loc.value()? loc.value(): 2 ) | ( ec.lc_flags_ & 1 );
         }
     }
 
@@ -190,12 +191,12 @@ public:
         *this = error_code( val, cat );
     }
 
-    void assign( int val, const error_category & cat, source_location const * loc ) BOOST_NOEXCEPT
+    void assign( int val, const error_category & cat, detail::source_location_ptr loc ) BOOST_NOEXCEPT
     {
         *this = error_code( val, cat, loc );
     }
 
-    void assign( error_code const& ec, source_location const * loc ) BOOST_NOEXCEPT
+    void assign( error_code const& ec, detail::source_location_ptr loc ) BOOST_NOEXCEPT
     {
         *this = error_code( ec, loc );
     }
@@ -364,10 +365,12 @@ public:
         return lc_flags_ >= 4;
     }
 
-    source_location const & location() const BOOST_NOEXCEPT
+    source_location location() const BOOST_NOEXCEPT
     {
-        BOOST_STATIC_CONSTEXPR source_location loc;
-        return lc_flags_ >= 4? *reinterpret_cast<source_location const*>( lc_flags_ &~ static_cast<boost::uintptr_t>( 1 ) ): loc;
+        source_location loc;
+        if( lc_flags_ >= 4 )
+            std::memcpy( &loc, reinterpret_cast<source_location const*>( lc_flags_ &~ static_cast<boost::uintptr_t>( 1 ) ), sizeof loc );
+        return loc;
     }
 
     // relationals:

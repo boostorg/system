@@ -154,6 +154,7 @@ run std_interop_test14.cpp ;
 
 run ec_location_test3.cpp ;
 run ec_location_test4.cpp ;
+run ec_location_test5.cpp ;
 
 compile constexpr_test2.cpp ;
 

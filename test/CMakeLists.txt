@@ -62,6 +62,12 @@ system_run(system_category_test.cpp)
 system_run(after_main_test.cpp)
 system_run(failed_test.cpp)
 system_run(failed_constexpr_test.cpp)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
+    CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 6 AND
+    CMAKE_CXX_COMPILER_VERSION VERSION_LESS 13)
+  # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=71962
+  set_source_files_properties(failed_constexpr_test.cpp PROPERTIES COMPILE_OPTIONS -fno-sanitize=undefined)
+endif()
 
 boost_test(SOURCES warnings_test.cpp COMPILE_OPTIONS -Wall -Werror)
 
@@ -124,6 +130,7 @@ boost_test(TYPE run SOURCES std_interop_test14.cpp)
 
 boost_test(TYPE run SOURCES ec_location_test3.cpp)
 boost_test(TYPE run SOURCES ec_location_test4.cpp)
+boost_test(TYPE run SOURCES ec_location_test5.cpp)
 
 boost_test(TYPE compile SOURCES constexpr_test2.cpp)
 

@@ -45,7 +45,7 @@ int main()
 
         BOOST_TEST_EQ( ec.value(), 5 );
         BOOST_TEST( ec.category() == sys::generic_category() );
-        BOOST_TEST_EQ( &ec.location(), &loc );
+        BOOST_TEST_EQ( ec.location().line(), loc.line() );
 
         BOOST_TEST_EQ( ec.what(), ec.message() + " [generic:5 at " + loc.to_string() + "]" );
     }
@@ -57,7 +57,7 @@ int main()
 
         BOOST_TEST_EQ( ec.value(), 5 );
         BOOST_TEST( ec.category() == sys::system_category() );
-        BOOST_TEST_EQ( &ec.location(), &loc );
+        BOOST_TEST_EQ( ec.location().line(), loc.line() );
 
         BOOST_TEST_EQ( ec.what(), ec.message() + " [system:5 at " + loc.to_string() + "]" );
     }

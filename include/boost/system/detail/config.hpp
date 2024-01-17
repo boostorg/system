@@ -63,6 +63,14 @@
 # define BOOST_SYSTEM_DEPRECATED(msg)
 #endif
 
+// BOOST_SYSTEM_IMPLICIT
+
+#if __cplusplus >= 202002L
+# define BOOST_SYSTEM_IMPLICIT explicit( false )
+#else
+# define BOOST_SYSTEM_IMPLICIT
+#endif
+
 // BOOST_SYSTEM_CLANG_6
 
 // Android NDK r18b has Clang 7.0.2 that still needs the workaround
