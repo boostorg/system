@@ -158,29 +158,10 @@ public:
         }
     }
 
-#if !defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS)
-
     BOOST_SYSTEM_CONSTEXPR explicit operator bool() const BOOST_NOEXCEPT  // true if error
     {
         return failed();
     }
-
-#else
-
-    typedef void (*unspecified_bool_type)();
-    static void unspecified_bool_true() {}
-
-    BOOST_SYSTEM_CONSTEXPR operator unspecified_bool_type() const BOOST_NOEXCEPT  // true if error
-    {
-        return failed()? unspecified_bool_true: 0;
-    }
-
-    BOOST_SYSTEM_CONSTEXPR bool operator!() const BOOST_NOEXCEPT  // true if no error
-    {
-        return !failed();
-    }
-
-#endif
 
     // relationals:
     //  the more symmetrical non-member syntax allows enum
