@@ -51,11 +51,7 @@ public:
         // here when Id != 0, but this should never happen now because this code
         // path is no longer used
 
-#if !defined(BOOST_NO_CXX11_STATIC_ASSERT)
-
         static_assert( Id == 0, "This constructor should only be called with Id == 0 under MS STL 14.0+" );
-
-#endif
 
 #endif
     }
