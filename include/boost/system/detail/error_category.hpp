@@ -84,18 +84,11 @@ protected:
 
     ~error_category() = default;
 
-#if !BOOST_WORKAROUND(BOOST_GCC, < 40800)
-    BOOST_CONSTEXPR
-#endif
-    error_category() BOOST_NOEXCEPT: id_( 0 ), stdcat_(), sc_init_()
+    constexpr error_category() BOOST_NOEXCEPT: id_( 0 ), stdcat_(), sc_init_()
     {
     }
 
-    explicit
-#if !BOOST_WORKAROUND(BOOST_GCC, < 40800)
-    BOOST_CONSTEXPR
-#endif
-    error_category( boost::ulong_long_type id ) BOOST_NOEXCEPT: id_( id ), stdcat_(), sc_init_()
+    explicit constexpr error_category( boost::ulong_long_type id ) BOOST_NOEXCEPT: id_( id ), stdcat_(), sc_init_()
     {
     }
 
