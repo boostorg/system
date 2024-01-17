@@ -13,7 +13,7 @@ class user_category: public boost::system::error_category
 {
 public:
 
-    virtual const char * name() const BOOST_NOEXCEPT
+    virtual const char * name() const noexcept
     {
         return "user";
     }

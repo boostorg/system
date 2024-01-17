@@ -20,7 +20,7 @@
 // BOOST_SYSTEM_NOEXCEPT
 // Retained for backward compatibility
 
-#define BOOST_SYSTEM_NOEXCEPT BOOST_NOEXCEPT
+#define BOOST_SYSTEM_NOEXCEPT noexcept
 
 // BOOST_SYSTEM_HAS_CONSTEXPR
 

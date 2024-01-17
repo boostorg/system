@@ -51,14 +51,14 @@ namespace system
 //  and error_code containing a pointer to an object of a type derived
 //  from error_category.
 
-bool operator==( const error_code & code, const error_condition & condition ) BOOST_NOEXCEPT;
+bool operator==( const error_code & code, const error_condition & condition ) noexcept;
 std::size_t hash_value( error_code const & ec );
 
 class error_code
 {
 private:
 
-    friend bool operator==( const error_code & code, const error_condition & condition ) BOOST_NOEXCEPT;
+    friend bool operator==( const error_code & code, const error_condition & condition ) noexcept;
     friend std::size_t hash_value( error_code const & ec );
 
 private:
@@ -84,7 +84,7 @@ private:
 
 private:
 
-    char const* category_name() const BOOST_NOEXCEPT
+    char const* category_name() const noexcept
     {
         // return category().name();
 
@@ -108,19 +108,19 @@ public:
 
     // constructors:
 
-    constexpr error_code() BOOST_NOEXCEPT:
+    constexpr error_code() noexcept:
         d1_(), lc_flags_( 0 )
     {
     }
 
-    BOOST_SYSTEM_CONSTEXPR error_code( int val, const error_category & cat ) BOOST_NOEXCEPT:
+    BOOST_SYSTEM_CONSTEXPR error_code( int val, const error_category & cat ) noexcept:
         d1_(), lc_flags_( 2 + detail::failed_impl( val, cat ) )
     {
         d1_.val_ = val;
         d1_.cat_ = &cat;
     }
 
-    error_code( int val, const error_category & cat, source_location const * loc ) BOOST_NOEXCEPT:
+    error_code( int val, const error_category & cat, source_location const * loc ) noexcept:
         d1_(), lc_flags_( ( loc? reinterpret_cast<boost::uintptr_t>( loc ): 2 ) | +detail::failed_impl( val, cat ) )
     {
         d1_.val_ = val;
@@ -131,12 +131,12 @@ public:
         typename detail::enable_if<
             is_error_code_enum<ErrorCodeEnum>::value
             || std::is_error_code_enum<ErrorCodeEnum>::value
-        >::type* = 0 ) BOOST_NOEXCEPT: d1_(), lc_flags_( 0 )
+        >::type* = 0 ) noexcept: d1_(), lc_flags_( 0 )
     {
         *this = make_error_code( e );
     }
 
-    error_code( error_code const& ec, source_location const * loc ) BOOST_NOEXCEPT:
+    error_code( error_code const& ec, source_location const * loc ) noexcept:
         d1_(), lc_flags_( 0 )
     {
         *this = ec;
@@ -147,7 +147,7 @@ public:
         }
     }
 
-    error_code( std::error_code const& ec ) BOOST_NOEXCEPT:
+    error_code( std::error_code const& ec ) noexcept:
         d1_(), lc_flags_( 0 )
     {
 #ifndef BOOST_NO_RTTI
@@ -167,37 +167,37 @@ public:
 
     // modifiers:
 
-    BOOST_SYSTEM_CONSTEXPR void assign( int val, const error_category & cat ) BOOST_NOEXCEPT
+    BOOST_SYSTEM_CONSTEXPR void assign( int val, const error_category & cat ) noexcept
     {
         *this = error_code( val, cat );
     }
 
-    void assign( int val, const error_category & cat, source_location const * loc ) BOOST_NOEXCEPT
+    void assign( int val, const error_category & cat, source_location const * loc ) noexcept
     {
         *this = error_code( val, cat, loc );
     }
 
-    void assign( error_code const& ec, source_location const * loc ) BOOST_NOEXCEPT
+    void assign( error_code const& ec, source_location const * loc ) noexcept
     {
         *this = error_code( ec, loc );
     }
 
     template<typename ErrorCodeEnum>
         BOOST_SYSTEM_CONSTEXPR typename detail::enable_if<is_error_code_enum<ErrorCodeEnum>::value, error_code>::type &
-        operator=( ErrorCodeEnum val ) BOOST_NOEXCEPT
+        operator=( ErrorCodeEnum val ) noexcept
     {
         *this = make_error_code( val );
         return *this;
     }
 
-    BOOST_SYSTEM_CONSTEXPR void clear() BOOST_NOEXCEPT
+    BOOST_SYSTEM_CONSTEXPR void clear() noexcept
     {
         *this = error_code();
     }
 
     // observers:
 
-    BOOST_SYSTEM_CONSTEXPR int value() const BOOST_NOEXCEPT
+    BOOST_SYSTEM_CONSTEXPR int value() const noexcept
     {
         if( lc_flags_ != 1 )
         {
@@ -214,7 +214,7 @@ public:
         }
     }
 
-    BOOST_SYSTEM_CONSTEXPR const error_category & category() const BOOST_NOEXCEPT
+    BOOST_SYSTEM_CONSTEXPR const error_category & category() const noexcept
     {
         if( lc_flags_ == 0 )
         {
@@ -231,7 +231,7 @@ public:
     }
 
     // deprecated?
-    error_condition default_error_condition() const BOOST_NOEXCEPT
+    error_condition default_error_condition() const noexcept
     {
         return category().default_error_condition( value() );
     }
@@ -253,7 +253,7 @@ public:
         }
     }
 
-    char const * message( char * buffer, std::size_t len ) const BOOST_NOEXCEPT
+    char const * message( char * buffer, std::size_t len ) const noexcept
     {
         if( lc_flags_ == 1 )
         {
@@ -284,7 +284,7 @@ public:
         }
     }
 
-    BOOST_SYSTEM_CONSTEXPR bool failed() const BOOST_NOEXCEPT
+    BOOST_SYSTEM_CONSTEXPR bool failed() const noexcept
     {
         if( lc_flags_ & 1 )
         {
@@ -302,17 +302,17 @@ public:
         }
     }
 
-    BOOST_SYSTEM_CONSTEXPR explicit operator bool() const BOOST_NOEXCEPT  // true if error
+    BOOST_SYSTEM_CONSTEXPR explicit operator bool() const noexcept  // true if error
     {
         return failed();
     }
 
-    bool has_location() const BOOST_NOEXCEPT
+    bool has_location() const noexcept
     {
         return lc_flags_ >= 4;
     }
 
-    source_location const & location() const BOOST_NOEXCEPT
+    source_location const & location() const noexcept
     {
         BOOST_STATIC_CONSTEXPR source_location loc;
         return lc_flags_ >= 4? *reinterpret_cast<source_location const*>( lc_flags_ &~ static_cast<boost::uintptr_t>( 1 ) ): loc;
@@ -326,7 +326,7 @@ private:
 
     friend class error_category;
 
-    BOOST_SYSTEM_CONSTEXPR bool equals( int val, error_category const& cat ) const BOOST_NOEXCEPT
+    BOOST_SYSTEM_CONSTEXPR bool equals( int val, error_category const& cat ) const noexcept
     {
         if( lc_flags_ == 0 )
         {
@@ -347,7 +347,7 @@ public:
     //  the more symmetrical non-member syntax allows enum
     //  conversions work for both rhs and lhs.
 
-    BOOST_SYSTEM_CONSTEXPR inline friend bool operator==( const error_code & lhs, const error_code & rhs ) BOOST_NOEXCEPT
+    BOOST_SYSTEM_CONSTEXPR inline friend bool operator==( const error_code & lhs, const error_code & rhs ) noexcept
     {
         bool s1 = lhs.lc_flags_ == 1;
         bool s2 = rhs.lc_flags_ == 1;
@@ -367,7 +367,7 @@ public:
         }
     }
 
-    BOOST_SYSTEM_CONSTEXPR inline friend bool operator<( const error_code & lhs, const error_code & rhs ) BOOST_NOEXCEPT
+    BOOST_SYSTEM_CONSTEXPR inline friend bool operator<( const error_code & lhs, const error_code & rhs ) noexcept
     {
         bool s1 = lhs.lc_flags_ == 1;
         bool s2 = rhs.lc_flags_ == 1;
@@ -388,27 +388,27 @@ public:
         }
     }
 
-    BOOST_SYSTEM_CONSTEXPR inline friend bool operator!=( const error_code & lhs, const error_code & rhs ) BOOST_NOEXCEPT
+    BOOST_SYSTEM_CONSTEXPR inline friend bool operator!=( const error_code & lhs, const error_code & rhs ) noexcept
     {
         return !( lhs == rhs );
     }
 
-    inline friend bool operator==( std::error_code const & lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    inline friend bool operator==( std::error_code const & lhs, error_code const & rhs ) noexcept
     {
         return lhs == static_cast< std::error_code >( rhs );
     }
 
-    inline friend bool operator==( error_code const & lhs, std::error_code const & rhs ) BOOST_NOEXCEPT
+    inline friend bool operator==( error_code const & lhs, std::error_code const & rhs ) noexcept
     {
         return static_cast< std::error_code >( lhs ) == rhs;
     }
 
-    inline friend bool operator!=( std::error_code const & lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    inline friend bool operator!=( std::error_code const & lhs, error_code const & rhs ) noexcept
     {
         return !( lhs == rhs );
     }
 
-    inline friend bool operator!=( error_code const & lhs, std::error_code const & rhs ) BOOST_NOEXCEPT
+    inline friend bool operator!=( error_code const & lhs, std::error_code const & rhs ) noexcept
     {
         return !( lhs == rhs );
     }
@@ -416,25 +416,25 @@ public:
     //
 
     template<class E, class N = typename detail::enable_if<std::is_error_condition_enum<E>::value>::type>
-    inline friend bool operator==( error_code const & lhs, E rhs ) BOOST_NOEXCEPT
+    inline friend bool operator==( error_code const & lhs, E rhs ) noexcept
     {
         return lhs == make_error_condition( rhs );
     }
 
     template<class E, class N = typename detail::enable_if<std::is_error_condition_enum<E>::value>::type>
-    inline friend bool operator==( E lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    inline friend bool operator==( E lhs, error_code const & rhs ) noexcept
     {
         return make_error_condition( lhs ) == rhs;
     }
 
     template<class E, class N = typename detail::enable_if<std::is_error_condition_enum<E>::value>::type>
-    inline friend bool operator!=( error_code const & lhs, E rhs ) BOOST_NOEXCEPT
+    inline friend bool operator!=( error_code const & lhs, E rhs ) noexcept
     {
         return !( lhs == rhs );
     }
 
     template<class E, class N = typename detail::enable_if<std::is_error_condition_enum<E>::value>::type>
-    inline friend bool operator!=( E lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    inline friend bool operator!=( E lhs, error_code const & rhs ) noexcept
     {
         return !( lhs == rhs );
     }
@@ -442,47 +442,47 @@ public:
     //
 
     template<class E, class N1 = void, class N2 = typename detail::enable_if<std::is_error_code_enum<E>::value>::type>
-    BOOST_SYSTEM_CONSTEXPR inline friend bool operator==( error_code const & lhs, E rhs ) BOOST_NOEXCEPT
+    BOOST_SYSTEM_CONSTEXPR inline friend bool operator==( error_code const & lhs, E rhs ) noexcept
     {
         return lhs == make_error_code( rhs );
     }
 
     template<class E, class N1 = void, class N2 = typename detail::enable_if<std::is_error_code_enum<E>::value>::type>
-    BOOST_SYSTEM_CONSTEXPR inline friend bool operator==( E lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    BOOST_SYSTEM_CONSTEXPR inline friend bool operator==( E lhs, error_code const & rhs ) noexcept
     {
         return make_error_code( lhs ) == rhs;
     }
 
     template<class E, class N1 = void, class N2 = typename detail::enable_if<std::is_error_code_enum<E>::value>::type>
-    BOOST_SYSTEM_CONSTEXPR inline friend bool operator!=( error_code const & lhs, E rhs ) BOOST_NOEXCEPT
+    BOOST_SYSTEM_CONSTEXPR inline friend bool operator!=( error_code const & lhs, E rhs ) noexcept
     {
         return !( lhs == rhs );
     }
 
     template<class E, class N1 = void, class N2 = typename detail::enable_if<std::is_error_code_enum<E>::value>::type>
-    BOOST_SYSTEM_CONSTEXPR inline friend bool operator!=( E lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    BOOST_SYSTEM_CONSTEXPR inline friend bool operator!=( E lhs, error_code const & rhs ) noexcept
     {
         return !( lhs == rhs );
     }
 
 #if defined(BOOST_SYSTEM_CLANG_6)
 
-    inline friend bool operator==( error_code const & lhs, std::error_condition const & rhs ) BOOST_NOEXCEPT
+    inline friend bool operator==( error_code const & lhs, std::error_condition const & rhs ) noexcept
     {
         return static_cast< std::error_code >( lhs ) == rhs;
     }
 
-    inline friend bool operator==( std::error_condition const & lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    inline friend bool operator==( std::error_condition const & lhs, error_code const & rhs ) noexcept
     {
         return lhs == static_cast< std::error_code >( rhs );
     }
 
-    inline friend bool operator!=( error_code const & lhs, std::error_condition const & rhs ) BOOST_NOEXCEPT
+    inline friend bool operator!=( error_code const & lhs, std::error_condition const & rhs ) noexcept
     {
         return !( lhs == rhs );
     }
 
-    inline friend bool operator!=( std::error_condition const & lhs, error_code const & rhs ) BOOST_NOEXCEPT
+    inline friend bool operator!=( std::error_condition const & lhs, error_code const & rhs ) noexcept
     {
         return !( lhs == rhs );
     }
@@ -588,7 +588,7 @@ public:
     }
 };
 
-inline bool operator==( const error_code & code, const error_condition & condition ) BOOST_NOEXCEPT
+inline bool operator==( const error_code & code, const error_condition & condition ) noexcept
 {
     if( code.lc_flags_ == 1 )
     {
@@ -600,17 +600,17 @@ inline bool operator==( const error_code & code, const error_condition & conditi
     }
 }
 
-inline bool operator==( const error_condition & condition, const error_code & code ) BOOST_NOEXCEPT
+inline bool operator==( const error_condition & condition, const error_code & code ) noexcept
 {
     return code == condition;
 }
 
-inline bool operator!=( const error_code & lhs, const error_condition & rhs ) BOOST_NOEXCEPT
+inline bool operator!=( const error_code & lhs, const error_condition & rhs ) noexcept
 {
     return !( lhs == rhs );
 }
 
-inline bool operator!=( const error_condition & lhs, const error_code & rhs ) BOOST_NOEXCEPT
+inline bool operator!=( const error_condition & lhs, const error_code & rhs ) noexcept
 {
     return !( lhs == rhs );
 }

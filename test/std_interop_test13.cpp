@@ -13,7 +13,7 @@ class my_category_impl: public std::error_category
 {
 public:
 
-    char const* name() const BOOST_NOEXCEPT
+    char const* name() const noexcept
     {
         return "mycat";
     }

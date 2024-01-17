@@ -26,22 +26,22 @@ namespace system
 
 // error_category default implementation
 
-inline error_condition error_category::default_error_condition( int ev ) const BOOST_NOEXCEPT
+inline error_condition error_category::default_error_condition( int ev ) const noexcept
 {
     return error_condition( ev, *this );
 }
 
-inline bool error_category::equivalent( int code, const error_condition & condition ) const BOOST_NOEXCEPT
+inline bool error_category::equivalent( int code, const error_condition & condition ) const noexcept
 {
     return default_error_condition( code ) == condition;
 }
 
-inline bool error_category::equivalent( const error_code & code, int condition ) const BOOST_NOEXCEPT
+inline bool error_category::equivalent( const error_code & code, int condition ) const noexcept
 {
     return code.equals( condition, *this );
 }
 
-inline char const * error_category::message( int ev, char * buffer, std::size_t len ) const BOOST_NOEXCEPT
+inline char const * error_category::message( int ev, char * buffer, std::size_t len ) const noexcept
 {
     if( len == 0 )
     {

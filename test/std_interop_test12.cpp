@@ -19,12 +19,12 @@ class my_category: public boost::system::error_category
 {
 public:
 
-    char const* name() const BOOST_NOEXCEPT
+    char const* name() const noexcept
     {
         return "mycat";
     }
 
-    boost::system::error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT
+    boost::system::error_condition default_error_condition( int ev ) const noexcept
     {
         switch( ev )
         {

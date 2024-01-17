@@ -100,7 +100,7 @@ class user_category_impl: public boost::system::error_category
 {
 public:
 
-    virtual const char * name() const BOOST_NOEXCEPT
+    virtual const char * name() const noexcept
     {
         return "user";
     }
@@ -113,7 +113,7 @@ public:
         return buffer;
     }
 
-    virtual boost::system::error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT
+    virtual boost::system::error_condition default_error_condition( int ev ) const noexcept
     {
         if( ev == 4 )
         {
@@ -129,7 +129,7 @@ public:
         }
     }
 
-    virtual bool equivalent( int code, const boost::system::error_condition & condition ) const BOOST_NOEXCEPT
+    virtual bool equivalent( int code, const boost::system::error_condition & condition ) const noexcept
     {
         if( code == 4 && condition == make_error_condition( boost::system::errc::too_many_files_open_in_system ) )
         {
@@ -144,7 +144,7 @@ public:
         return default_error_condition( code ) == condition;
     }
 
-    // virtual bool equivalent( const error_code & code, int condition ) const BOOST_NOEXCEPT;
+    // virtual bool equivalent( const error_code & code, int condition ) const noexcept;
 };
 
 boost::system::error_category const & user_category()
@@ -240,7 +240,7 @@ class user2_category_impl: public boost::system::error_category
 {
 public:
 
-    virtual const char * name() const BOOST_NOEXCEPT
+    virtual const char * name() const noexcept
     {
         return "user2";
     }
@@ -253,17 +253,17 @@ public:
         return buffer;
     }
 
-    virtual boost::system::error_condition default_error_condition( int ev ) const BOOST_NOEXCEPT
+    virtual boost::system::error_condition default_error_condition( int ev ) const noexcept
     {
         return boost::system::error_condition( ev, *this );
     }
 
-    virtual bool equivalent( int code, const boost::system::error_condition & condition ) const BOOST_NOEXCEPT
+    virtual bool equivalent( int code, const boost::system::error_condition & condition ) const noexcept
     {
         return default_error_condition( code ) == condition;
     }
 
-    virtual bool equivalent( const boost::system::error_code & code, int condition ) const BOOST_NOEXCEPT
+    virtual bool equivalent( const boost::system::error_code & code, int condition ) const noexcept
     {
         if( code.category() == *this )
         {
