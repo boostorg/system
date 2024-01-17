@@ -64,19 +64,10 @@ private:
     friend class error_code;
     friend class error_condition;
 
-#if !defined(BOOST_NO_CXX11_DELETED_FUNCTIONS)
 public:
 
     error_category( error_category const & ) = delete;
     error_category& operator=( error_category const & ) = delete;
-
-#else
-private:
-
-    error_category( error_category const & );
-    error_category& operator=( error_category const & );
-
-#endif
 
 private:
 
@@ -102,20 +93,7 @@ private:
 
 protected:
 
-#if !defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS) && !defined(BOOST_NO_CXX11_NON_PUBLIC_DEFAULTED_FUNCTIONS)
-
     ~error_category() = default;
-
-#else
-
-    // We'd like to make the destructor protected, to make code that deletes
-    // an error_category* not compile; unfortunately, doing the below makes
-    // the destructor user-provided and hence breaks use after main, as the
-    // categories may get destroyed before code that uses them
-
-    // ~error_category() {}
-
-#endif
 
 #if !BOOST_WORKAROUND(BOOST_GCC, < 40800)
     BOOST_CONSTEXPR
