@@ -58,27 +58,7 @@ inline char const * error_category::message( int ev, char * buffer, std::size_t 
     try
 #endif
     {
-        std::string m = this->message( ev );
-
-# if defined( BOOST_MSVC )
-#  pragma warning( push )
-#  pragma warning( disable: 4996 )
-# elif defined(__clang__) && defined(__has_warning)
-#  pragma clang diagnostic push
-#  if __has_warning("-Wdeprecated-declarations")
-#   pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#  endif
-# endif
-
-        std::strncpy( buffer, m.c_str(), len - 1 );
-        buffer[ len-1 ] = 0;
-
-# if defined( BOOST_MSVC )
-#  pragma warning( pop )
-# elif defined(__clang__) && defined(__has_warning)
-#  pragma clang diagnostic pop
-# endif
-
+        detail::snprintf( buffer, len, "%s", this->message( ev ).c_str() );
         return buffer;
     }
 #if !defined(BOOST_NO_EXCEPTIONS)
