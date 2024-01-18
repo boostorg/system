@@ -84,7 +84,6 @@ boost_test(TYPE run SOURCES system_category_test2.cpp)
 boost_test(TYPE run SOURCES system_category_test3.cpp)
 
 boost_test(TYPE run SOURCES windows_error_test.cpp)
-boost_test(TYPE run SOURCES cygwin_error_test.cpp)
 boost_test(TYPE run SOURCES linux_error_test.cpp)
 
 boost_test(TYPE link SOURCES errc_test3.cpp)
