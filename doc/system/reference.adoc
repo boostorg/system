@@ -12,13 +12,6 @@ http://www.boost.org/LICENSE_1_0.txt
 # Reference
 :idprefix: ref_
 
-## Use of {cpp}11 and {cpp}14 Features
-
-The library is documented to use several {cpp}11 and {cpp}14 features,
-including `noexcept`, explicit conversion operators and `constexpr`. The
-actual implementation uses {cpp}11 and {cpp}14 features only when they are
-available, and otherwise falls back on {cpp}03 features.
-
 ## Macros
 
 When `BOOST_SYSTEM_ENABLE_DEPRECATED` is defined, the library provides
