@@ -1155,6 +1155,23 @@ U operator&( result<T, E>&& r, F&& f )
     }
 }
 
+template<class E, class F,
+    class U = decltype( std::declval<F>()() ),
+    class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<std::is_convertible<E, typename U::error_type>::value>::type
+>
+U operator&( result<void, E> const& r, F&& f )
+{
+    if( r.has_error() )
+    {
+        return r.error();
+    }
+    else
+    {
+        return std::forward<F>( f )();
+    }
+}
+
 // operator&=
 
 // result &= unary-returning-value
