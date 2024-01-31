@@ -2656,6 +2656,24 @@ result<double> convert( double amount, currency_type from, currency_type to )
 ```
 
 ```
+template<class E, class F, class U = ...>
+  result<U, E> operator&( result<void, E> const& r, F&& f );
+```
+[none]
+* {blank}
++
+Returns the error in `r`, or if `r` contains a value, replaces it with the result of calling `f`.
++
+Let `U` be the type of `f()`.
++
+Effects: ::
+  - If `r.has_value()` is `true`, returns `f()`.
+  - Otherwise, returns `r.error()`.
+Remarks: ::
+  Only enabled when `U` is not an instance of `result`.
+
+
+```
 template<class T, class E, class F, class R = ...> R operator&( result<T, E> const& r, F&& f );
 template<class T, class E, class F, class R = ...> R operator&( result<T, E>&& r, F&& f );
 ```
@@ -2702,6 +2720,24 @@ int get_port( JsonValue const& config, int def )
     return config.at( "servers" ) & at( 0 ) & at( "port" ) & to_number<int>() | def;
 }
 ```
+
+```
+template<class E, class F, class R = ...> R operator&( result<void, E> const& r, F&& f );
+```
+[none]
+* {blank}
++
+Returns the error in `r`, or if `r` contains a value, another `result` obtained
+by invoking the function `f`.
++
+Let `R` be the type of `f()`.
++
+Effects: ::
+  - If `r.has_value()` is `true`, returns `f()`.
+  - Otherwise, returns `r.error()`.
+Remarks: ::
+  Only enabled when `R` is an instance of `result` and `E` is convertible to `R::error_type`.
+
 
 #### operator&=
 
