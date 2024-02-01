@@ -1067,6 +1067,23 @@ U operator|( result<void, E>&& r, F&& f )
     }
 }
 
+// operator|=
+
+// result |= value
+
+template<class T, class E, class U,
+    class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
+>
+result<T, E>& operator|=( result<T, E>& r, U&& u )
+{
+    if( !r )
+    {
+        r = std::forward<U>( u );
+    }
+
+    return r;
+}
+
 // operator&
 
 // result & unary-returning-value
