@@ -205,3 +205,4 @@ run result_and_eq_fn1v.cpp ;
 run result_and_eq_fn1r.cpp ;
 run result_in_place_use.cpp ;
 run result_or_eq_value.cpp ;
+run result_or_eq_fn0v.cpp ;

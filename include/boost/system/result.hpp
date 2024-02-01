@@ -1084,6 +1084,22 @@ result<T, E>& operator|=( result<T, E>& r, U&& u )
     return r;
 }
 
+// result |= nullary-returning-value
+
+template<class T, class E, class F,
+    class U = decltype( std::declval<F>()() ),
+    class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
+>
+result<T, E>& operator|=( result<T, E>& r, F&& f )
+{
+    if( !r )
+    {
+        r = std::forward<F>( f )();
+    }
+
+    return r;
+}
+
 // operator&
 
 // result & unary-returning-value
