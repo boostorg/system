@@ -100,6 +100,11 @@ result<void, E2> fk3()
     return {};
 }
 
+result<void, E2> fk4()
+{
+    return E2();
+}
+
 int main()
 {
     {
@@ -375,6 +380,11 @@ int main()
             result<void, E2> r2 = r & fk3;
             BOOST_TEST( r2.has_value() );
         }
+
+        {
+            result<void, E2> r2 = r & fk4;
+            BOOST_TEST( r2.has_error() );
+        }
     }
 
     {
@@ -394,6 +404,11 @@ int main()
             result<void, E2> r2 = r & fk3;
             BOOST_TEST( r2.has_value() );
         }
+
+        {
+            result<void, E2> r2 = r & fk4;
+            BOOST_TEST( r2.has_error() );
+        }
     }
 
     {
@@ -412,6 +427,11 @@ int main()
     }
 
     {
+        result<void, E2> r2 = result<void, E>() & fk4;
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
         result<void, E> r( in_place_error );
 
         {
@@ -426,6 +446,11 @@ int main()
 
         {
             result<void, E2> r2 = r & fk3;
+            BOOST_TEST( r2.has_error() );
+        }
+
+        {
+            result<void, E2> r2 = r & fk4;
             BOOST_TEST( r2.has_error() );
         }
     }
@@ -447,6 +472,11 @@ int main()
             result<void, E2> r2 = r & fk3;
             BOOST_TEST( r2.has_error() );
         }
+
+        {
+            result<void, E2> r2 = r & fk4;
+            BOOST_TEST( r2.has_error() );
+        }
     }
 
     {
@@ -461,6 +491,11 @@ int main()
 
     {
         result<void, E2> r2 = result<void, E>( in_place_error ) & fk3;
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        result<void, E2> r2 = result<void, E>( in_place_error ) & fk4;
         BOOST_TEST( r2.has_error() );
     }
 
