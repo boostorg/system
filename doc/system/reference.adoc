@@ -2804,6 +2804,22 @@ result<JsonValue const&> at_path( JsonValue const& jv,
 }
 ```
 
+```
+template<class E, class F, class R = ...>
+  result<void, E>& operator&=( result<void, E>& r, F&& f );
+```
+[none]
+* {blank}
++
+If `r` contains a value, replaces `r` with the result of invoking the function `f`.
++
+Let `R` be the type of `f()`.
++
+Effects: :: If `r.has_value()` is `true`, assigns `f()` to `r`.
+Returns: :: `r`.
+Remarks: ::
+  Only enabled when `R` is an instance of `result<void, E2>` and `E2` is convertible to `E`.
+
 ## <boost/system.hpp>
 
 This convenience header includes all the headers previously described.
