@@ -14,6 +14,7 @@ https://www.boost.org/LICENSE_1_0.txt
 * The deprecated header `boost/system/cygwin_error.hpp` has been removed.
 * The original and obsolete (32 bit) MinGW is no longer supported. MinGW-w64 (both 64 and 32 bit) is still supported.
 * `operator&` now works for `result<void>` (by way of taking a nullary function.)
+* Added `operator|=` for `result`.
 
 ## Changes in Boost 1.84
 

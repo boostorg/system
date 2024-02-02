@@ -2618,6 +2618,41 @@ int get_port()
 }
 ```
 
+#### operator|=
+
+```
+template<class T, class E, class U> result<T, E>& operator|=( result<T, E>& r, U&& u );
+```
+[none]
+* {blank}
++
+If `r` contains an error, assigns a value to it, constructed from `u`.
++
+Effects: ::
+  If `r.has_value()` is `false`, assigns `u` to `r`.
+Returns: ::
+  `r`.
+Remarks: ::
+  Only enabled when `U` is convertible to `T`.
+
+```
+template<class T, class E, class F> result<T, E>& operator|=( result<T, E>& r, F&& f );
+```
+[none]
+* {blank}
++
+If `r` contains an error, assigns `f()` to it.
++
+Effects: ::
+  If `r.has_value()` is `false`, assigns `f()` to `r`.
+Returns: ::
+  `r`.
+Remarks: ::
+  Only enabled when the type of `f()` is either
+  - convertible to `T` or
+  - an instance of `result` convertible to `result<T, E>`.
+
+
 #### operator&
 
 ```
