@@ -2651,6 +2651,23 @@ Remarks: ::
   Only enabled when the type of `f()` is either
   - convertible to `T` or
   - an instance of `result` convertible to `result<T, E>`.
+Example: ::
++
+```
+result<response> query_impl( std::string_view server, request const& req );
+
+result<response> query( std::vector<std::string_view> const& servers, request const& req )
+{
+    result<response> r = make_error_code( errc::invalid_argument );
+
+    for( auto const& server: servers )
+    {
+        r |= std::bind( query_impl, server, std::ref( req ) );
+    }
+
+    return r;
+}
+```
 
 
 #### operator&
