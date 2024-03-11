@@ -7,7 +7,7 @@
 
 # See library home page at https://www.boost.org/libs/system
 
-project boost/system
+project
     : source-location ../src
     : usage-requirements  # pass these requirement to dependents (i.e. users)
       <link>shared:<define>BOOST_SYSTEM_DYN_LINK=1
@@ -21,5 +21,3 @@ lib boost_system
    : <link>shared:<define>BOOST_SYSTEM_DYN_LINK=1
      <link>static:<define>BOOST_SYSTEM_STATIC_LINK=1
    ;
-
-boost-install boost_system ;
