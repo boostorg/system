@@ -73,10 +73,10 @@ BOOST_NORETURN BOOST_NOINLINE inline void throw_exception_from_error( std::excep
 // in_place_*
 
 using in_place_value_t = variant2::in_place_index_t<0>;
-constexpr in_place_value_t in_place_value{};
+BOOST_INLINE_CONSTEXPR in_place_value_t in_place_value{};
 
 using in_place_error_t = variant2::in_place_index_t<1>;
-constexpr in_place_error_t in_place_error{};
+BOOST_INLINE_CONSTEXPR in_place_error_t in_place_error{};
 
 namespace detail
 {
