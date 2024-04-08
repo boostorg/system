@@ -1124,7 +1124,8 @@ result<T, E>& operator|=( result<T, E>& r, F&& f )
 
 template<class T, class E, class F,
     class U = decltype( std::declval<F>()( std::declval<T const&>() ) ),
-    class En = typename std::enable_if<!detail::is_result<U>::value>::type
+    class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<!std::is_void<U>::value>::type
 >
 result<U, E> operator&( result<T, E> const& r, F&& f )
 {
@@ -1140,7 +1141,8 @@ result<U, E> operator&( result<T, E> const& r, F&& f )
 
 template<class T, class E, class F,
     class U = decltype( std::declval<F>()( std::declval<T>() ) ),
-    class En = typename std::enable_if<!detail::is_result<U>::value>::type
+    class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<!std::is_void<U>::value>::type
 >
 result<U, E> operator&( result<T, E>&& r, F&& f )
 {
@@ -1151,6 +1153,40 @@ result<U, E> operator&( result<T, E>&& r, F&& f )
     else
     {
         return std::forward<F>( f )( *std::move( r ) );
+    }
+}
+
+template<class T, class E, class F,
+    class U = decltype( std::declval<F>()( std::declval<T const&>() ) ),
+    class En = typename std::enable_if<std::is_void<U>::value>::type
+>
+result<U, E> operator&( result<T, E> const& r, F&& f )
+{
+    if( r.has_error() )
+    {
+        return r.error();
+    }
+    else
+    {
+        std::forward<F>( f )( *r );
+        return {};
+    }
+}
+
+template<class T, class E, class F,
+    class U = decltype( std::declval<F>()( std::declval<T>() ) ),
+    class En = typename std::enable_if<std::is_void<U>::value>::type
+>
+result<U, E> operator&( result<T, E>&& r, F&& f )
+{
+    if( r.has_error() )
+    {
+        return r.error();
+    }
+    else
+    {
+        std::forward<F>( f )( *std::move( r ) );
+        return {};
     }
 }
 
