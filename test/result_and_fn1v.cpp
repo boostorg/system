@@ -59,6 +59,10 @@ void fv1( int /*x*/ )
 {
 }
 
+void fv2()
+{
+}
+
 int main()
 {
     {
@@ -239,6 +243,46 @@ int main()
 
     {
         result<void, E> r2 = result<int, E>( in_place_error ) & fv1;
+
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        result<void> r;
+        result<void> r2 = r & fv2;
+
+        BOOST_TEST( r2.has_value() );
+    }
+
+    {
+        result<void> const r;
+        result<void> r2 = r & fv2;
+
+        BOOST_TEST( r2.has_value() );
+    }
+
+    {
+        result<void> r2 = result<void>() & fv2;
+
+        BOOST_TEST( r2.has_value() );
+    }
+
+    {
+        result<void, E> r( in_place_error );
+        result<void, E> r2 = r & fv2;
+
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        result<void, E> const r( in_place_error );
+        result<void, E> r2 = r & fv2;
+
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        result<void, E> r2 = result<void, E>( in_place_error ) & fv2;
 
         BOOST_TEST( r2.has_error() );
     }
