@@ -1296,6 +1296,20 @@ result<T, E>& operator&=( result<T, E>& r, F&& f )
     return r;
 }
 
+template<class E, class F,
+    class U = decltype( std::declval<F>()() ),
+    class En = typename std::enable_if<!detail::is_result<U>::value>::type
+>
+result<void, E>& operator&=( result<void, E>& r, F&& f )
+{
+    if( r )
+    {
+        std::forward<F>( f )();
+    }
+
+    return r;
+}
+
 // result &= unary-returning-result
 
 template<class T, class E, class F,
