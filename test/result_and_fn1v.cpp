@@ -55,12 +55,18 @@ int k()
     return 7;
 }
 
-void fv1( int /*x*/ )
+static int fv1_called_with;
+
+void fv1( int x )
 {
+    fv1_called_with = x;
 }
+
+static int fv2_called;
 
 void fv2()
 {
+    ++fv2_called;
 }
 
 int main()
@@ -208,10 +214,13 @@ int main()
     }
 
     {
+        fv1_called_with = 0;
+
         result<int> r( 1 );
         result<void> r2 = r & fv1;
 
         BOOST_TEST( r2.has_value() );
+        BOOST_TEST_EQ( fv1_called_with, 1 );
     }
 
     {
@@ -219,72 +228,103 @@ int main()
         result<void> r2 = r & fv1;
 
         BOOST_TEST( r2.has_value() );
+        BOOST_TEST_EQ( fv1_called_with, 1 );
     }
 
     {
+        fv1_called_with = 0;
+
         result<void> r2 = result<int>( 1 ) & fv1;
 
         BOOST_TEST( r2.has_value() );
+        BOOST_TEST_EQ( fv1_called_with, 1 );
     }
 
     {
+        fv1_called_with = 0;
+
         result<int, E> r( in_place_error );
         result<void, E> r2 = r & fv1;
 
         BOOST_TEST( r2.has_error() );
+        BOOST_TEST_EQ( fv1_called_with, 0 );
     }
 
     {
+        fv1_called_with = 0;
+
         result<int, E> const r( in_place_error );
         result<void, E> r2 = r & fv1;
 
         BOOST_TEST( r2.has_error() );
+        BOOST_TEST_EQ( fv1_called_with, 0 );
     }
 
     {
+        fv1_called_with = 0;
+
         result<void, E> r2 = result<int, E>( in_place_error ) & fv1;
 
         BOOST_TEST( r2.has_error() );
+        BOOST_TEST_EQ( fv1_called_with, 0 );
     }
 
     {
         result<void> r;
+        fv2_called = 0;
+
         result<void> r2 = r & fv2;
 
         BOOST_TEST( r2.has_value() );
+        BOOST_TEST_EQ( fv2_called, 1 );
     }
 
     {
         result<void> const r;
+        fv2_called = 0;
+
         result<void> r2 = r & fv2;
 
         BOOST_TEST( r2.has_value() );
+        BOOST_TEST_EQ( fv2_called, 1 );
     }
 
     {
+        fv2_called = 0;
+
         result<void> r2 = result<void>() & fv2;
 
         BOOST_TEST( r2.has_value() );
+        BOOST_TEST_EQ( fv2_called, 1 );
     }
 
     {
         result<void, E> r( in_place_error );
+        fv2_called = 0;
+
         result<void, E> r2 = r & fv2;
 
         BOOST_TEST( r2.has_error() );
+        BOOST_TEST_EQ( fv2_called, 0 );
     }
 
     {
         result<void, E> const r( in_place_error );
+        fv2_called = 0;
+
         result<void, E> r2 = r & fv2;
 
         BOOST_TEST( r2.has_error() );
+        BOOST_TEST_EQ( fv2_called, 0 );
     }
 
     {
+        fv2_called = 0;
+
         result<void, E> r2 = result<void, E>( in_place_error ) & fv2;
 
         BOOST_TEST( r2.has_error() );
+        BOOST_TEST_EQ( fv2_called, 0 );
     }
 
     return boost::report_errors();
