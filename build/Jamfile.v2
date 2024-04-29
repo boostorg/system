@@ -12,6 +12,7 @@ project
     : usage-requirements  # pass these requirement to dependents (i.e. users)
       <link>shared:<define>BOOST_SYSTEM_DYN_LINK=1
       <link>static:<define>BOOST_SYSTEM_STATIC_LINK=1
+      <define>BOOST_SYSTEM_NO_LIB=1
     ;
 
 SOURCES = error_code ;
