@@ -24,6 +24,9 @@ int main()
 
     BOOST_TEST_EQ( ec.to_string(), std::string( "system:0" ) );
 
+    // when len is 0 buffer can be nullptr
+    ec.message( nullptr, 0 );
+
     {
         sys::error_code ec2( ec );
 

@@ -24,6 +24,9 @@ int main()
 
     BOOST_TEST_EQ( en.to_string(), std::string( "cond:generic:0" ) );
 
+    // when len is 0 buffer can be nullptr
+    en.message( nullptr, 0 );
+
     {
         sys::error_condition en2( en );
 
