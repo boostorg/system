@@ -47,7 +47,7 @@ inline char const * generic_error_category_message( int ev, char * buffer, std::
     {
         // strerror_r requires non-null buffer pointer
 
-        char tmp[ 1 ];
+        char tmp[ 1 ] = {};
         char const* r = strerror_r_helper( strerror_r( ev, tmp, 0 ), buffer );
 
         return r == tmp? nullptr: r;
