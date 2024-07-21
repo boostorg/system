@@ -17,7 +17,7 @@ project
 
   : requirements
 
-    <source>/boost/core//boost_core
+    <library>/boost/core//boost_core
 
     <toolset>msvc:<warnings-as-errors>on
     <toolset>gcc:<warnings-as-errors>on
