@@ -919,9 +919,10 @@ template<class T, class E> struct is_result< result<T, E> >: std::true_type {};
 // result | value
 
 template<class T, class E, class U,
-    class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
+    class En = typename std::enable_if<std::is_convertible<U, typename std::decay<T>::type>::value>::type
 >
-T operator|( result<T, E> const& r, U&& u )
+typename std::decay<T>::type
+operator|( result<T, E> const& r, U&& u )
 {
     if( r )
     {
@@ -934,9 +935,10 @@ T operator|( result<T, E> const& r, U&& u )
 }
 
 template<class T, class E, class U,
-    class En = typename std::enable_if<detail::is_value_convertible_to<U, T>::value>::type
+    class En = typename std::enable_if<std::is_convertible<U, typename std::decay<T>::type>::value>::type
 >
-T operator|( result<T, E>&& r, U&& u )
+typename std::decay<T>::type
+operator|( result<T, E>&& r, U&& u )
 {
     if( r )
     {

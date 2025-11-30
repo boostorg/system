@@ -198,8 +198,6 @@ run result_value_construct6.cpp ;
 run result_value_construct7.cpp ;
 run result_error_construct5.cpp ;
 run result_or_value.cpp ;
-compile-fail result_or_value_fail.cpp ;
-compile-fail result_or_value_fail2.cpp ;
 run result_or_fn0v.cpp ;
 run result_or_fn0r.cpp ;
 run result_and_fn1v.cpp ;
