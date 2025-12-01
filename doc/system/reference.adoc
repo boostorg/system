@@ -2518,8 +2518,8 @@ Returns: ::
 #### operator|
 
 ```
-template<class T, class E, class U> T operator|( result<T, E> const& r, U&& u );
-template<class T, class E, class U> T operator|( result<T, E>&& r, U&& u );
+template<class T, class E, class U> std::decay_t<T> operator|( result<T, E> const& r, U&& u );
+template<class T, class E, class U> std::decay_t<T> operator|( result<T, E>&& r, U&& u );
 ```
 [none]
 * {blank}
@@ -2530,7 +2530,7 @@ Effects: ::
   - If `r.has_value()` is `true`, returns `*r`.
   - Otherwise, returns `u`.
 Remarks: ::
-  Only enabled when `U` is convertible to `T`.
+  Only enabled when `U` is convertible to `std::decay_t<T>`.
 Example: ::
 +
 ```
@@ -2545,6 +2545,7 @@ int get_port()
 ```
 template<class T, class E, class F> T operator|( result<T, E> const& r, F&& f );
 template<class T, class E, class F> T operator|( result<T, E>&& r, F&& f );
+template<class T, class E, class F> std::decay_t<T> operator|( result<T&, E> const& r, F&& f );
 ```
 [none]
 * {blank}
@@ -2556,7 +2557,7 @@ Effects: ::
   - If `r.has_value()` is `true`, returns `*r`.
   - Otherwise, returns `f()`.
 Remarks: ::
-  Only enabled when `f()` is convertible to `T`.
+  Only enabled when `f()` is convertible to `T`, or, when `T` is a reference, to `std::decay_t<T>`.
 Example: ::
 +
 ```
