@@ -984,6 +984,26 @@ T operator|( result<T, E>&& r, F&& f )
     }
 }
 
+template<class T, class E, class F,
+    class U = decltype( std::declval<F>()() ),
+    class En = typename std::enable_if<
+        std::is_convertible<U, typename std::decay<T>::type>::value &&
+        !detail::is_value_convertible_to<U, T&>::value
+    >::type
+>
+typename std::decay<T>::type
+operator|( result<T&, E> const& r, F&& f )
+{
+    if( r )
+    {
+        return *r;
+    }
+    else
+    {
+        return std::forward<F>( f )();
+    }
+}
+
 // result | nullary-returning-result
 
 template<class T, class E, class F,
