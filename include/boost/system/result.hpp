@@ -9,8 +9,8 @@
 #include <boost/system/system_error.hpp>
 #include <boost/system/detail/error_code.hpp>
 #include <boost/system/detail/error_category_impl.hpp>
-#include <boost/system/detail/invoke.hpp>
 #include <boost/variant2/variant.hpp>
+#include <boost/compat/invoke.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/assert/source_location.hpp>
 #include <boost/assert.hpp>
@@ -1131,7 +1131,7 @@ result<T, E>& operator|=( result<T, E>& r, F&& f )
 // result & unary-returning-value
 
 template<class T, class E, class F,
-    class U = detail::invoke_result_t<F, T&>,
+    class U = compat::invoke_result_t<F, T&>,
     class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<!std::is_void<U>::value>::type
 >
@@ -1143,12 +1143,12 @@ result<U, E> operator&( result<T, E>& r, F&& f )
     }
     else
     {
-        return detail::invoke( std::forward<F>( f ), *r );
+        return compat::invoke( std::forward<F>( f ), *r );
     }
 }
 
 template<class T, class E, class F,
-    class U = detail::invoke_result_t<F, T const&>,
+    class U = compat::invoke_result_t<F, T const&>,
     class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<!std::is_void<U>::value>::type
 >
@@ -1160,12 +1160,12 @@ result<U, E> operator&( result<T, E> const& r, F&& f )
     }
     else
     {
-        return detail::invoke( std::forward<F>( f ), *r );
+        return compat::invoke( std::forward<F>( f ), *r );
     }
 }
 
 template<class T, class E, class F,
-    class U = typename std::decay< detail::invoke_result_t<F, T> >::type,
+    class U = typename std::decay< compat::invoke_result_t<F, T> >::type,
     class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<!std::is_void<U>::value>::type
 >
@@ -1177,12 +1177,12 @@ result<U, E> operator&( result<T, E>&& r, F&& f )
     }
     else
     {
-        return detail::invoke( std::forward<F>( f ), *std::move( r ) );
+        return compat::invoke( std::forward<F>( f ), *std::move( r ) );
     }
 }
 
 template<class T, class E, class F,
-    class U = detail::invoke_result_t<F, T&>,
+    class U = compat::invoke_result_t<F, T&>,
     class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<!std::is_void<U>::value>::type
 >
@@ -1194,12 +1194,12 @@ result<U, E> operator&( result<T&, E>&& r, F&& f )
     }
     else
     {
-        return detail::invoke( std::forward<F>( f ), *std::move( r ) );
+        return compat::invoke( std::forward<F>( f ), *std::move( r ) );
     }
 }
 
 template<class T, class E, class F,
-    class U = detail::invoke_result_t<F, T const&>,
+    class U = compat::invoke_result_t<F, T const&>,
     class En = typename std::enable_if<std::is_void<U>::value>::type
 >
 result<U, E> operator&( result<T, E> const& r, F&& f )
@@ -1210,13 +1210,13 @@ result<U, E> operator&( result<T, E> const& r, F&& f )
     }
     else
     {
-        detail::invoke( std::forward<F>( f ), *r );
+        compat::invoke( std::forward<F>( f ), *r );
         return {};
     }
 }
 
 template<class T, class E, class F,
-    class U = detail::invoke_result_t<F, T>,
+    class U = compat::invoke_result_t<F, T>,
     class En = typename std::enable_if<std::is_void<U>::value>::type
 >
 result<U, E> operator&( result<T, E>&& r, F&& f )
@@ -1227,7 +1227,7 @@ result<U, E> operator&( result<T, E>&& r, F&& f )
     }
     else
     {
-        detail::invoke( std::forward<F>( f ), *std::move( r ) );
+        compat::invoke( std::forward<F>( f ), *std::move( r ) );
         return {};
     }
 }
@@ -1269,7 +1269,7 @@ result<U, E> operator&( result<void, E> const& r, F&& f )
 // result & unary-returning-result
 
 template<class T, class E, class F,
-    class U = typename std::decay< detail::invoke_result_t<F, T&> >::type,
+    class U = typename std::decay< compat::invoke_result_t<F, T&> >::type,
     class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<std::is_convertible<E, typename U::error_type>::value>::type
 >
@@ -1281,12 +1281,12 @@ U operator&( result<T, E>& r, F&& f )
     }
     else
     {
-        return detail::invoke( std::forward<F>( f ), *r );
+        return compat::invoke( std::forward<F>( f ), *r );
     }
 }
 
 template<class T, class E, class F,
-    class U = typename std::decay< detail::invoke_result_t<F, T const&> >::type,
+    class U = typename std::decay< compat::invoke_result_t<F, T const&> >::type,
     class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<std::is_convertible<E, typename U::error_type>::value>::type
 >
@@ -1298,12 +1298,12 @@ U operator&( result<T, E> const& r, F&& f )
     }
     else
     {
-        return detail::invoke( std::forward<F>( f ), *r );
+        return compat::invoke( std::forward<F>( f ), *r );
     }
 }
 
 template<class T, class E, class F,
-    class U = typename std::decay< detail::invoke_result_t<F, T> >::type,
+    class U = typename std::decay< compat::invoke_result_t<F, T> >::type,
     class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<std::is_convertible<E, typename U::error_type>::value>::type
 >
@@ -1315,7 +1315,7 @@ U operator&( result<T, E>&& r, F&& f )
     }
     else
     {
-        return detail::invoke( std::forward<F>( f ), *std::move( r ) );
+        return compat::invoke( std::forward<F>( f ), *std::move( r ) );
     }
 }
 
