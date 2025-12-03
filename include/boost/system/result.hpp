@@ -1269,7 +1269,24 @@ result<U, E> operator&( result<void, E> const& r, F&& f )
 // result & unary-returning-result
 
 template<class T, class E, class F,
-    class U = decltype( std::declval<F>()( std::declval<T const&>() ) ),
+    class U = typename std::decay< detail::invoke_result_t<F, T&> >::type,
+    class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<std::is_convertible<E, typename U::error_type>::value>::type
+>
+U operator&( result<T, E>& r, F&& f )
+{
+    if( r.has_error() )
+    {
+        return r.error();
+    }
+    else
+    {
+        return detail::invoke( std::forward<F>( f ), *r );
+    }
+}
+
+template<class T, class E, class F,
+    class U = typename std::decay< detail::invoke_result_t<F, T const&> >::type,
     class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<std::is_convertible<E, typename U::error_type>::value>::type
 >
@@ -1281,12 +1298,12 @@ U operator&( result<T, E> const& r, F&& f )
     }
     else
     {
-        return std::forward<F>( f )( *r );
+        return detail::invoke( std::forward<F>( f ), *r );
     }
 }
 
 template<class T, class E, class F,
-    class U = decltype( std::declval<F>()( std::declval<T>() ) ),
+    class U = typename std::decay< detail::invoke_result_t<F, T> >::type,
     class En1 = typename std::enable_if<detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<std::is_convertible<E, typename U::error_type>::value>::type
 >
@@ -1298,7 +1315,7 @@ U operator&( result<T, E>&& r, F&& f )
     }
     else
     {
-        return std::forward<F>( f )( *std::move( r ) );
+        return detail::invoke( std::forward<F>( f ), *std::move( r ) );
     }
 }
 

@@ -177,3 +177,4 @@ boost_test(TYPE run SOURCES result_or_eq_fn0v.cpp)
 boost_test(TYPE run SOURCES result_or_eq_fn0r.cpp)
 
 boost_test(TYPE run SOURCES result_and_mfn1v.cpp)
+boost_test(TYPE run SOURCES result_and_mfn1r.cpp)
