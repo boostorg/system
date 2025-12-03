@@ -1131,6 +1131,23 @@ result<T, E>& operator|=( result<T, E>& r, F&& f )
 // result & unary-returning-value
 
 template<class T, class E, class F,
+    class U = detail::invoke_result_t<F, T&>,
+    class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<!std::is_void<U>::value>::type
+>
+result<U, E> operator&( result<T, E>& r, F&& f )
+{
+    if( r.has_error() )
+    {
+        return r.error();
+    }
+    else
+    {
+        return detail::invoke( std::forward<F>( f ), *r );
+    }
+}
+
+template<class T, class E, class F,
     class U = detail::invoke_result_t<F, T const&>,
     class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<!std::is_void<U>::value>::type
@@ -1148,11 +1165,28 @@ result<U, E> operator&( result<T, E> const& r, F&& f )
 }
 
 template<class T, class E, class F,
-    class U = detail::invoke_result_t<F, T>,
+    class U = typename std::decay< detail::invoke_result_t<F, T> >::type,
     class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
     class En2 = typename std::enable_if<!std::is_void<U>::value>::type
 >
 result<U, E> operator&( result<T, E>&& r, F&& f )
+{
+    if( r.has_error() )
+    {
+        return r.error();
+    }
+    else
+    {
+        return detail::invoke( std::forward<F>( f ), *std::move( r ) );
+    }
+}
+
+template<class T, class E, class F,
+    class U = detail::invoke_result_t<F, T&>,
+    class En1 = typename std::enable_if<!detail::is_result<U>::value>::type,
+    class En2 = typename std::enable_if<!std::is_void<U>::value>::type
+>
+result<U, E> operator&( result<T&, E>&& r, F&& f )
 {
     if( r.has_error() )
     {

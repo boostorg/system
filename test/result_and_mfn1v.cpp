@@ -66,6 +66,106 @@ int main()
 
     {
         result<X> r( 1 );
+        result<int&> r2 = r & &X::v_;
+
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &r->v_ );
+    }
+
+    {
+        result<X> const r( 1 );
+        result<int const&> r2 = r & &X::v_;
+
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &r->v_ );
+    }
+
+    {
+        result<int> r2 = result<X>( 1 ) & &X::v_;
+
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( *r2, 1 );
+    }
+
+    {
+        result<X, E> r( in_place_error );
+        result<int&, E> r2 = r & &X::v_;
+
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        result<X, E> const r( in_place_error );
+        result<int const&, E> r2 = r & &X::v_;
+
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        result<int, E> r2 = result<X, E>( in_place_error ) & &X::v_;
+
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        X x( 1 );
+
+        result<X&> r( x );
+        result<int&> r2 = r & &X::v_;
+
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &x.v_ );
+    }
+
+    {
+        X const x( 1 );
+
+        result<X const&> r( x );
+        result<int const&> r2 = r & &X::v_;
+
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &x.v_ );
+    }
+
+    {
+        X x( 1 );
+
+        result<int&> r2 = result<X&>( x ) & &X::v_;
+
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &x.v_ );
+    }
+
+    {
+        X const x( 1 );
+
+        result<int const&> r2 = result<X const&>( x ) & &X::v_;
+
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &x.v_ );
+    }
+
+    {
+        result<X&, E> r( in_place_error );
+        result<int&, E> r2 = r & &X::v_;
+
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        result<X const&, E> const r( in_place_error );
+        result<int const&, E> r2 = r & &X::v_;
+
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        result<int&, E> r2 = result<X&, E>( in_place_error ) & &X::v_;
+
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        result<int const&, E> r2 = result<X const&, E>( in_place_error ) & &X::v_;
+
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        result<X> r( 1 );
         result<void> r2 = r & &X::g;
 
         BOOST_TEST( r2.has_value() );
