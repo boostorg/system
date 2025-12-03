@@ -15,7 +15,11 @@ struct X
     X( int v ): v_( v ) {}
 
     int f() const { return v_; }
+
     void g() const { ++g_called_; }
+
+    int& h() { return v_; }
+    int const& h2() const { return v_; }
 };
 
 struct E
@@ -202,6 +206,46 @@ int main()
 
     {
         result<void, E> r2 = result<X, E>( in_place_error ) & &X::g;
+
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        result<X> r( 1 );
+        result<int&> r2 = r & &X::h;
+
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( *r2, 1 );
+    }
+
+    {
+        result<X> const r( 1 );
+        result<int const&> r2 = r & &X::h2;
+
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( *r2, 1 );
+    }
+
+    {
+        result<int> r2 = result<X>( 1 ) & &X::h2;
+
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( *r2, 1 );
+    }
+
+    {
+        result<X, E> r( in_place_error );
+        result<int&, E> r2 = r & &X::h;
+
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        result<X, E> const r( in_place_error );
+        result<int const&, E> r2 = r & &X::h2;
+
+        BOOST_TEST( r2.has_error() );
+    }
+
+    {
+        result<int, E> r2 = result<X, E>( in_place_error ) & &X::h2;
 
         BOOST_TEST( r2.has_error() );
     }
