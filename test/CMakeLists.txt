@@ -175,3 +175,5 @@ boost_test(TYPE run SOURCES result_in_place_use.cpp)
 boost_test(TYPE run SOURCES result_or_eq_value.cpp)
 boost_test(TYPE run SOURCES result_or_eq_fn0v.cpp)
 boost_test(TYPE run SOURCES result_or_eq_fn0r.cpp)
+
+boost_test(TYPE run SOURCES result_and_mfn1v.cpp)
