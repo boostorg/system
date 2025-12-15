@@ -21,4 +21,5 @@ explicit
     ;
 
 call-if : boost-library system
+    : install boost_system
     ;
