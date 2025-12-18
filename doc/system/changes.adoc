@@ -11,6 +11,10 @@ https://www.boost.org/LICENSE_1_0.txt
 ## Changes in Boost 1.91
 
 * The return type of `operator|(result<T&>, U)` has been changed to non-reference.
+* Pointers to members in `r & f` are now supported (by using `boost::compat::invoke`).
+* A CMake config file is now installed, even though the library is header-only. This
+  avoids breaking third-party `CMakeLists.txt` files that contain
+  `find_package(Boost COMPONENTS system ...)`.
 
 ## Changes in Boost 1.89
 
