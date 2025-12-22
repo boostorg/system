@@ -13,6 +13,6 @@ int main()
     BOOST_TEST_EQ( static_cast<int>( boost::system::errc::address_family_not_supported ), EAFNOSUPPORT );
 
     BOOST_TEST( boost::system::is_error_condition_enum< boost::system::errc::errc_t >::value );
-
+    printf( "All tests passed\n" );
     return boost::report_errors();
 }
