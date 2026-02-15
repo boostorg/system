@@ -135,6 +135,8 @@ boost_test(TYPE run SOURCES ec_hash_value_test.cpp)
 
 boost_test(TYPE run SOURCES std_interop_test16.cpp)
 
+boost_test(TYPE run SOURCES failed_constexpr_test2.cpp)
+
 # result
 
 boost_test(TYPE run SOURCES result_default_construct.cpp)

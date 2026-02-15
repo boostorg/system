@@ -168,6 +168,8 @@ run ec_hash_value_test.cpp ;
 
 run std_interop_test16.cpp ;
 
+run failed_constexpr_test2.cpp ;
+
 # result
 
 run result_default_construct.cpp ;
