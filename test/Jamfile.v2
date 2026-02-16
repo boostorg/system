@@ -213,3 +213,6 @@ run result_or_eq_fn0r.cpp ;
 
 run result_and_mfn1v.cpp ;
 run result_and_mfn1r.cpp ;
+
+compile result_value_construct_cx.cpp ;
+compile result_error_construct_cx.cpp ;
