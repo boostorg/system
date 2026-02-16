@@ -216,3 +216,4 @@ run result_and_mfn1r.cpp ;
 
 compile result_value_construct_cx.cpp ;
 compile result_error_construct_cx.cpp ;
+compile result_error_construct_cx2.cpp ;
