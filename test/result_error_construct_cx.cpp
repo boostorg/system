@@ -5,10 +5,15 @@
 #include <boost/system/result.hpp>
 #include <boost/config/pragma_message.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/config.hpp>
 
 #if !defined(BOOST_SYSTEM_HAS_CONSTEXPR)
 
 BOOST_PRAGMA_MESSAGE("Skipping constexpr test, BOOST_SYSTEM_HAS_CONSTEXPR isn't defined")
+
+#elif defined(BOOST_CLANG_VERSION) && BOOST_CLANG_VERSION < 60000
+
+BOOST_PRAGMA_MESSAGE("Skipping constexpr test, BOOST_CLANG_VERSION < 60000")
 
 #else
 
