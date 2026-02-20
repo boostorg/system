@@ -388,6 +388,70 @@ public:
 
 #endif
 
+    // unchecked value access
+
+#if defined( BOOST_NO_CXX11_REF_QUALIFIERS )
+
+    BOOST_CXX14_CONSTEXPR T& unsafe_value()
+    {
+        BOOST_ASSERT( has_value() );
+        return *variant2::get_if<0>( &v_ );
+    }
+
+    BOOST_CXX14_CONSTEXPR T const& unsafe_value() const
+    {
+        BOOST_ASSERT( has_value() );
+        return *variant2::get_if<0>( &v_ );
+    }
+
+#else
+
+    BOOST_CXX14_CONSTEXPR T& unsafe_value() &
+    {
+        BOOST_ASSERT( has_value() );
+        return *variant2::get_if<0>( &v_ );
+    }
+
+    BOOST_CXX14_CONSTEXPR T const& unsafe_value() const &
+    {
+        BOOST_ASSERT( has_value() );
+        return *variant2::get_if<0>( &v_ );
+    }
+
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<std::is_move_constructible<U>::value, T>::type
+        unsafe_value() &&
+    {
+        BOOST_ASSERT( has_value() );
+        return std::move( *variant2::get_if<0>( &v_ ) );
+    }
+
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<!std::is_move_constructible<U>::value, T&&>::type
+        unsafe_value() &&
+    {
+        BOOST_ASSERT( has_value() );
+        return std::move( *variant2::get_if<0>( &v_ ) );
+    }
+
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<std::is_move_constructible<U>::value, T>::type
+        unsafe_value() const && = delete;
+
+    template<class U = T>
+        BOOST_CXX14_CONSTEXPR
+        typename std::enable_if<!std::is_move_constructible<U>::value, T const&&>::type
+        unsafe_value() const &&
+    {
+        BOOST_ASSERT( has_value() );
+        return std::move( *variant2::get_if<0>( &v_ ) );
+    }
+
+#endif
+
     // error access
 
     constexpr E error() const &
@@ -594,6 +658,13 @@ public:
     }
 
     BOOST_CXX14_CONSTEXPR void operator*() const noexcept
+    {
+        BOOST_ASSERT( has_value() );
+    }
+
+    // unchecked value access
+
+    BOOST_CXX14_CONSTEXPR void unsafe_value() const
     {
         BOOST_ASSERT( has_value() );
     }
@@ -829,6 +900,14 @@ public:
     {
         BOOST_ASSERT( has_value() );
         return *operator->();
+    }
+
+    // unchecked value access
+
+    BOOST_CXX14_CONSTEXPR U& unsafe_value() const
+    {
+        BOOST_ASSERT( has_value() );
+        return *( has_value()? variant2::unsafe_get<0>( v_ ): 0 );
     }
 
     // error access

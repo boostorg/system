@@ -184,3 +184,6 @@ boost_test(TYPE run SOURCES result_and_mfn1r.cpp)
 boost_test(TYPE compile SOURCES result_value_construct_cx.cpp)
 boost_test(TYPE compile SOURCES result_error_construct_cx.cpp)
 boost_test(TYPE compile SOURCES result_error_construct_cx2.cpp)
+
+boost_test(TYPE run SOURCES result_unsafe_value_access.cpp)
+boost_test(TYPE run SOURCES result_unsafe_value_access2.cpp)
