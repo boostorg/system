@@ -196,7 +196,7 @@ int main()
 
         auto r2 = r | fri;
 
-        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &x1 );
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &r2.unsafe_value(), &x1 );
     }
 
     {
@@ -206,7 +206,7 @@ int main()
 
         auto r2 = r | fri;
 
-        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &x1 );
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &r2.unsafe_value(), &x1 );
     }
 
     {
@@ -214,7 +214,7 @@ int main()
 
         auto r2 = result<int&>( x1 ) | fri;
 
-        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &x1 );
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &r2.unsafe_value(), &x1 );
     }
 
     {
@@ -224,7 +224,7 @@ int main()
 
         auto r2 = r | fri2;
 
-        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &x1 );
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &r2.unsafe_value(), &x1 );
     }
 
     {
@@ -234,7 +234,7 @@ int main()
 
         auto r2 = r | fri2;
 
-        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &x1 );
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &r2.unsafe_value(), &x1 );
     }
 
     {
@@ -242,7 +242,7 @@ int main()
 
         auto r2 = result<int&>( x1 ) | fri2;
 
-        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &x1 );
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &r2.unsafe_value(), &x1 );
     }
 
     {
@@ -250,7 +250,7 @@ int main()
 
         auto r2 = r | fri;
 
-        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &*fri() );
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &r2.unsafe_value(), &fri().unsafe_value() );
     }
 
     {
@@ -258,13 +258,13 @@ int main()
 
         auto r2 = r | fri;
 
-        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &*fri() );
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &r2.unsafe_value(), &fri().unsafe_value() );
     }
 
     {
         auto r2 = result<int&, E>( in_place_error ) | fri;
 
-        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &*fri() );
+        BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &r2.unsafe_value(), &fri().unsafe_value() );
     }
 
     {

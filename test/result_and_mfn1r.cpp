@@ -41,7 +41,7 @@ int main()
 
         {
             result<int, E2> r2 = r & &X::f;
-            BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( *r2, 1 );
+            BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( r2.unsafe_value(), 1 );
         }
 
         {
@@ -51,12 +51,12 @@ int main()
 
         {
             result<int&, E2> r2 = r & &X::g;
-            BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &r->v_ );
+            BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &r2.unsafe_value(), &r.unsafe_value().v_ );
         }
 
         {
             result<int const&, E2> r2 = r & &X::g2;
-            BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &r->v_ );
+            BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &r2.unsafe_value(), &r.unsafe_value().v_ );
         }
 
         {
@@ -75,7 +75,7 @@ int main()
 
         {
             result<int, E2> r2 = r & &X::f;
-            BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( *r2, 1 );
+            BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( r2.unsafe_value(), 1 );
         }
 
         {
@@ -85,7 +85,7 @@ int main()
 
         {
             result<int const&, E2> r2 = r & &X::g2;
-            BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &*r2, &r->v_ );
+            BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( &r2.unsafe_value(), &r.unsafe_value().v_ );
         }
 
         {
@@ -102,7 +102,7 @@ int main()
     {
         {
             result<int, E2> r2 = result<X, E>( 1 ) & &X::f;
-            BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( *r2, 1 );
+            BOOST_TEST( r2.has_value() ) && BOOST_TEST_EQ( r2.unsafe_value(), 1 );
         }
 
         {

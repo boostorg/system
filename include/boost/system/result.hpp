@@ -205,7 +205,7 @@ public:
     {
         if( r2 )
         {
-            v_.template emplace<0>( *r2 );
+            v_.template emplace<0>( r2.unsafe_value() );
         }
     }
 
@@ -224,7 +224,7 @@ public:
     {
         if( r2 )
         {
-            v_.template emplace<0>( std::move( *r2 ) );
+            v_.template emplace<0>( std::move( r2 ).unsafe_value() );
         }
     }
 
@@ -317,73 +317,69 @@ public:
 
 #endif
 
-    // unchecked value access
+    // checked value access
 
-    BOOST_CXX14_CONSTEXPR T* operator->() noexcept
+    BOOST_CXX14_CONSTEXPR T* operator->()
     {
-        return variant2::get_if<0>( &v_ );
+        return &value();
     }
 
-    BOOST_CXX14_CONSTEXPR T const* operator->() const noexcept
+    BOOST_CXX14_CONSTEXPR T const* operator->() const
     {
-        return variant2::get_if<0>( &v_ );
+        return &value();
     }
 
 #if defined( BOOST_NO_CXX11_REF_QUALIFIERS )
 
-    BOOST_CXX14_CONSTEXPR T& operator*() noexcept
+    BOOST_CXX14_CONSTEXPR T& operator*()
     {
-        BOOST_ASSERT( has_value() );
-        return *operator->();
+        return value();
     }
 
-    BOOST_CXX14_CONSTEXPR T const& operator*() const noexcept
+    BOOST_CXX14_CONSTEXPR T const& operator*() const
     {
-        BOOST_ASSERT( has_value() );
-        return *operator->();
+        return value();
     }
 
 #else
 
-    BOOST_CXX14_CONSTEXPR T& operator*() & noexcept
+    BOOST_CXX14_CONSTEXPR T& operator*() &
     {
-        BOOST_ASSERT( has_value() );
-        return *operator->();
+        return value();
     }
 
-    BOOST_CXX14_CONSTEXPR T const& operator*() const & noexcept
+    BOOST_CXX14_CONSTEXPR T const& operator*() const &
     {
-        BOOST_ASSERT( has_value() );
-        return *operator->();
+        return value();
     }
 
     template<class U = T>
         BOOST_CXX14_CONSTEXPR
         typename std::enable_if<std::is_move_constructible<U>::value, T>::type
-        operator*() && noexcept(std::is_nothrow_move_constructible<T>::value)
+        operator*() &&
     {
-        return std::move(**this);
+        return std::move( value() );
     }
 
     template<class U = T>
         BOOST_CXX14_CONSTEXPR
         typename std::enable_if<!std::is_move_constructible<U>::value, T&&>::type
-        operator*() && noexcept
+        operator*() &&
     {
-        return std::move(**this);
+        return std::move( value() );
     }
 
     template<class U = T>
         BOOST_CXX14_CONSTEXPR
         typename std::enable_if<std::is_move_constructible<U>::value, T>::type
-        operator*() const && noexcept = delete;
+        operator*() const && = delete;
 
     template<class U = T>
         BOOST_CXX14_CONSTEXPR
         typename std::enable_if<!std::is_move_constructible<U>::value, T const&&>::type
-        operator*() const && noexcept
+        operator*() const &&
     {
-        return std::move(**this);
+        return std::move( value() );
     }
 
 #endif
@@ -514,7 +510,7 @@ template<class Ch, class Tr, class T, class E> std::basic_ostream<Ch, Tr>& opera
 {
     if( r.has_value() )
     {
-        os << "value:" << *r;
+        os << "value:" << r.unsafe_value();
     }
     else
     {
@@ -645,21 +641,23 @@ public:
         }
     }
 
-    // unchecked value access
+    // checked value access
 
-    BOOST_CXX14_CONSTEXPR void* operator->() noexcept
+    BOOST_CXX14_CONSTEXPR void* operator->()
     {
-        return variant2::get_if<0>( &v_ );
+        value();
+        return &variant2::unsafe_get<0>( v_ );
     }
 
-    BOOST_CXX14_CONSTEXPR void const* operator->() const noexcept
+    BOOST_CXX14_CONSTEXPR void const* operator->() const
     {
-        return variant2::get_if<0>( &v_ );
+        value();
+        return &variant2::unsafe_get<0>( v_ );
     }
 
-    BOOST_CXX14_CONSTEXPR void operator*() const noexcept
+    BOOST_CXX14_CONSTEXPR void operator*() const
     {
-        BOOST_ASSERT( has_value() );
+        return value();
     }
 
     // unchecked value access
@@ -854,7 +852,7 @@ public:
     {
         if( r2 )
         {
-            this->emplace( *r2 );
+            this->emplace( r2.unsafe_value() );
         }
     }
 
@@ -889,17 +887,16 @@ public:
         }
     }
 
-    // unchecked value access
+    // checked value access
 
-    BOOST_CXX14_CONSTEXPR U* operator->() const noexcept
+    BOOST_CXX14_CONSTEXPR U* operator->() const
     {
-        return has_value()? variant2::unsafe_get<0>( v_ ): 0;
+        return &value();
     }
 
-    BOOST_CXX14_CONSTEXPR U& operator*() const noexcept
+    BOOST_CXX14_CONSTEXPR U& operator*() const
     {
-        BOOST_ASSERT( has_value() );
-        return *operator->();
+        return value();
     }
 
     // unchecked value access
@@ -952,9 +949,9 @@ public:
     // equality
 
     friend constexpr bool operator==( result const & r1, result const & r2 )
-        noexcept( noexcept( r1 && r2? *r1 == *r2: r1.v_ == r2.v_ ) )
+        noexcept( noexcept( r1 && r2? r1.unsafe_value() == r2.unsafe_value(): r1.v_ == r2.v_ ) )
     {
-        return r1 && r2? *r1 == *r2: r1.v_ == r2.v_;
+        return r1 && r2? r1.unsafe_value() == r2.unsafe_value(): r1.v_ == r2.v_;
     }
 
     friend constexpr bool operator!=( result const & r1, result const & r2 )
@@ -1006,7 +1003,7 @@ operator|( result<T, E> const& r, U&& u )
 {
     if( r )
     {
-        return *r;
+        return r.unsafe_value();
     }
     else
     {
@@ -1022,7 +1019,7 @@ operator|( result<T, E>&& r, U&& u )
 {
     if( r )
     {
-        return *std::move( r );
+        return std::move( r ).unsafe_value();
     }
     else
     {
@@ -1040,7 +1037,7 @@ T operator|( result<T, E> const& r, F&& f )
 {
     if( r )
     {
-        return *r;
+        return r.unsafe_value();
     }
     else
     {
@@ -1056,7 +1053,7 @@ T operator|( result<T, E>&& r, F&& f )
 {
     if( r )
     {
-        return *std::move( r );
+        return std::move( r ).unsafe_value();
     }
     else
     {
@@ -1076,7 +1073,7 @@ operator|( result<T&, E> const& r, F&& f )
 {
     if( r )
     {
-        return *r;
+        return r.unsafe_value();
     }
     else
     {
@@ -1095,7 +1092,7 @@ U operator|( result<T, E> const& r, F&& f )
 {
     if( r )
     {
-        return *r;
+        return r.unsafe_value();
     }
     else
     {
@@ -1112,7 +1109,7 @@ U operator|( result<T, E>&& r, F&& f )
 {
     if( r )
     {
-        return *std::move( r );
+        return std::move( r ).unsafe_value();
     }
     else
     {
@@ -1222,7 +1219,7 @@ result<U, E> operator&( result<T, E>& r, F&& f )
     }
     else
     {
-        return compat::invoke( std::forward<F>( f ), *r );
+        return compat::invoke( std::forward<F>( f ), r.unsafe_value() );
     }
 }
 
@@ -1239,7 +1236,7 @@ result<U, E> operator&( result<T, E> const& r, F&& f )
     }
     else
     {
-        return compat::invoke( std::forward<F>( f ), *r );
+        return compat::invoke( std::forward<F>( f ), r.unsafe_value() );
     }
 }
 
@@ -1256,7 +1253,7 @@ result<U, E> operator&( result<T, E>&& r, F&& f )
     }
     else
     {
-        return compat::invoke( std::forward<F>( f ), *std::move( r ) );
+        return compat::invoke( std::forward<F>( f ), std::move( r ).unsafe_value() );
     }
 }
 
@@ -1273,7 +1270,7 @@ result<U, E> operator&( result<T&, E>&& r, F&& f )
     }
     else
     {
-        return compat::invoke( std::forward<F>( f ), *std::move( r ) );
+        return compat::invoke( std::forward<F>( f ), std::move( r ).unsafe_value() );
     }
 }
 
@@ -1289,7 +1286,7 @@ result<U, E> operator&( result<T, E> const& r, F&& f )
     }
     else
     {
-        compat::invoke( std::forward<F>( f ), *r );
+        compat::invoke( std::forward<F>( f ), r.unsafe_value() );
         return {};
     }
 }
@@ -1306,7 +1303,7 @@ result<U, E> operator&( result<T, E>&& r, F&& f )
     }
     else
     {
-        compat::invoke( std::forward<F>( f ), *std::move( r ) );
+        compat::invoke( std::forward<F>( f ), std::move( r ).unsafe_value() );
         return {};
     }
 }
@@ -1360,7 +1357,7 @@ U operator&( result<T, E>& r, F&& f )
     }
     else
     {
-        return compat::invoke( std::forward<F>( f ), *r );
+        return compat::invoke( std::forward<F>( f ), r.unsafe_value() );
     }
 }
 
@@ -1377,7 +1374,7 @@ U operator&( result<T, E> const& r, F&& f )
     }
     else
     {
-        return compat::invoke( std::forward<F>( f ), *r );
+        return compat::invoke( std::forward<F>( f ), r.unsafe_value() );
     }
 }
 
@@ -1394,7 +1391,7 @@ U operator&( result<T, E>&& r, F&& f )
     }
     else
     {
-        return compat::invoke( std::forward<F>( f ), *std::move( r ) );
+        return compat::invoke( std::forward<F>( f ), std::move( r ).unsafe_value() );
     }
 }
 
@@ -1428,7 +1425,7 @@ result<T, E>& operator&=( result<T, E>& r, F&& f )
 {
     if( r )
     {
-        r = std::forward<F>( f )( *std::move( r ) );
+        r = std::forward<F>( f )( std::move( r ).unsafe_value() );
     }
 
     return r;
@@ -1460,7 +1457,7 @@ result<T, E>& operator&=( result<T, E>& r, F&& f )
 {
     if( r )
     {
-        r = std::forward<F>( f )( *std::move( r ) );
+        r = std::forward<F>( f )( std::move( r ).unsafe_value() );
     }
 
     return r;
