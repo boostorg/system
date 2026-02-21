@@ -233,10 +233,9 @@ int main()
 #if defined(BOOST_CLANG_VERSION) && BOOST_CLANG_VERSION < 30600
 #else
         BOOST_TEST_THROWS( r.value(), E2 );
-#endif
-
         BOOST_TEST_THROWS( *r, E2 );
         BOOST_TEST_THROWS( r.operator->(), E2 );
+#endif
     }
 
     {
@@ -506,10 +505,9 @@ int main()
 #if defined(BOOST_CLANG_VERSION) && BOOST_CLANG_VERSION < 30600
 #else
         BOOST_TEST_THROWS( r.value(), E2 );
-#endif
-
         BOOST_TEST_THROWS( *r, E2 );
         BOOST_TEST_THROWS( r.operator->(), E2 );
+#endif
     }
 
     {
@@ -686,10 +684,9 @@ int main()
 #if defined(BOOST_CLANG_VERSION) && BOOST_CLANG_VERSION < 30600
 #else
         BOOST_TEST_THROWS( r.value(), E2 );
-#endif
-
         BOOST_TEST_THROWS( *r, E2 );
         BOOST_TEST_THROWS( r.operator->(), E2 );
+#endif
     }
 
     {
