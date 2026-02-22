@@ -1670,15 +1670,20 @@ public:
     constexpr T const&& value( boost::source_location const & loc =
       BOOST_CURRENT_LOCATION ) const&& ;
 
+    constexpr T* operator->();
+    constexpr T const* operator->() const;
+
+    constexpr T& operator*() &;
+    constexpr T const& operator*() const &;
+    constexpr T&& operator*() &&;
+    constexpr T const&& operator*() const &&;
+
     // unchecked value access
 
-    constexpr T* operator->() noexcept;
-    constexpr T const* operator->() const noexcept;
-
-    constexpr T& operator*() & noexcept;
-    constexpr T const& operator*() const & noexcept;
-    constexpr T&& operator*() && noexcept;
-    constexpr T const&& operator*() const && noexcept;
+    constexpr T& unsafe_value() & ;
+    constexpr T const& unsafe_value() const& ;
+    constexpr T&& unsafe_value() && ;
+    constexpr T const&& unsafe_value() const&& ;
 
     // error access
 
@@ -1840,39 +1845,50 @@ Effects: ::
   calls `throw_exception_from_error`, passing it a reference to
   the held error, and `loc`.
 
+```
+constexpr T* operator->();
+constexpr T const* operator->() const;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `&value()`.
+
+```
+constexpr T& operator*() &;
+constexpr T const& operator*() const &;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `value()`.
+
+```
+constexpr T&& operator*() &&;
+constexpr T const&& operator*() const &&;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `std::move( value() )`.
+
 #### Unchecked Value Access
 
 ```
-constexpr T* operator->() noexcept;
-constexpr T const* operator->() const noexcept;
-```
-[none]
-* {blank}
-+
-Returns: ::
-  If `*this` holds a value, a pointer to it. Otherwise, `nullptr`.
-
-```
-constexpr T& operator*() & noexcept;
-constexpr T const& operator*() const & noexcept;
+constexpr T& unsafe_value() &;
+constexpr T const& unsafe_value() const &;
+constexpr T&& unsafe_value() &&;
+constexpr T const&& unsafe_value() const &&;
 ```
 [none]
 * {blank}
 +
 Requires: :: `*this` holds a value.
 Returns: ::
-  `*operator\->()`.
-
-```
-constexpr T&& operator*() && noexcept;
-constexpr T const&& operator*() const && noexcept;
-```
-[none]
-* {blank}
-+
-Requires: :: `*this` holds a value.
-Returns: ::
-  `std::move( *operator\->() )`.
+  A reference to the held value.
 
 #### Error Access
 
@@ -2000,12 +2016,14 @@ public:
     constexpr void value( boost::source_location const & loc =
       BOOST_CURRENT_LOCATION ) const;
 
+    constexpr void* operator->();
+    constexpr void const* operator->() const;
+
+    constexpr void operator*() const;
+
     // unchecked value access
 
-    constexpr void* operator->() noexcept;
-    constexpr void const* operator->() const noexcept;
-
-    constexpr void operator*() const noexcept;
+    constexpr void unsafe_value() const;
 
     // error access
 
@@ -2138,8 +2156,6 @@ Effects: ::
   If `*this` doesn't hold a value, calls `throw_exception_from_error`,
   passing it a reference to the held error, and `loc`.
 
-#### Unchecked Value Access
-
 ```
 constexpr void* operator->() noexcept;
 constexpr void const* operator->() const noexcept;
@@ -2147,11 +2163,22 @@ constexpr void const* operator->() const noexcept;
 [none]
 * {blank}
 +
-Returns: ::
-  If `*this` holds a value, a pointer to it. Otherwise, `nullptr`.
+Effects: ::
+  If `*this` holds a value, returns a pointer to it. Otherwise, calls `value()`.
 
 ```
 constexpr void operator*() const noexcept;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `value()`.
+
+#### Unchecked Value Access
+
+```
+constexpr void unsafe_value() const;
 ```
 [none]
 * {blank}
@@ -2285,10 +2312,12 @@ public:
     constexpr U& value( boost::source_location const & loc =
       BOOST_CURRENT_LOCATION ) const;
 
+    constexpr U* operator->() const;
+    constexpr U& operator*() const;
+
     // unchecked value access
 
-    constexpr U* operator->() const noexcept;
-    constexpr U& operator*() const noexcept;
+    constexpr U& unsafe_value() const;
 
     // error access
 
@@ -2422,26 +2451,35 @@ Effects: ::
   calls `throw_exception_from_error`, passing it a reference to
   the held error, and `loc`.
 
-#### Unchecked Value Access
-
 ```
-constexpr U* operator->() const noexcept;
+constexpr U* operator->() const;
 ```
 [none]
 * {blank}
 +
 Returns: ::
-  If `*this` holds a reference, a pointer to its referent. Otherwise, `nullptr`.
+  `&value()`.
 
 ```
-constexpr U& operator*() const noexcept;
+constexpr U& operator*() const;
+```
+[none]
+* {blank}
++
+Returns: ::
+  `value()`.
+
+#### Unchecked Value Access
+
+```
+constexpr U& unsafe_value() const;
 ```
 [none]
 * {blank}
 +
 Requires: :: `*this` holds a reference.
 Returns: ::
-  `*operator\->()`.
+  The held reference.
 
 #### Error Access
 
