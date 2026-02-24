@@ -33,6 +33,11 @@ struct X
     }
 };
 
+template<class T, class... A> std::unique_ptr<T> make_unique( A&&... a )
+{
+    return std::unique_ptr<T>( new T( std::forward<A>(a)... ) );
+}
+
 int main()
 {
     {
@@ -238,8 +243,8 @@ int main()
     //
 
     {
-        result< std::unique_ptr<X> > a1( std::make_unique<X>( 1 ) );
-        result< std::unique_ptr<X> > a2( std::make_unique<X>( 2 ) );
+        result< std::unique_ptr<X> > a1( ::make_unique<X>( 1 ) );
+        result< std::unique_ptr<X> > a2( ::make_unique<X>( 2 ) );
 
         auto r = unwrap_and_invoke( &X::g, std::move( a1 ), std::move( a2 ) );
         BOOST_TEST( r ) && BOOST_TEST_EQ( *r, 3 );
