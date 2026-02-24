@@ -220,3 +220,5 @@ compile result_error_construct_cx2.cpp ;
 
 run result_unsafe_value_access.cpp ;
 run result_unsafe_value_access2.cpp ;
+
+run unwrap_and_invoke.cpp ;

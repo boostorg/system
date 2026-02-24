@@ -187,3 +187,5 @@ boost_test(TYPE compile SOURCES result_error_construct_cx2.cpp)
 
 boost_test(TYPE run SOURCES result_unsafe_value_access.cpp)
 boost_test(TYPE run SOURCES result_unsafe_value_access2.cpp)
+
+boost_test(TYPE run SOURCES unwrap_and_invoke.cpp)
