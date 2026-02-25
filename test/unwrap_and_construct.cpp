@@ -17,7 +17,7 @@ struct Y
 {
     int v;
 
-    explicit Y( X a1 = {}, X a2 = {}, X a3 = {}, X a4 = {} ): v( a1.v + a2.v + a3.v + a4.v )
+    explicit Y( X a1 = {0}, X a2 = {0}, X a3 = {0}, X a4 = {0} ): v( a1.v + a2.v + a3.v + a4.v )
     {
     }
 };
