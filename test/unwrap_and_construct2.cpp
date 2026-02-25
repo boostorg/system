@@ -6,21 +6,7 @@
 #include <boost/system/result.hpp>
 #include <boost/core/lightweight_test_trait.hpp>
 #include <boost/config/pragma_message.hpp>
-
-struct X
-{
-    int v;
-};
-
-struct Y
-{
-    X x1{}, x2{}, x3{}, x4{};
-};
-
-struct E
-{
-    int w;
-};
+#include <boost/config.hpp>
 
 #if !defined(BOOST_SYSTEM_HAS_BUILTIN_IS_AGGREGATE) && !( defined(__cpp_lib_is_aggregate) && __cpp_lib_is_aggregate >= 201703L )
 
@@ -28,6 +14,32 @@ BOOST_PRAGMA_MESSAGE("Test skipped, detail::is_aggregate isn't functional")
 int main() {}
 
 #else
+
+struct X
+{
+    int v;
+};
+
+struct E
+{
+    int w;
+};
+
+#if BOOST_CXX_VERSION >= 201402L
+
+struct Y
+{
+    X x1{}, x2{}, x3{}, x4{};
+};
+
+#else
+
+struct Y
+{
+    X x1, x2, x3, x4;
+};
+
+#endif
 
 using namespace boost::system;
 
