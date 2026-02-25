@@ -5,12 +5,11 @@
 #include <boost/system/unwrap_and_invoke.hpp>
 #include <boost/system/result.hpp>
 #include <boost/core/lightweight_test_trait.hpp>
-
-using namespace boost::system;
+#include <boost/config/pragma_message.hpp>
 
 struct X
 {
-    int v{};
+    int v;
 };
 
 struct Y
@@ -20,8 +19,17 @@ struct Y
 
 struct E
 {
-    int w{};
+    int w;
 };
+
+#if !defined(BOOST_SYSTEM_HAS_BUILTIN_IS_AGGREGATE) && !( defined(__cpp_lib_is_aggregate) && __cpp_lib_is_aggregate >= 201703L )
+
+BOOST_PRAGMA_MESSAGE("Test skipped, detail::is_aggregate isn't functional")
+int main() {}
+
+#else
+
+using namespace boost::system;
 
 int main()
 {
@@ -127,3 +135,5 @@ int main()
 
     return boost::report_errors();
 }
+
+#endif
