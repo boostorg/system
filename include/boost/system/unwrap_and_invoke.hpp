@@ -81,6 +81,28 @@ auto unwrap_and_invoke( F&& f, A&&... a ) -> result<R, E>
     return compat::invoke( std::forward<F>(f), detail::invoke_unwrap( std::forward<A>(a) )... );
 }
 
+// unwrap_and_construct
+
+namespace detail
+{
+
+template<class T> struct construct
+{
+    template<class... A> T operator()( A&&... a ) const
+    {
+        return T( std::forward<A>(a)... );
+    }
+};
+
+} // namespace detail
+
+template<class T, class... A>
+auto unwrap_and_construct( A&&... a )
+-> decltype( unwrap_and_invoke( detail::construct<T>(), std::forward<A>(a)... ) )
+{
+    return unwrap_and_invoke( detail::construct<T>(), std::forward<A>(a)... );
+}
+
 } // namespace system
 } // namespace boost
 
