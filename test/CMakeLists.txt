@@ -192,5 +192,6 @@ boost_test(TYPE run SOURCES unwrap_and_invoke.cpp)
 boost_test(TYPE run SOURCES unwrap_and_invoke2.cpp)
 
 boost_test(TYPE run SOURCES unwrap_and_construct.cpp)
+boost_test(TYPE run SOURCES unwrap_and_construct2.cpp)
 
 boost_test(TYPE run SOURCES detail_is_aggregate_test.cpp)

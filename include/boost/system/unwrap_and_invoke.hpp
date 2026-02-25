@@ -6,6 +6,7 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/system/result.hpp>
+#include <boost/system/detail/is_aggregate.hpp>
 #include <boost/compat/type_traits.hpp>
 #include <boost/mp11/algorithm.hpp>
 #include <boost/mp11/utility.hpp>
@@ -88,9 +89,23 @@ namespace detail
 
 template<class T> struct construct
 {
-    template<class... A> T operator()( A&&... a ) const
+private:
+
+    template<class... A> static inline T call_impl( std::false_type, A&&... a )
     {
         return T( std::forward<A>(a)... );
+    }
+
+    template<class... A> static inline T call_impl( std::true_type, A&&... a )
+    {
+        return T{ std::forward<A>(a)... };
+    }
+
+public:
+
+    template<class... A> inline T operator()( A&&... a ) const
+    {
+        return this->call_impl( detail::is_aggregate<T>(), std::forward<A>(a)... );
     }
 };
 
