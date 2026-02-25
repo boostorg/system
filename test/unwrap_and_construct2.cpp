@@ -2,22 +2,24 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
+#if defined(__GNUC__) || defined(__clang__)
+# pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
+
 #include <boost/system/unwrap_and_invoke.hpp>
 #include <boost/system/result.hpp>
 #include <boost/core/lightweight_test_trait.hpp>
 #include <boost/config/pragma_message.hpp>
 #include <boost/config.hpp>
 
-#if !defined(BOOST_SYSTEM_HAS_BUILTIN_IS_AGGREGATE) && !( defined(__cpp_lib_is_aggregate) && __cpp_lib_is_aggregate >= 201703L )
-
-BOOST_PRAGMA_MESSAGE("Test skipped, detail::is_aggregate isn't functional")
-int main() {}
-
-#else
-
 struct X
 {
     int v;
+};
+
+struct Y
+{
+    X x1, x2, x3, x4;
 };
 
 struct E
@@ -25,21 +27,12 @@ struct E
     int w;
 };
 
-#if BOOST_CXX_VERSION >= 201402L
+#if !defined(BOOST_SYSTEM_HAS_BUILTIN_IS_AGGREGATE) && !( defined(__cpp_lib_is_aggregate) && __cpp_lib_is_aggregate >= 201703L )
 
-struct Y
-{
-    X x1{}, x2{}, x3{}, x4{};
-};
+BOOST_PRAGMA_MESSAGE("Test skipped, detail::is_aggregate isn't functional")
+int main() {}
 
 #else
-
-struct Y
-{
-    X x1, x2, x3, x4;
-};
-
-#endif
 
 using namespace boost::system;
 
