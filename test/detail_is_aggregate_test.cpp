@@ -33,7 +33,7 @@ struct Y1
     Y1() {}
 };
 
-#if !defined(BOOST_SYSTEM_HAS_IS_AGGREGATE) && !( defined(__cpp_lib_is_aggregate) && __cpp_lib_is_aggregate >= 201703L )
+#if !defined(BOOST_SYSTEM_HAS_BUILTIN_IS_AGGREGATE) && !( defined(__cpp_lib_is_aggregate) && __cpp_lib_is_aggregate >= 201703L )
 
 BOOST_PRAGMA_MESSAGE("Test skipped, detail::is_aggregate isn't functional")
 int main() {}

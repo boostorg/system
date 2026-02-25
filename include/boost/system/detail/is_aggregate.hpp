@@ -10,20 +10,20 @@
 
 #if defined(__has_builtin)
 # if __has_builtin(__is_aggregate)
-#  define BOOST_SYSTEM_HAS_IS_AGGREGATE
+#  define BOOST_SYSTEM_HAS_BUILTIN_IS_AGGREGATE
 # endif
 #endif
 
-#if !defined(BOOST_SYSTEM_HAS_IS_AGGREGATE) && defined(BOOST_CLANG_VERSION) && BOOST_CLANG_VERSION >= 50000
-# define BOOST_SYSTEM_HAS_IS_AGGREGATE
+#if !defined(BOOST_SYSTEM_HAS_BUILTIN_IS_AGGREGATE) && defined(BOOST_CLANG_VERSION) && BOOST_CLANG_VERSION >= 50000
+# define BOOST_SYSTEM_HAS_BUILTIN_IS_AGGREGATE
 #endif
 
-#if !defined(BOOST_SYSTEM_HAS_IS_AGGREGATE) && defined(BOOST_GCC) && BOOST_GCC >= 70000
-# define BOOST_SYSTEM_HAS_IS_AGGREGATE
+#if !defined(BOOST_SYSTEM_HAS_BUILTIN_IS_AGGREGATE) && defined(BOOST_GCC) && BOOST_GCC >= 70000
+# define BOOST_SYSTEM_HAS_BUILTIN_IS_AGGREGATE
 #endif
 
-#if !defined(BOOST_SYSTEM_HAS_IS_AGGREGATE) && defined(BOOST_MSVC) && BOOST_MSVC >= 1910
-# define BOOST_SYSTEM_HAS_IS_AGGREGATE
+#if !defined(BOOST_SYSTEM_HAS_BUILTIN_IS_AGGREGATE) && defined(BOOST_MSVC) && BOOST_MSVC >= 1910
+# define BOOST_SYSTEM_HAS_BUILTIN_IS_AGGREGATE
 #endif
 
 namespace boost
@@ -33,7 +33,7 @@ namespace system
 namespace detail
 {
 
-#if defined(BOOST_SYSTEM_HAS_IS_AGGREGATE)
+#if defined(BOOST_SYSTEM_HAS_BUILTIN_IS_AGGREGATE)
 
 template<class T> struct is_aggregate: public std::integral_constant<bool, __is_aggregate(T)>
 {
