@@ -2911,6 +2911,82 @@ Returns: :: `r`.
 Remarks: ::
   Only enabled when `R` is an instance of `result<void, E2>` and `E2` is convertible to `E`.
 
+## <boost/system/{zwsp}unwrap_and_invoke.hpp>
+
+```
+namespace boost {
+namespace system {
+
+template<class F, class... A>
+auto unwrap_and_invoke( F&& f, A&&... a ) -> result</*...*/>;
+
+template<class T, class... A>
+auto unwrap_and_construct( A&&... a ) -> /*...*/;
+
+} // namespace system
+} // namespace boost
+```
+
+### unwrap_and_invoke
+
+```
+template<class F, class... A>
+auto unwrap_and_invoke( F&& f, A&&... a ) -> result</*...*/>;
+```
+[none]
+* {blank}
++
+Mandates: ::
+At least one of the arguments in `a...` must be an instance of `result`.
++
+All arguments in `a...` that are instances of `result` must have the same error type.
++
+Effects: ::
+If `ai`, one of the arguments in `a...`, is an instance of `result` for which `has_error()` is `true`, returns `ai.error()`.
++
+Otherwise, returns `f(b...)`, where `bi` is `*ai` if `ai` is an instance of `result`, `ai` otherwise.
++
+Remarks: ::
+The return type is `result<R, E>`, where `R` is the type of the application of `f`, and `E` is the common error type of the arguments in `a...` that are instances of `result`.
+
+
+### unwrap_and_construct
+
+```
+template<class T, class... A>
+auto unwrap_and_construct( A&&... a ) -> /*...*/;
+```
+[none]
+* {blank}
++
+Like `unwrap_and_invoke`, but instead of a function object, invokes a constructor of the passed type `T`.
++
+Returns: :: `unwrap_and_invoke(cf, a...)`, where `cf` is a function object such that `cf(args...)` returns `T{args...}` when `T` is an aggregate, `T(args...)` otherwise.
++
+Example: ::
++
+```
+struct JsonValue
+{
+    result<JsonValue const&> at( std::string_view key ) const noexcept;
+};
+
+result<int> int_from_json( JsonValue const& jv ) noexcept;
+
+struct X
+{
+    int a;
+    int b;
+};
+
+result<X> X_from_json( JsonValue const& jv ) noexcept
+{
+    return unwrap_and_construct<X>(
+        jv.at( "a" ) & int_from_json,
+        jv.at( "b" ) & int_from_json );
+}
+```
+
 ## <boost/system.hpp>
 
 This convenience header includes all the headers previously described.

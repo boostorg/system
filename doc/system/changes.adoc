@@ -19,6 +19,7 @@ https://www.boost.org/LICENSE_1_0.txt
 * Added `unsafe_value` to `result`.
 * Changed `result<>::operator*` and `result<>::operator\->` to throw when `!has_value()`,
   instead of having that as a precondition. The old behavior is now spelled `unsafe_value()`.
+* Added `boost/system/unwrap_and_invoke.hpp`.
 
 ## Changes in Boost 1.89
 
