@@ -16,6 +16,7 @@
 #include <boost/system/detail/is_same.hpp>
 #include <boost/system/detail/errc.hpp>
 #include <boost/system/detail/append_int.hpp>
+#include <boost/system/detail/to_string_formatter.hpp>
 #include <boost/system/is_error_condition_enum.hpp>
 #include <boost/system/detail/config.hpp>
 #include <boost/config.hpp>
@@ -322,5 +323,15 @@ public:
 } // namespace system
 
 } // namespace boost
+
+// std::format support
+
+#if !defined(BOOST_NO_CXX20_HDR_FORMAT)
+
+template<> class std::formatter<boost::system::error_condition, char>: public boost::system::detail::to_string_formatter<boost::system::error_condition>
+{
+};
+
+#endif
 
 #endif // #ifndef BOOST_SYSTEM_DETAIL_ERROR_CONDITION_HPP_INCLUDED

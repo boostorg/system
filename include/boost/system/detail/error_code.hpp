@@ -22,6 +22,7 @@
 #include <boost/system/detail/snprintf.hpp>
 #include <boost/system/detail/config.hpp>
 #include <boost/system/detail/std_category.hpp>
+#include <boost/system/detail/to_string_formatter.hpp>
 #include <boost/assert/source_location.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/config.hpp>
@@ -651,6 +652,16 @@ inline std::size_t hash_value( error_code const & ec )
 } // namespace system
 
 } // namespace boost
+
+// std::format support
+
+#if !defined(BOOST_NO_CXX20_HDR_FORMAT)
+
+template<> class std::formatter<boost::system::error_code, char>: public boost::system::detail::to_string_formatter<boost::system::error_code>
+{
+};
+
+#endif
 
 #if defined(BOOST_GCC) && BOOST_GCC >= 40600 && BOOST_GCC < 70000
 # pragma GCC diagnostic pop
