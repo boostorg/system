@@ -1,5 +1,5 @@
 ////
-Copyright 2018-2025 Peter Dimov
+Copyright 2018-2026 Peter Dimov
 Distributed under the Boost Software License, Version 1.0.
 https://www.boost.org/LICENSE_1_0.txt
 ////
@@ -7,6 +7,10 @@ https://www.boost.org/LICENSE_1_0.txt
 [#changes]
 # Revision History
 :idprefix:
+
+## Changes in Boost 1.93
+
+* Add `std::format` support for `error_code` and `error_condition`.
 
 ## Changes in Boost 1.92
 
