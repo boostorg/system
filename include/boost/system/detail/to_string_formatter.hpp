@@ -32,7 +32,7 @@ public:
         return fmt_.parse( ctx );
     }
 
-    auto format( T const& t, std::format_context& ctx ) const
+    template<class Context> auto format( T const& t, Context& ctx ) const
     {
         return fmt_.format( t.to_string(), ctx );
     }
