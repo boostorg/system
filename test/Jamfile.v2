@@ -232,3 +232,4 @@ run detail_is_aggregate_test.cpp ;
 run unwrap_and_invoke3.cpp ;
 
 run std_format_test.cpp ;
+compile std_formattable_test.cpp ;

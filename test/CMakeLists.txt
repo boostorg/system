@@ -199,3 +199,4 @@ boost_test(TYPE run SOURCES detail_is_aggregate_test.cpp)
 boost_test(TYPE run SOURCES unwrap_and_invoke3.cpp)
 
 boost_test(TYPE run SOURCES std_format_test.cpp)
+boost_test(TYPE compile SOURCES std_formattable_test.cpp)
